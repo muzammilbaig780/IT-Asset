@@ -5,25 +5,25 @@
 namespace SLRM_IT_Assest_Management.Migrations
 {
     /// <inheritdoc />
-    public partial class removeddeviceimage : Migration
+    public partial class addedAssetTag : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "DeviceImage",
-                table: "Assets");
+            migrationBuilder.AddColumn<string>(
+                name: "AssetTag",
+                table: "Assets",
+                type: "nvarchar(max)",
+                nullable: false,
+                defaultValue: "");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<string>(
-                name: "DeviceImage",
-                table: "Assets",
-                type: "nvarchar(max)",
-                nullable: false,
-                defaultValue: "");
+            migrationBuilder.DropColumn(
+                name: "AssetTag",
+                table: "Assets");
         }
     }
 }

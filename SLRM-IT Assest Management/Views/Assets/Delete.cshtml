@@ -71,41 +71,47 @@
             <p>Are you sure you want to delete this asset?</p>
 
             <dl class="row">
-                <dt class="col-sm-3 form-label">Company</dt>
-                <dd class="col-sm-9">@Model.Company</dd>
+                <dt class="col-sm-3 form-label">Type</dt>
+                <dd class="col-sm-9">@Model.Type</dd>
 
-                <dt class="col-sm-3 form-label">Asset Name</dt>
-                <dd class="col-sm-9">@Model.AssetName</dd>
+                <dt class="col-sm-3 form-label">Department</dt>
+                <dd class="col-sm-9">@Model.Department</dd>
 
-                <dt class="col-sm-3 form-label">Asset Tag</dt>
-                <dd class="col-sm-9">@Model.AssetTag</dd>
+                <dt class="col-sm-3 form-label">User Name</dt>
+                <dd class="col-sm-9">@Model.UserName</dd>
+
+                <dt class="col-sm-3 form-label">Host Name</dt>
+                <dd class="col-sm-9">@Model.HostName</dd>
+
+                <dt class="col-sm-3 form-label">Make</dt>
+                <dd class="col-sm-9">@Model.Make</dd>
+
+                <dt class="col-sm-3 form-label">Model</dt>
+                <dd class="col-sm-9">@Model.Model</dd>
 
                 <dt class="col-sm-3 form-label">Serial Number</dt>
-                <dd class="col-sm-9">@Model.Serial</dd>
+                <dd class="col-sm-9">@Model.SerialNo</dd>
 
                 <dt class="col-sm-3 form-label">Status</dt>
                 <dd class="col-sm-9">@Model.Status</dd>
 
-                <dt class="col-sm-3 form-label">Employee Name</dt>
-                <dd class="col-sm-9">@Model.EmployeeName</dd>
+                <dt class="col-sm-3 form-label">AssetTag</dt>
+                <dd class="col-sm-9">@Model.AssetTag</dd>
 
-                <dt class="col-sm-3 form-label">Category</dt>
-                <dd class="col-sm-9">@Model.Category</dd>
+                <dt class="col-sm-3 form-label">Processor</dt>
+                <dd class="col-sm-9">@Model.Processor</dd>
 
-                <dt class="col-sm-3 form-label">Model Number</dt>
-                <dd class="col-sm-9">@Model.ModelNo</dd>
+                <dt class="col-sm-3 form-label">RAM</dt>
+                <dd class="col-sm-9">@Model.Ram</dd>
 
-                <dt class="col-sm-3 form-label">Warranty (months)</dt>
-                <dd class="col-sm-9">@Model.Warranty</dd>
+                <dt class="col-sm-3 form-label">HDD</dt>
+                <dd class="col-sm-9">@Model.Hdd</dd>
 
-                <dt class="col-sm-3 form-label">Expected Check-in Date</dt>
-                <dd class="col-sm-9">@Model.ExpectedCheckinDate?.ToString("yyyy-MM-dd")</dd>
+                <dt class="col-sm-3 form-label">OS Version</dt>
+                <dd class="col-sm-9">@Model.OSVersion</dd>
 
-                <dt class="col-sm-3 form-label">CheckedOutTo</dt>
-                <dd class="col-sm-9">@Model.CheckedOutTo?.ToString("yyyy-MM-dd")</dd>
-
-                <dt class="col-sm-3 form-label">Next Audit Date</dt>
-                <dd class="col-sm-9">@Model.NextAuditDate?.ToString("yyyy-MM-dd")</dd>
+                <dt class="col-sm-3 form-label">IP Address</dt>
+                <dd class="col-sm-9">@Model.IPAddress</dd>
             </dl>
 
             <div class="btn-container">

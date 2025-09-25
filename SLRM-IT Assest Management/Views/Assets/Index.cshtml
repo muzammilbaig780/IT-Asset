@@ -69,18 +69,30 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th>Company</th>
-                            <th>Asset Name</th>
-                            <th>Asset Tag</th>
-                            <th>Serial</th>
+                            <th>Sl No</th>
+                            <th>Type</th>
+                            <th>Department</th>
+                            <th>UserName</th>
+                            <th>Host Name</th>
+                            <th>Block</th>
+                            <th>AssetLocation</th>
+                            <th>Assettag</th>
+                            <th>Make</th>
+                            <th>Model</th>
+                            <th>Serial No</th>
+                            <th>Processor</th>
+                            <th>RAM</th>
+                            <th>HDD</th>
+                            <th>Division</th>
+                            <th>Antivirus</th>
                             <th>Status</th>
-                            <th>Employee Name</th>
-                            <th>Category</th>
-                            <th>Model Number</th>
-                            <th>Warranty</th>
-                            <th>Checked Out To</th>
-                            <th>Expected Checkin</th>
-                            <th>Next Audit</th>
+                            <th>OS Version</th>
+                            <th>AutoCAD</th>
+                            <th>Office</th>
+                            <th>Windows License Key</th>
+                            <th>IP Address</th>
+                            <th>Nitro</th>
+                            <th>Audit Status</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -88,10 +100,22 @@
                         @foreach (var item in Model)
                         {
                             <tr>
-                                <td>@item.Company</td>
-                                <td>@item.AssetName</td>
+                                <td>@item.SlNo</td>
+                                <td>@item.Type</td>
+                                <td>@item.Department</td>
+                                <td>@item.UserName</td>
+                                <td>@item.HostName</td>
+                                <td>@item.Block</td>
+                                <td>@item.AssetLocation</td>
                                 <td>@item.AssetTag</td>
-                                <td>@item.Serial</td>
+                                <td>@item.Make</td>
+                                <td>@item.Model</td>
+                                <td>@item.SerialNo</td>
+                                <td>@item.Processor</td>
+                                <td>@item.Ram</td>
+                                <td>@item.Hdd</td>
+                                <td>@item.Division</td>
+                                <td>@item.AntiVirus</td>
                                 <td>
                                     @if (item.Status == "ACTIVE")
                                     {
@@ -110,13 +134,13 @@
                                         <span class="badge bg-light text-dark">Not Set</span>
                                     }
                                 </td>
-                                <td>@item.EmployeeName</td>
-                                <td>@item.Category</td>
-                                <td>@item.ModelNo</td>
-                                <td>@(item.Warranty?.ToString() + " months")</td>
-                                <td>@item.CheckedOutTo</td>
-                                <td>@item.ExpectedCheckinDate?.ToString("yyyy-MM-dd")</td>
-                                <td>@item.NextAuditDate?.ToString("yyyy-MM-dd")</td>
+                                <td>@item.OSVersion</td>
+                                <td>@item.AutoCad</td>
+                                <td>@item.Office</td>
+                                <td>@item.WindowLicenseKey</td>
+                                <td>@item.IPAddress</td>
+                                <td>@item.Nitro</td>
+                                <td>@item.AuditStatus</td>
                                 <td>
                                     <div class="action-buttons">
                                         <a asp-action="Edit" asp-route-id="@item.AssetId" class="btn btn-warning btn-sm">Edit</a>

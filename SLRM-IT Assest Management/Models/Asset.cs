@@ -1,50 +1,52 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 namespace SLRM_IT_Assest_Management.Models
 {
     public class Asset
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int AssetId { get; set; }
+        public int SlNo { get; set; }
 
         [Required]
-        [Display(Name = "Company")]
-        public string Company { get; set; }
+        [Display(Name = "Type")]
+        public string Type { get; set; }
 
         [Required]
-        [Display(Name = "Asset Name")]
-        public string AssetName { get; set; }
-
+        [Display(Name = "Department")]
+        public string Department { get; set; }
         [Required]
-        [Display(Name = "Asset Tag")]
+        [Display(Name = "UserName")]
+        public string UserName { get; set; }
+        public string HostName { get; set; }
+        public string Block { get; set; }
+        public string AssetLocation { get; set; }
         public string AssetTag { get; set; }
 
-        public string Serial { get; set; }
+        [Display(Name = "Make")]
+        public string Make { get; set; }
 
-        
-        public string ModelNo { get; set; }
+        [Display(Name = "Model")]
+        public string Model { get; set; }
 
-        public string Category { get; set; }
+        [Display(Name = "SerialNo")]
+        public string SerialNo { get; set; }
 
-        [Display(Name = "Status")]
+        public string Processor { get; set; }
+
+        public string Ram { get; set; }
+        public string Hdd { get; set; }
+        public string Division { get; set; }
+        public string AntiVirus { get; set; }
         public string Status { get; set; }
+        public string OSVersion { get; set; }
+        public string AutoCad { get; set; }
+        public string Office { get; set; }
+        public string WindowLicenseKey { get; set; }
+        public string IPAddress { get; set; }
+        public string Nitro { get; set; }
+        public string AuditStatus { get; set; }
 
-        [Display(Name = "Checked Out To")]
-        public DateTime? CheckedOutTo { get; set; }
-
-        [Display(Name = "Employee Name")]
-        public string EmployeeName { get; set; }
-
-        [Display(Name = "Warranty (Months)")]
-        public int? Warranty { get; set; }
-
-        [DataType(DataType.Date)]
-        [Display(Name = "Expected Checkin Date")]
-        public DateTime? ExpectedCheckinDate { get; set; }
-
-        [DataType(DataType.Date)]
-        [Display(Name = "Next Audit Date")]
-        public DateTime? NextAuditDate { get; set; }
     }
 }

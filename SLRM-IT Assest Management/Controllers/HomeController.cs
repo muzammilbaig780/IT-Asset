@@ -12,7 +12,7 @@ namespace SLRM_IT_Assest_Management.Controllers
         {
             _logger = logger;
         }
-
+        
         public IActionResult Index()
         {
             return View();

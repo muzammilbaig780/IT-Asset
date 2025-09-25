@@ -312,7 +312,7 @@
     </style>
 </head>
 <body>
-    <!-- This is where the view content will be injected -->
+
     @RenderBody()
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
@@ -333,6 +333,7 @@
                 });
             });
         });
+
     </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

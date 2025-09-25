@@ -3,8 +3,10 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+
 <div class="sidebar">
-    <div class="logo">
+    <div class="logo" style="background: white; padding: 10px; border-radius: 8px;">
+        <img src="~/css/slrm-logo.png" alt="SLRM Logo" class="img-fluid" style="max-height: 40px;" />
         <h1>SLRM <span>IT-ASSET MANAGEMENT</span></h1>
     </div>
     <ul class="menu">
@@ -43,8 +45,10 @@
             <span>Graphs</span>
         </li>
         <li class="menu-item">
-            <i class="fas fa-file-import"></i>
-            <span>Import</span>
+            <a href="@Url.Action("Import", "Assets")" style="text-decoration: none; color: inherit;">
+                <i class="fas fa-file-import"></i>
+                <span>Import</span>
+            </a>
         </li>
         <li class="menu-item">
             <i class="fas fa-cog"></i>
@@ -75,16 +79,18 @@
 
     <!-- Dashboard Cards -->
     <div class="dashboard-cards">
-        <div class="card">
-            <div class="card-header">
-                <div class="card-title">Assets</div>
-                <div class="card-icon assets">
-                    <i class="fas fa-server"></i>
+        <a href="https://localhost:7232/Assets" style="text-decoration: none; color: inherit;">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Assets</div>
+                    <div class="card-icon assets">
+                        <i class="fas fa-server"></i>
+                    </div>
                 </div>
+                <div class="card-value">99</div>
+                <div class="card-text">Total IT Assets</div>
             </div>
-            <div class="card-value">99</div>
-            <div class="card-text">Total IT Assets</div>
-        </div>
+        </a>
 
         <div class="card">
             <div class="card-header">
@@ -238,6 +244,6 @@
                     <div style="color: var(--text-light);">NOT ACTIVE</div>
                 </div>
             </div>
-        </div>
+        </div><a href="c:\users\slr\source\repos\slrm-it assest management\slrm-it assest management\views\home\index.cshtml">c:\users\slr\source\repos\slrm-it assest management\slrm-it assest management\views\home\index.cshtml</a>
     </div>
 </div>
