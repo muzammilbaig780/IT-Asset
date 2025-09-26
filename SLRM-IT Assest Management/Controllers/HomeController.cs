@@ -22,7 +22,7 @@ namespace SLRM_IT_Assest_Management.Controllers
             var dashboardData = new DashbaordViewModel
             {
                 AssetCount = _context.Assets.Count(),   // <-- Actual count from DB
-                //LicenseCount = _context.Licenses.Count(),
+                LicenseCount = _context.Licenses.Count(),
                 //AccessoriesCount = _context.Accessories.Count(),
                 //ConsumablesCount = _context.Consumables.Count()
             };
