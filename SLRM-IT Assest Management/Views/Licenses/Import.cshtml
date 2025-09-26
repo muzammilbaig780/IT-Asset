@@ -1,0 +1,168 @@
+﻿@{
+    ViewData["Title"] = "Import Licenses";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="content">
+    <div class="header d-flex justify-content-between align-items-center mb-4">
+        <h2>Import Licenses</h2>
+        <div class="user-info d-flex align-items-center gap-2">
+            <img src="https://ui-avatars.com/api/?name=Admin&background=3498db&color=fff" alt="User" style="width:40px; border-radius:50%;">
+            <div>
+                <div style="font-size: 12px; color: var(--text-light);">Admin</div>
+            </div>
+        </div>
+    </div>
+
+    <form asp-action="Import" asp-controller="Licenses" method="post" enctype="multipart/form-data" id="importForm">
+        @Html.AntiForgeryToken()
+        <input type="file" id="fileInput" name="file" style="display:none;" accept=".xlsx,.xls,.csv,.json,.xml,.txt" />
+
+        <div class="card mx-auto" style="max-width: 900px;">
+            <div class="card-header">
+                <h3 class="mb-0">Import Licenses Data</h3>
+            </div>
+            <div class="card-body">
+
+                <!-- Import Info -->
+                <div class="mb-4">
+                    <h4 class="text-primary mb-2">
+                        <i class="fas fa-info-circle"></i> Importing Licenses
+                    </h4>
+                    <p class="text-muted" style="line-height:1.6;">
+                        Upload your licenses data in supported formats.<br />
+                        Supported formats: <strong>XLSX, CSV, JSON, XML, TXT</strong><br />
+                        Maximum file size: 10MB.
+                    </p>
+                </div>
+
+                <!-- File Upload Area -->
+                <div id="dropArea" class="border border-secondary rounded p-5 text-center mb-4"
+                     style="background: #fafafa; cursor:pointer;">
+                    <i class="fas fa-cloud-upload-alt fa-4x text-secondary mb-3"></i>
+                    <h5 class="text-muted mb-3">Drag and drop files here</h5>
+                    <p class="text-muted mb-3">
+                        Or click the button below to select files from your computer
+                    </p>
+                    <button type="button" class="btn btn-primary" onclick="fileInput.click()">
+                        <i class="fas fa-folder-open"></i> Choose Files
+                    </button>
+                </div>
+
+                <!-- Selected Files Table -->
+                <div id="selectedFiles" class="mb-4" style="display:none;">
+                    <h5 class="text-primary mb-3">
+                        <i class="fas fa-file-alt"></i> Selected Files
+                    </h5>
+                    <table class="table table-bordered table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>File Name</th>
+                                <th>Type</th>
+                                <th>Size</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="fileTableBody"></tbody>
+                    </table>
+                </div>
+
+                <!-- Import Options -->
+                <div class="mb-4">
+                    <h5 class="text-primary mb-3">
+                        <i class="fas fa-cog"></i> Import Options
+                    </h5>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="overwriteExisting" name="overwriteExisting" checked />
+                        <label class="form-check-label" for="overwriteExisting">Overwrite existing records</label>
+                    </div>
+                </div>
+
+                <!-- Commit Message and Description -->
+                <div class="bg-light p-3 rounded">
+                    <h5 class="text-primary mb-3">
+                        <i class="fas fa-upload"></i> Import Settings
+                    </h5>
+                    <div class="mb-3 d-flex gap-3">
+                        <input type="text" name="commitMessage" class="form-control" placeholder="Add commit message (optional)" />
+                        <button type="submit" id="importButton" class="btn btn-success d-flex align-items-center gap-2">
+                            <i class="fas fa-upload"></i> Import Now
+                        </button>
+                    </div>
+                    <textarea name="importDescription" class="form-control" rows="4" placeholder="Add an extended description (optional)"></textarea>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const fileTableBody = document.getElementById('fileTableBody');
+        const selectedFilesDiv = document.getElementById('selectedFiles');
+        const dropArea = document.getElementById('dropArea');
+
+        // When files selected via input
+        fileInput.addEventListener('change', e => handleFiles(e.target.files));
+
+        // Handle files and update table
+        function handleFiles(files) {
+            fileTableBody.innerHTML = '';
+            for (let file of files) {
+                const ext = file.name.split('.').pop().toUpperCase();
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${file.name}</td>
+                    <td>${ext}</td>
+                    <td>${formatFileSize(file.size)}</td>
+                    <td>
+                        <button type="button" class="btn btn-sm btn-danger" onclick="removeFile(this)">Remove</button>
+                    </td>
+                `;
+                fileTableBody.appendChild(row);
+            }
+            selectedFilesDiv.style.display = files.length ? 'block' : 'none';
+        }
+
+        // Remove a file row (Note: this just removes row visually, input.files is read-only)
+        function removeFile(button) {
+            button.closest('tr').remove();
+            if (!fileTableBody.hasChildNodes()) {
+                selectedFilesDiv.style.display = 'none';
+                fileInput.value = ''; // clear file input
+            }
+        }
+
+        // Format bytes to human readable size
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024,
+                sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'],
+                i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Drag and drop handlers
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, e => {
+                e.preventDefault();
+                e.stopPropagation();
+            }, false);
+        });
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropArea.addEventListener(eventName, () => dropArea.style.backgroundColor = '#e9f7fe');
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, () => dropArea.style.backgroundColor = '#fafafa');
+        });
+
+        dropArea.addEventListener('drop', e => {
+            const dtFiles = e.dataTransfer.files;
+            handleFiles(dtFiles);
+            fileInput.files = dtFiles; // bind files to input for form submission
+        });
+    </script>
+}

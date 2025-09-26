@@ -11,5 +11,6 @@ namespace AssetManagement.Data
         }
 
         public DbSet<Asset> Assets { get; set; }
+        public DbSet<License> Licenses { get; set; }
     }
 }
