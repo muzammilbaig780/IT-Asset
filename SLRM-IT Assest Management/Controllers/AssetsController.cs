@@ -34,7 +34,7 @@ namespace AssetManagement.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("AssetId,SlNo,Type,Department,UserName,HostName,Block,AssetLocation,AssetTag,Make,Model,SerialNo,Processor,Ram,Hdd,Division,AntiVirus,Status,OSVersion,AutoCad,Office,WindowLicenseKey,IPAddress,Nitro,AuditStatus")] Asset asset)
+        public async Task<IActionResult> Create([Bind("AssetId,SlNo,Type,Department,UserName,EmpCode,HostName,Block,AssetLocation,MoniterMake,MoniterAssetTag,Make,Model,SerialNo,Processor,Ram,Hdd,Division,AntiVirus,Status,OSVersion,AutoCad,Office,WindowLicenseKey,IPAddress,Nitro,AuditStatus")] Asset asset)
         {
             if (ModelState.IsValid)
             {
@@ -204,29 +204,31 @@ namespace AssetManagement.Controllers
                                 Department = worksheet.Cells[row, 3]?.Text?.Trim(),
 
                                 UserName = worksheet.Cells[row, 4]?.Text?.Trim(), // Asset Tag
-                                HostName = worksheet.Cells[row, 5]?.Text?.Trim(),
-                                Block = worksheet.Cells[row, 6]?.Text?.Trim(),
-                                AssetLocation = worksheet.Cells[row, 7]?.Text?.Trim(),
-                                AssetTag = worksheet.Cells[row, 8]?.Text?.Trim(),
-                                Make = worksheet.Cells[row, 9]?.Text?.Trim(),
-                                Model = worksheet.Cells[row, 10]?.Text?.Trim(),
+                                EmpCode = worksheet.Cells[row, 5]?.Text?.Trim(),
+                                HostName = worksheet.Cells[row, 6]?.Text?.Trim(),
+                                Block = worksheet.Cells[row, 7]?.Text?.Trim(),
+                                AssetLocation = worksheet.Cells[row, 8]?.Text?.Trim(),
+                                AssetTag = worksheet.Cells[row, 9]?.Text?.Trim(),
+                                Make = worksheet.Cells[row, 10]?.Text?.Trim(),
+                                Model = worksheet.Cells[row, 11]?.Text?.Trim(),
+                                MoniterMake = worksheet.Cells[row,12]?.Text?.Trim(),
+                                MoniterModel = worksheet.Cells[row,13]?.Text?.Trim(),
+                                SerialNo = worksheet.Cells[row, 14]?.Text?.Trim(),
+                                Processor = worksheet.Cells[row, 15]?.Text?.Trim(),
 
-                                SerialNo = worksheet.Cells[row, 11]?.Text?.Trim(),
-                                Processor = worksheet.Cells[row, 12]?.Text?.Trim(),
+                                Ram = worksheet.Cells[row, 16]?.Text?.Trim(),
+                                Hdd = worksheet.Cells[row, 17]?.Text?.Trim(),
+                                Division = worksheet.Cells[row, 18]?.Text?.Trim(),
+                                AntiVirus = worksheet.Cells[row, 19]?.Text?.Trim(),
+                                Status = worksheet.Cells[row, 20]?.Text?.Trim(),
 
-                                Ram = worksheet.Cells[row, 13]?.Text?.Trim(),
-                                Hdd = worksheet.Cells[row, 14]?.Text?.Trim(),
-                                Division = worksheet.Cells[row, 15]?.Text?.Trim(),
-                                AntiVirus = worksheet.Cells[row, 16]?.Text?.Trim(),
-                                Status = worksheet.Cells[row, 17]?.Text?.Trim(),
-
-                                OSVersion = worksheet.Cells[row, 18]?.Text?.Trim(),
-                                AutoCad = worksheet.Cells[row, 19]?.Text?.Trim(),
-                                Office = worksheet.Cells[row, 20]?.Text?.Trim(),
-                                WindowLicenseKey = worksheet.Cells[row, 21]?.Text?.Trim(),
-                                IPAddress = worksheet.Cells[row, 22]?.Text?.Trim(),
-                                Nitro = worksheet.Cells[row, 23]?.Text?.Trim(),
-                                AuditStatus = worksheet.Cells[row, 24]?.Text?.Trim()
+                                OSVersion = worksheet.Cells[row, 21]?.Text?.Trim(),
+                                AutoCad = worksheet.Cells[row, 22]?.Text?.Trim(),
+                                Office = worksheet.Cells[row, 23]?.Text?.Trim(),
+                                WindowLicenseKey = worksheet.Cells[row, 24]?.Text?.Trim(),
+                                IPAddress = worksheet.Cells[row, 25]?.Text?.Trim(),
+                                Nitro = worksheet.Cells[row, 26]?.Text?.Trim(),
+                                AuditStatus = worksheet.Cells[row, 27]?.Text?.Trim()
                             };
 
                             assets.Add(asset);

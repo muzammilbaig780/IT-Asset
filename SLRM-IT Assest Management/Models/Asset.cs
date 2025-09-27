@@ -19,6 +19,7 @@ namespace SLRM_IT_Assest_Management.Models
         [Required]
         [Display(Name = "UserName")]
         public string UserName { get; set; }
+        public string EmpCode { get; set; }
         public string HostName { get; set; }
         public string Block { get; set; }
         public string AssetLocation { get; set; }
@@ -29,6 +30,8 @@ namespace SLRM_IT_Assest_Management.Models
 
         [Display(Name = "Model")]
         public string Model { get; set; }
+        public string MoniterMake { get; set; }
+        public string MoniterModel { get; set; }
 
         [Display(Name = "SerialNo")]
         public string SerialNo { get; set; }

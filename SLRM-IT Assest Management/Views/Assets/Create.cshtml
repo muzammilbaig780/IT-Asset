@@ -134,6 +134,13 @@
                     </div>
 
                     <div class="form-group mb-3">
+                        <label asp-for="EmpCode" class="form-label">EmpCode</label>
+                        <input asp-for="EmpCode" class="form-control" />
+                        <span asp-validation-for="EmpCode" class="text-danger"></span>
+                    </div>
+
+
+                    <div class="form-group mb-3">
                         <label asp-for="HostName" class="form-label">Host Name</label>
                         <input asp-for="HostName" class="form-control" />
                         <span asp-validation-for="HostName" class="text-danger"></span>
@@ -185,6 +192,18 @@
                         <label asp-for="Model" class="form-label">MODEL</label>
                         <input asp-for="Model"  class="form-control" />
                         <span asp-validation-for="Model" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="MoniterModel" class="form-label">MONITERMODEL</label>
+                        <input asp-for="MoniterModel" class="form-control" />
+                        <span asp-validation-for="MoniterModel" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="MoniterMake" class="form-label">MoniterMake</label>
+                        <input asp-for="MoniterMake" class="form-control" />
+                        <span asp-validation-for="MoniterMake" class="text-danger"></span>
                     </div>
 
                     <div class="form-group mb-3">
