@@ -202,14 +202,13 @@ namespace AssetManagement.Controllers
                                 SlNo = int.TryParse(worksheet.Cells[row, 1]?.Text, out int slNo) ? slNo : 0,
                                 Type = worksheet.Cells[row, 2]?.Text?.Trim(),
                                 Department = worksheet.Cells[row, 3]?.Text?.Trim(),
-
                                 UserName = worksheet.Cells[row, 4]?.Text?.Trim(), // Asset Tag
                                 EmpCode = worksheet.Cells[row, 5]?.Text?.Trim(),
                                 HostName = worksheet.Cells[row, 6]?.Text?.Trim(),
                                 Block = worksheet.Cells[row, 7]?.Text?.Trim(),
                                 AssetLocation = worksheet.Cells[row, 8]?.Text?.Trim(),
                                 AssetTag = worksheet.Cells[row, 9]?.Text?.Trim(),
-                                Make = worksheet.Cells[row, 10]?.Text?.Trim(),
+                                Make = worksheet.Cells[row, 10]?.Text?.Trim(),  
                                 Model = worksheet.Cells[row, 11]?.Text?.Trim(),
                                 MoniterMake = worksheet.Cells[row,12]?.Text?.Trim(),
                                 MoniterModel = worksheet.Cells[row,13]?.Text?.Trim(),
@@ -255,6 +254,23 @@ namespace AssetManagement.Controllers
                 return RedirectToAction(nameof(Import));
             }
         }
+
+
+
+        public IActionResult Laptops()
+        {
+            var laptops = _context.Assets.Where(a => a.Type == "Laptop").ToList();
+            ViewBag.AssetType = "Laptop";
+            return View("Index", laptops);
+        }
+
+        public IActionResult Desktops()
+        {
+            var desktops = _context.Assets.Where(a => a.Type == "Desktop").ToList();
+            ViewBag.AssetType = "Desktop"; // ← MUST be set!
+            return View("Index", desktops); // or View("Desktops", desktops)
+        }
+
 
 
 
