@@ -168,8 +168,7 @@ namespace AssetManagement.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Import(IFormFile file, bool overwriteExisting = false)
         {
-            // Use new static property for EPPlus 8+
-            OfficeOpenXml.ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
             if (file == null || file.Length == 0)
             {
@@ -194,44 +193,52 @@ namespace AssetManagement.Controllers
 
                         for (int row = 2; row <= rowCount; row++)
                         {
-                            var type = worksheet.Cells[row, 2]?.Text?.Trim();
+                            string type = worksheet.Cells[row, 2]?.Text?.Trim().ToUpper();
                             if (string.IsNullOrWhiteSpace(type)) continue;
+
+                            bool isDesktop = type == "DESKTOP";
 
                             var asset = new Asset
                             {
                                 SlNo = int.TryParse(worksheet.Cells[row, 1]?.Text, out int slNo) ? slNo : 0,
-                                Type = worksheet.Cells[row, 2]?.Text?.Trim(),
+                                Type = type,
                                 Department = worksheet.Cells[row, 3]?.Text?.Trim(),
-                                UserName = worksheet.Cells[row, 4]?.Text?.Trim(), // Asset Tag
+                                UserName = worksheet.Cells[row, 4]?.Text?.Trim(),
                                 EmpCode = worksheet.Cells[row, 5]?.Text?.Trim(),
                                 HostName = worksheet.Cells[row, 6]?.Text?.Trim(),
                                 Block = worksheet.Cells[row, 7]?.Text?.Trim(),
                                 AssetLocation = worksheet.Cells[row, 8]?.Text?.Trim(),
                                 AssetTag = worksheet.Cells[row, 9]?.Text?.Trim(),
-                                Make = worksheet.Cells[row, 10]?.Text?.Trim(),  
+                                Make = worksheet.Cells[row, 10]?.Text?.Trim(),
                                 Model = worksheet.Cells[row, 11]?.Text?.Trim(),
-                                MoniterMake = worksheet.Cells[row,12]?.Text?.Trim(),
-                                MoniterModel = worksheet.Cells[row,13]?.Text?.Trim(),
-                                SerialNo = worksheet.Cells[row, 14]?.Text?.Trim(),
-                                Processor = worksheet.Cells[row, 15]?.Text?.Trim(),
-
-                                Ram = worksheet.Cells[row, 16]?.Text?.Trim(),
-                                Hdd = worksheet.Cells[row, 17]?.Text?.Trim(),
-                                Division = worksheet.Cells[row, 18]?.Text?.Trim(),
-                                AntiVirus = worksheet.Cells[row, 19]?.Text?.Trim(),
-                                Status = worksheet.Cells[row, 20]?.Text?.Trim(),
-
-                                OSVersion = worksheet.Cells[row, 21]?.Text?.Trim(),
-                                AutoCad = worksheet.Cells[row, 22]?.Text?.Trim(),
-                                Office = worksheet.Cells[row, 23]?.Text?.Trim(),
-                                WindowLicenseKey = worksheet.Cells[row, 24]?.Text?.Trim(),
-                                IPAddress = worksheet.Cells[row, 25]?.Text?.Trim(),
-                                Nitro = worksheet.Cells[row, 26]?.Text?.Trim(),
-                                AuditStatus = worksheet.Cells[row, 27]?.Text?.Trim()
+                                SerialNo = worksheet.Cells[row, 12]?.Text?.Trim(),
+                                Processor = worksheet.Cells[row, 13]?.Text?.Trim(),
+                                Ram = worksheet.Cells[row, 14]?.Text?.Trim(),
+                                Hdd = worksheet.Cells[row, 15]?.Text?.Trim(),
+                                Division = worksheet.Cells[row, 16]?.Text?.Trim(),
+                                AntiVirus = worksheet.Cells[row, 17]?.Text?.Trim(),
+                                Status = worksheet.Cells[row, 18]?.Text?.Trim(),
+                                OSVersion = worksheet.Cells[row, 19]?.Text?.Trim(),
+                                AutoCad = worksheet.Cells[row, 20]?.Text?.Trim(),
+                                Office = worksheet.Cells[row, 21]?.Text?.Trim(),
+                                WindowLicenseKey = worksheet.Cells[row, 22]?.Text?.Trim(),
+                                IPAddress = worksheet.Cells[row, 23]?.Text?.Trim(),
+                                Nitro = worksheet.Cells[row, 24]?.Text?.Trim(),
+                                AuditStatus = worksheet.Cells[row, 25]?.Text?.Trim(),
                             };
 
-                            assets.Add(asset);
+                            if (isDesktop)
+                            {
+                                asset.MoniterMake = worksheet.Cells[row, 26]?.Text?.Trim();
+                                asset.MoniterModel = worksheet.Cells[row, 27]?.Text?.Trim();
+                            }
+                            else
+                            {
+                                asset.MoniterMake = "N/A"; // or "" if you prefer
+                                asset.MoniterModel = "N/A";
+                            }
 
+                            assets.Add(asset);
                         }
                     }
                 }
@@ -254,7 +261,6 @@ namespace AssetManagement.Controllers
                 return RedirectToAction(nameof(Import));
             }
         }
-
 
 
         public IActionResult Laptops()
