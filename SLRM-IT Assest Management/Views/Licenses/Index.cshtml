@@ -80,6 +80,9 @@
     </style>
 </head>
 <body>
+    @{
+        await Html.RenderPartialAsync("_BackButton");
+    }
     <div class="container-fluid">
         <h1 class="page-title">SLRM IT-ASSET MANAGEMENT &gt; Licenses</h1>
 

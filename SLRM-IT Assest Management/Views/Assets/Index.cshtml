@@ -112,6 +112,11 @@
                 </select>
             </div>
         </div>
+
+        @{
+            await Html.RenderPartialAsync("_BackButton");
+        }
+
         <div class="btn-group mb-3" role="group" aria-label="Asset Type Toggle">
             <a asp-action="Laptops" class="btn btn-outline-primary">Laptops</a>
             <a asp-action="Desktops" class="btn btn-outline-primary">Desktops</a>
@@ -138,9 +143,9 @@
                             <th>AssetLocation</th>
                             <th>AssetTag</th>
                             <th>Make</th>
-                            <th>
-                            <th class="monitor-col @(ViewBag.AssetType == "Laptop" ? "d-none" : "")">Monitor Make</th>
-                            <th class="monitor-col @(ViewBag.AssetType == "Laptop" ? "d-none" : "")">Monitor Model</th>
+                            <th>Model</th>
+                            @* <th class="monitor-col @(ViewBag.AssetType == "Laptop" ? "d-none" : "")">Monitor Make</th>
+                            <th class="monitor-col @(ViewBag.AssetType == "Laptop" ? "d-none" : "")">Monitor Model</th> *@
                             @if (ViewBag.AssetType == "Desktop")
                             {
                                 <th>Monitor Make</th>
@@ -233,4 +238,10 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+<script>
+    function goToDashboard() {
+        // Replace with the correct dashboard route/path
+        window.location.href = "/Home";
+    }
+</script>
 
