@@ -1,5 +1,6 @@
 ﻿using AssetManagement.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
 using SLRM_IT_Assest_Management.Models;
@@ -24,9 +25,16 @@ namespace AssetManagement.Controllers
             var assets = await _context.Assets.ToListAsync();
             return View(assets);
         }
+        [HttpGet]
         public IActionResult Create()
         {
-            return View();
+            // Simple initialization - no complex queries
+            ViewBag.AssetTypes = _context.AssetTypes?.ToList() ?? new List<AssetType>();
+            ViewBag.Companies = _context.Companies?.ToList() ?? new List<Company>();
+            ViewBag.AssetStatuses = _context.AssetStatuses?.ToList() ?? new List<Status>();
+            ViewBag.AssetLocations = _context.AssetLocations?.ToList() ?? new List<AssetLocation>();
+
+            return View(new Asset());
         }
 
         // POST: Items/Create
@@ -34,7 +42,7 @@ namespace AssetManagement.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("AssetId,SlNo,Type,Department,UserName,EmpCode,HostName,Block,AssetLocation,MoniterMake,MoniterAssetTag,Make,Model,SerialNo,Processor,Ram,Hdd,Division,AntiVirus,Status,OSVersion,AutoCad,Office,WindowLicenseKey,IPAddress,Nitro,AuditStatus")] Asset asset)
+        public async Task<IActionResult> Create(Asset asset)
         {
             if (ModelState.IsValid)
             {
@@ -42,8 +50,16 @@ namespace AssetManagement.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
+            // Re-populate dropdowns when the form fails validation
+            ViewBag.AssetTypes = new SelectList(_context.AssetTypes, "TypeId", "Name", asset.AssetTypeId);
+            ViewBag.AssetStatuses = new SelectList(_context.AssetStatuses, "StatusId", "Name", asset.AssetStatusId);
+            ViewBag.AssetLocations = new SelectList(_context.AssetLocations, "AssetLocationId", "Name", asset.AssetLocationId);
+            ViewBag.Companies = new SelectList(_context.Companies, "CompanyId", "CompanyName", asset.CompanyId);
+
             return View(asset);
         }
+
         // GET: Assets/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -201,13 +217,13 @@ namespace AssetManagement.Controllers
                             var asset = new Asset
                             {
                                 SlNo = int.TryParse(worksheet.Cells[row, 1]?.Text, out int slNo) ? slNo : 0,
-                                Type = type,
+                                //Type = type,
                                 Department = worksheet.Cells[row, 3]?.Text?.Trim(),
                                 UserName = worksheet.Cells[row, 4]?.Text?.Trim(),
                                 EmpCode = worksheet.Cells[row, 5]?.Text?.Trim(),
                                 HostName = worksheet.Cells[row, 6]?.Text?.Trim(),
                                 Block = worksheet.Cells[row, 7]?.Text?.Trim(),
-                                AssetLocation = worksheet.Cells[row, 8]?.Text?.Trim(),
+                                //AssetLocation = worksheet.Cells[row, 8]?.Text?.Trim(),
                                 AssetTag = worksheet.Cells[row, 9]?.Text?.Trim(),
                                 Make = worksheet.Cells[row, 10]?.Text?.Trim(),
                                 Model = worksheet.Cells[row, 11]?.Text?.Trim(),
@@ -217,7 +233,7 @@ namespace AssetManagement.Controllers
                                 Hdd = worksheet.Cells[row, 15]?.Text?.Trim(),
                                 Division = worksheet.Cells[row, 16]?.Text?.Trim(),
                                 AntiVirus = worksheet.Cells[row, 17]?.Text?.Trim(),
-                                Status = worksheet.Cells[row, 18]?.Text?.Trim(),
+                                //Status = worksheet.Cells[row, 18]?.Text?.Trim(),
                                 OSVersion = worksheet.Cells[row, 19]?.Text?.Trim(),
                                 AutoCad = worksheet.Cells[row, 20]?.Text?.Trim(),
                                 Office = worksheet.Cells[row, 21]?.Text?.Trim(),
@@ -263,19 +279,19 @@ namespace AssetManagement.Controllers
         }
 
 
-        public IActionResult Laptops()
-        {
-            var laptops = _context.Assets.Where(a => a.Type == "Laptop").ToList();
-            ViewBag.AssetType = "Laptop";
-            return View("Index", laptops);
-        }
+        //public IActionResult Laptops()
+        //{
+        //    var laptops = _context.Assets.Where(a => a.AssetType == "Laptop").ToList();
+        //    ViewBag.AssetType = "Laptop";
+        //    return View("Index", laptops);
+        //}
 
-        public IActionResult Desktops()
-        {
-            var desktops = _context.Assets.Where(a => a.Type == "Desktop").ToList();
-            ViewBag.AssetType = "Desktop"; // ← MUST be set!
-            return View("Index", desktops); // or View("Desktops", desktops)
-        }
+        //public IActionResult Desktops()
+        //{
+        //    var desktops = _context.Assets.Where(a => a.Type == "Desktop").ToList();
+        //    ViewBag.AssetType = "Desktop"; // ← MUST be set!
+        //    return View("Index", desktops); // or View("Desktops", desktops)
+        //}
 
 
 

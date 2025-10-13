@@ -1,6 +1,5 @@
 ﻿@model SLRM_IT_Assest_Management.Models.Asset
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create New Asset - SLRM IT-ASSET MANAGEMENT</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body {
             background-color: #f8f9fa;
@@ -88,6 +88,35 @@
             border-radius: 6px;
             margin-bottom: 20px;
         }
+
+        .custom-fields-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .custom-fields-btn {
+            color: white !important;
+            font-weight: 600;
+            width: 100%;
+            text-align: left;
+            padding: 15px 20px;
+        }
+
+            .custom-fields-btn:hover {
+                color: #f8f9fa !important;
+                background-color: rgba(255,255,255,0.1);
+            }
+
+            .custom-fields-btn:focus {
+                box-shadow: none;
+            }
+
+        .custom-fields-collapse {
+            border: 1px solid #dee2e6;
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+        }
     </style>
 </head>
 <body>
@@ -105,13 +134,16 @@
             </div>
         }
 
-        <form asp-action="Create" method="post" enctype="multipart/form-data" class="form-container">
+        <form asp-controller="Assets" asp-action="Create" method="post">
             @Html.AntiForgeryToken()
 
             <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
 
             <div class="row">
+                <!-- Left Column - Basic Information -->
                 <div class="col-md-6">
+                    <h5 class="section-title">Basic Information</h5>
+
                     <div class="form-group mb-3">
                         <label asp-for="SlNo" class="form-label">Sl No *</label>
                         <input asp-for="SlNo" class="form-control" required />
@@ -119,9 +151,14 @@
                     </div>
 
                     <div class="form-group mb-3">
-                        <label asp-for="Type" class="form-label">Type *</label>
-                        <input asp-for="Type" class="form-control" required />
-                        <span asp-validation-for="Type" class="text-danger"></span>
+                        <label class="form-label">Type *</label>
+                        <div class="input-group">
+                            <select asp-for="AssetTypeId" class="form-select" asp-items="@(new SelectList(ViewBag.AssetTypes, "TypeId", "Name"))" required>
+                                <option value="">-- Select Type --</option>
+                            </select>
+                            <a asp-controller="MasterData" asp-action="CreateAssetType" class="btn btn-outline-primary">New</a>
+                        </div>
+                        <span asp-validation-for="AssetTypeId" class="text-danger"></span>
                     </div>
 
                     <div class="form-group mb-3">
@@ -142,102 +179,55 @@
                         <span asp-validation-for="EmpCode" class="text-danger"></span>
                     </div>
 
-
                     <div class="form-group mb-3">
                         <label asp-for="HostName" class="form-label">Host Name</label>
                         <input asp-for="HostName" class="form-control" />
                         <span asp-validation-for="HostName" class="text-danger"></span>
                     </div>
-
-                    <div class="form-group mb-3">
-                        <label asp-for="Status" class="form-label">Status</label>
-                        <select asp-for="Status" class="form-select">
-                            <option value="">-- Select Status --</option>
-                            <option value="ACTIVE">ACTIVE</option>
-                            <option value="Ready to Deploy">Ready to Deploy</option>
-                            <option value="Not Active">Not Active</option>
-                        </select>
-                        <span asp-validation-for="Status" class="text-danger"></span>
-                    </div>
                 </div>
 
+                <!-- Right Column - Organization Information -->
                 <div class="col-md-6">
+                    <h5 class="section-title">Organization Information</h5>
+
+                    <div class="form-group mb-3">
+                        <label class="form-label">Company *</label>
+                        <div class="input-group">
+                            <select asp-for="CompanyId" class="form-select"
+                                    asp-items="@(new SelectList(ViewBag.Companies, "CompanyId", "CompanyName"))" required>
+                                <option value="">-- Select Company --</option>
+                            </select>
+                            <a asp-controller="MasterData" asp-action="CreateCompany" class="btn btn-outline-primary">New</a>
+                        </div>
+                        <span asp-validation-for="CompanyId" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label class="form-label">Status *</label>
+                        <div class="input-group">
+                            <select asp-for="AssetStatusId" class="form-select" asp-items="@(new SelectList(ViewBag.AssetStatuses, "StatusId", "Name"))" required>
+                                <option value="">-- Select Status --</option>
+                            </select>
+                            <a asp-controller="MasterData" asp-action="CreateStatus" class="btn btn-outline-primary">New</a>
+                        </div>
+                        <span asp-validation-for="AssetStatusId" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label class="form-label">Location *</label>
+                        <div class="input-group">
+                            <select asp-for="AssetLocationId" class="form-select" asp-items="@(new SelectList(ViewBag.AssetLocations, "AssetLocationId", "Name"))" required>
+                                <option value="">-- Select Location --</option>
+                            </select>
+                            <a asp-controller="MasterData" asp-action="CreateAssetLocation" class="btn btn-outline-primary">New</a>
+                        </div>
+                        <span asp-validation-for="AssetLocationId" class="text-danger"></span>
+                    </div>
+
                     <div class="form-group mb-3">
                         <label asp-for="Block" class="form-label">BLOCK</label>
                         <input asp-for="Block" class="form-control" />
                         <span asp-validation-for="Block" class="text-danger"></span>
-                    </div>
-
-                
-
-                    <div class="form-group mb-3">
-                        <label asp-for="AssetLocation" class="form-label">Asset Location</label>
-                        <input asp-for="AssetLocation" class="form-control" />
-                        <span asp-validation-for="AssetLocation" class="text-danger"></span>
-                    </div>
-
-
-                    <div class="form-group mb-3">
-                        <label asp-for="AssetTag" class="form-label">Asset Tag</label>
-                        <input asp-for="AssetTag" class="form-control" />
-                        <span asp-validation-for="AssetTag" class="text-danger"></span>
-                    </div>
-
-                   
-
-                    <div class="form-group mb-3">
-                        <label asp-for="Make" class="form-label">MAKE</label>
-                        <input asp-for="Make"  class="form-control" min="0" />
-                        <span asp-validation-for="Make" class="text-danger"></span>
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label asp-for="Model" class="form-label">MODEL</label>
-                        <input asp-for="Model"  class="form-control" />
-                        <span asp-validation-for="Model" class="text-danger"></span>
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label asp-for="MoniterModel" class="form-label">MONITERMODEL</label>
-                        <input asp-for="MoniterModel" class="form-control" />
-                        <span asp-validation-for="MoniterModel" class="text-danger"></span>
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label asp-for="MoniterMake" class="form-label">MoniterMake</label>
-                        <input asp-for="MoniterMake" class="form-control" />
-                        <span asp-validation-for="MoniterMake" class="text-danger"></span>
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label asp-for="SerialNo" class="form-label">Serial No</label>
-                        <input asp-for="SerialNo"  class="form-control" />
-                        <span asp-validation-for="SerialNo" class="text-danger"></span>
-                    </div>
-
-
-                    <div class="form-group mb-3">
-                        <label asp-for="Processor" class="form-label">Processor</label>
-                        <input asp-for="Processor"  class="form-control" />
-                        <span asp-validation-for="Processor" class="text-danger"></span>
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label asp-for="Ram" class="form-label">RAM</label>
-                        <input asp-for="Ram" class="form-control" />
-                        <span asp-validation-for="Ram" class="text-danger"></span>
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label asp-for="Hdd" class="form-label">HDD</label>
-                        <input asp-for="Hdd" class="form-control" />
-                        <span asp-validation-for="Hdd" class="text-danger"></span>
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label asp-for="AntiVirus" class="form-label">Anti Virus</label>
-                        <input asp-for="AntiVirus" class="form-control" />
-                        <span asp-validation-for="AntiVirus" class="text-danger"></span>
                     </div>
 
                     <div class="form-group mb-3">
@@ -245,60 +235,236 @@
                         <input asp-for="Division" class="form-control" />
                         <span asp-validation-for="Division" class="text-danger"></span>
                     </div>
+                </div>
+            </div>
 
-                    <div class="form-group mb-3">
-                        <label asp-for="OSVersion" class="form-label">OS Version</label>
-                        <input asp-for="OSVersion" class="form-control" />
-                        <span asp-validation-for="OSVersion" class="text-danger"></span>
+            <!-- Custom Fields Section -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header custom-fields-header">
+                            <button class="btn custom-fields-btn" type="button" data-bs-toggle="collapse" data-bs-target="#customFieldsCollapse">
+                                <i class="fas fa-cogs me-2"></i>Custom Fields
+                                <i class="fas fa-chevron-down float-end mt-1"></i>
+                            </button>
+                        </div>
+                        <div class="collapse" id="customFieldsCollapse">
+                            <div class="card-body custom-fields-collapse">
+                                <div class="row">
+                                    <!-- Asset Details -->
+                                    <div class="col-md-6">
+                                        <h6 class="text-primary mb-3"><i class="fas fa-tag me-2"></i>Asset Details</h6>
+
+                                        <div class="form-group mb-3">
+                                            <label asp-for="AssetTag" class="form-label">Asset Tag</label>
+                                            <input asp-for="AssetTag" class="form-control" />
+                                            <span asp-validation-for="AssetTag" class="text-danger"></span>
+                                        </div>
+
+                                        <div class="form-group mb-3">
+                                            <label asp-for="Make" class="form-label">MAKE</label>
+                                            <input asp-for="Make" class="form-control" />
+                                            <span asp-validation-for="Make" class="text-danger"></span>
+                                        </div>
+
+                                        <div class="form-group mb-3">
+                                            <label asp-for="Model" class="form-label">MODEL</label>
+                                            <input asp-for="Model" class="form-control" />
+                                            <span asp-validation-for="Model" class="text-danger"></span>
+                                        </div>
+
+                                        <div class="form-group mb-3">
+                                            <label asp-for="SerialNo" class="form-label">Serial No</label>
+                                            <input asp-for="SerialNo" class="form-control" />
+                                            <span asp-validation-for="SerialNo" class="text-danger"></span>
+                                        </div>
+
+                                        <div class="form-group mb-3">
+                                            <label asp-for="IPAddress" class="form-label">IP ADDRESS</label>
+                                            <input asp-for="IPAddress" class="form-control" />
+                                            <span asp-validation-for="IPAddress" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Monitor Details -->
+                                    <div class="col-md-6">
+                                        <h6 class="text-primary mb-3"><i class="fas fa-desktop me-2"></i>Monitor Details</h6>
+
+                                        <div class="form-group mb-3">
+                                            <label asp-for="MoniterModel" class="form-label">MONITOR MODEL</label>
+                                            <input asp-for="MoniterModel" class="form-control" />
+                                            <span asp-validation-for="MoniterModel" class="text-danger"></span>
+                                        </div>
+
+                                        <div class="form-group mb-3">
+                                            <label asp-for="MoniterMake" class="form-label">Monitor Make</label>
+                                            <input asp-for="MoniterMake" class="form-control" />
+                                            <span asp-validation-for="MoniterMake" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Technical Specifications -->
+                                <div class="row mt-3">
+                                    <div class="col-12">
+                                        <h6 class="text-primary mb-3"><i class="fas fa-microchip me-2"></i>Technical Specifications</h6>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="form-group mb-3">
+                                            <label asp-for="Processor" class="form-label">Processor</label>
+                                            <input asp-for="Processor" class="form-control" />
+                                            <span asp-validation-for="Processor" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="form-group mb-3">
+                                            <label asp-for="Ram" class="form-label">RAM</label>
+                                            <input asp-for="Ram" class="form-control" />
+                                            <span asp-validation-for="Ram" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="form-group mb-3">
+                                            <label asp-for="Hdd" class="form-label">HDD</label>
+                                            <input asp-for="Hdd" class="form-control" />
+                                            <span asp-validation-for="Hdd" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Software Information -->
+                                <div class="row mt-3">
+                                    <div class="col-12">
+                                        <h6 class="text-primary mb-3"><i class="fas fa-code me-2"></i>Software Information</h6>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="form-group mb-3">
+                                            <label asp-for="OSVersion" class="form-label">OS Version</label>
+                                            <input asp-for="OSVersion" class="form-control" />
+                                            <span asp-validation-for="OSVersion" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="form-group mb-3">
+                                            <label asp-for="Office" class="form-label">OFFICE</label>
+                                            <input asp-for="Office" class="form-control" />
+                                            <span asp-validation-for="Office" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="form-group mb-3">
+                                            <label asp-for="AntiVirus" class="form-label">Anti Virus</label>
+                                            <input asp-for="AntiVirus" class="form-control" />
+                                            <span asp-validation-for="AntiVirus" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Additional Information -->
+                                <div class="row mt-3">
+                                    <div class="col-12">
+                                        <h6 class="text-primary mb-3"><i class="fas fa-info-circle me-2"></i>Additional Information</h6>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="form-group mb-3">
+                                            <label asp-for="AutoCad" class="form-label">AutoCad</label>
+                                            <input asp-for="AutoCad" class="form-control" />
+                                            <span asp-validation-for="AutoCad" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="form-group mb-3">
+                                            <label asp-for="WindowLicenseKey" class="form-label">Window License Key</label>
+                                            <input asp-for="WindowLicenseKey" class="form-control" />
+                                            <span asp-validation-for="WindowLicenseKey" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="form-group mb-3">
+                                            <label asp-for="Nitro" class="form-label">NITRO</label>
+                                            <input asp-for="Nitro" class="form-control" />
+                                            <span asp-validation-for="Nitro" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-3">
+                                            <label asp-for="AuditStatus" class="form-label">Audit Status</label>
+                                            <input asp-for="AuditStatus" class="form-control" />
+                                            <span asp-validation-for="AuditStatus" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group mb-3">
-                        <label asp-for="AutoCad" class="form-label">AutoCad</label>
-                        <input asp-for="AutoCad" class="form-control" />
-                        <span asp-validation-for="AutoCad" class="text-danger"></span>
-                    </div>
-
-
-                    <div class="form-group mb-3">
-                        <label asp-for="Office" class="form-label">OFFICE </label>
-                        <input asp-for="Office" class="form-control" />
-                        <span asp-validation-for="Office" class="text-danger"></span>
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label asp-for="WindowLicenseKey" class="form-label">WindowLicenseKey</label>
-                        <input asp-for="WindowLicenseKey" class="form-control" />
-                        <span asp-validation-for="WindowLicenseKey" class="text-danger"></span>
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label asp-for="IPAddress" class="form-label">IP ADDRESS </label>
-                        <input asp-for="IPAddress" class="form-control" />
-                        <span asp-validation-for="IPAddress" class="text-danger"></span>
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label asp-for="Nitro" class="form-label">NITRO </label>
-                        <input asp-for="Nitro" class="form-control" />
-                        <span asp-validation-for="Nitro" class="text-danger"></span>
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label asp-for="AuditStatus" class="form-label">AuditStatus </label>
-                        <input asp-for="AuditStatus" class="form-control" />
-                        <span asp-validation-for="AuditStatus" class="text-danger"></span>
-                    </div>
-
                 </div>
             </div>
 
             <!-- Buttons -->
             <div class="btn-container">
-                <button type="submit" class="btn btn-primary btn-save">Save Asset</button>
-                <a asp-action="Index" class="btn btn-secondary btn-cancel">Cancel</a>
+                <button type="submit" class="btn btn-primary btn-save">
+                    <i class="fas fa-save me-2"></i>Save Asset
+                </button>
+                <a asp-action="Index" class="btn btn-secondary btn-cancel">
+                    <i class="fas fa-times me-2"></i>Cancel
+                </a>
             </div>
         </form>
     </div>
 
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            // Custom Fields collapse icon animation
+            $('#customFieldsCollapse').on('show.bs.collapse', function () {
+                $('.custom-fields-btn .fa-chevron-down').removeClass('fa-chevron-down').addClass('fa-chevron-up');
+            });
+
+            $('#customFieldsCollapse').on('hide.bs.collapse', function () {
+                $('.custom-fields-btn .fa-chevron-up').removeClass('fa-chevron-up').addClass('fa-chevron-down');
+            });
+
+            // Form validation
+            $('form').on('submit', function() {
+                const requiredFields = $(this).find('[required]');
+                let isValid = true;
+
+                requiredFields.each(function() {
+                    if (!$(this).val()) {
+                        $(this).addClass('is-invalid');
+                        isValid = false;
+                    } else {
+                        $(this).removeClass('is-invalid');
+                    }
+                });
+
+                if (!isValid) {
+                    alert('Please fill all required fields marked with *');
+                    return false;
+                }
+                return true;
+            });
+
+            // Remove validation styles when user starts typing
+            $('input, select').on('input change', function() {
+                if ($(this).val()) {
+                    $(this).removeClass('is-invalid');
+                }
+            });
+        });
+    </script>
 </body>
 </html>

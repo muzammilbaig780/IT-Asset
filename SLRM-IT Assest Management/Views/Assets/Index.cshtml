@@ -171,9 +171,9 @@
                     <tbody>
                         @foreach (var item in Model)
                         {
-                            <tr data-type="@item.Type">
+                            <tr data-type="@item.AssetType">
                                 <td>@item.SlNo</td>
-                                <td>@item.Type</td>
+                                <td>@item.AssetType</td>
                                 <td>@item.Department</td>
                                 <td>@item.UserName</td>
                                 <td>@item.EmpCode</td>
@@ -191,7 +191,7 @@
                                 <td>@item.Hdd</td>
                                 <td>@item.Division</td>
                                 <td>@item.AntiVirus</td>
-                                <td>
+                               @*  <td>
                                     @if (item.Status == "ACTIVE")
                                     {
                                         <span class="badge bg-success">ACTIVE</span>
@@ -208,7 +208,7 @@
                                     {
                                         <span class="badge bg-light text-dark">Not Set</span>
                                     }
-                                </td>
+                                </td> *@
                                 <td>@item.OSVersion</td>
                                 <td>@item.AutoCad</td>
                                 <td>@item.Office</td>

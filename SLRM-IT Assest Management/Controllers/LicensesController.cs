@@ -116,7 +116,7 @@ namespace AssetManagement.Controllers
         }
 
         // GET: Licenses/Import
-        public IActionResult Import()
+        public IActionResult Import1()
         {
             return View();
         }
@@ -124,20 +124,20 @@ namespace AssetManagement.Controllers
         // POST: Licenses/Import
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Import(IFormFile file, bool overwriteExisting = false)
+        public async Task<IActionResult> Import1(IFormFile file, bool overwriteExisting = false)
         {
             OfficeOpenXml.ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
             if (file == null || file.Length == 0)
             {
                 TempData["ErrorMessage"] = "Please select a valid Excel file.";
-                return RedirectToAction(nameof(Import));
+                return RedirectToAction(nameof(Import1));
             }
 
             var licenses = new List<License>();
 
             try
-            {
+            {  
                 using var stream = new MemoryStream();
                 await file.CopyToAsync(stream);
                 using var package = new ExcelPackage(stream);
@@ -196,7 +196,7 @@ namespace AssetManagement.Controllers
             catch (Exception ex)
             {
                 TempData["ErrorMessage"] = "Import failed: " + ex.Message;
-                return RedirectToAction(nameof(Import));
+                return RedirectToAction(nameof(Import1));
             }
         }
 

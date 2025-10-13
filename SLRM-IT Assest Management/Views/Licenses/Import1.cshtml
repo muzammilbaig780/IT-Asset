@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "Import Licenses";
+    ViewData["Title"] = "Import Data";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -14,7 +14,7 @@
         </div>
     </div>
 
-    <form asp-action="Import" asp-controller="Licenses" method="post" enctype="multipart/form-data" id="importForm">
+    <form asp-action="Import1" asp-controller="Licenses" method="post" enctype="multipart/form-data" id="importForm">
         @Html.AntiForgeryToken()
         <input type="file" id="fileInput" name="file" style="display:none;" accept=".xlsx,.xls,.csv,.json,.xml,.txt" />
 

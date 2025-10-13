@@ -57,7 +57,7 @@
                     <h4 style="margin-bottom: 10px; color: var(--text-light);">Drag files here to add them to your repository</h4>
                     <p style="color: var(--text-light); margin-bottom: 20px;">
                         Supported formats: XLSX, CSV, JSON, XML, TXT<br>
-                        Max file size: 10MB
+                        Max file size: 100MB
                     </p>
                     <button type="button" onclick="document.getElementById('fileInput').click()"
                             style="background: var(--accent); color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer;">
@@ -120,9 +120,11 @@
         const fileTableBody = document.getElementById('fileTableBody');
         const selectedFilesDiv = document.getElementById('selectedFiles');
         const dropArea = document.getElementById('dropArea');
+        const importForm = document.getElementById('importForm');
+        const importTypeSelect = document.getElementById('importType');
 
+        // Handle file input preview
         fileInput.addEventListener('change', e => handleFiles(e.target.files));
-
         function handleFiles(files) {
             fileTableBody.innerHTML = '';
             for (let file of files) {
@@ -154,7 +156,7 @@
             return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
         }
 
-        // Drag & drop
+        // Drag & Drop styling
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
             dropArea.addEventListener(eventName, e => { e.preventDefault(); e.stopPropagation(); }, false);
         });
@@ -163,10 +165,42 @@
         dropArea.addEventListener('drop', e => {
             const files = e.dataTransfer.files;
             handleFiles(files);
-            fileInput.files = files; // bind to input for form submission
+            fileInput.files = files;
         });
 
-              
+        // Dynamically update form action based on selection
+        importForm.addEventListener('submit', function (e) {
+            const selected = importTypeSelect.value;
 
+            switch (selected) {
+                case "licenses":
+                    importForm.action = "/Licenses/Import1";
+                    break;
+                case "assets":
+                    importForm.action = "/Assets/Import";
+                    break;
+                case "accessories":
+                    importForm.action = "/Accessories/Import";
+                    break;
+                case "components":
+                    importForm.action = "/Components/Import";
+                    break;
+                case "consumables":
+                    importForm.action = "/Consumables/Import";
+                    break;
+                case "users":
+                    importForm.action = "/Users/Import";
+                    break;
+                case "kits":
+                    importForm.action = "/Kits/Import";
+                    break;
+                default:
+                    alert("Please select a valid import type.");
+                    e.preventDefault();
+                    break;
+            }
+        });
     </script>
+}
+
 }
