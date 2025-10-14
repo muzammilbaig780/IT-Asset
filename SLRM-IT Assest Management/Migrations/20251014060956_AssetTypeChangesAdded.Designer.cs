@@ -4,6 +4,7 @@ using AssetManagement.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace SLRM_IT_Assest_Management.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251014060956_AssetTypeChangesAdded")]
+    partial class AssetTypeChangesAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,7 +37,7 @@ namespace SLRM_IT_Assest_Management.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("AssetLocationId")
+                    b.Property<int?>("AssetLocationId")
                         .HasColumnType("int");
 
                     b.Property<string>("AssetTag")
@@ -56,7 +59,7 @@ namespace SLRM_IT_Assest_Management.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("CompanyId")
+                    b.Property<int?>("CompanyId")
                         .HasColumnType("int");
 
                     b.Property<string>("Department")
@@ -123,10 +126,10 @@ namespace SLRM_IT_Assest_Management.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("SlNo")
+                    b.Property<int?>("SlNo")
                         .HasColumnType("int");
 
-                    b.Property<int>("StatusId")
+                    b.Property<int?>("StatusId")
                         .HasColumnType("int");
 
                     b.Property<string>("UserName")
@@ -295,9 +298,7 @@ namespace SLRM_IT_Assest_Management.Migrations
                 {
                     b.HasOne("SLRM_IT_Assest_Management.Models.AssetLocation", "AssetLocation")
                         .WithMany()
-                        .HasForeignKey("AssetLocationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("AssetLocationId");
 
                     b.HasOne("SLRM_IT_Assest_Management.Models.AssetType", "AssetType")
                         .WithMany()
@@ -307,15 +308,11 @@ namespace SLRM_IT_Assest_Management.Migrations
 
                     b.HasOne("SLRM_IT_Assest_Management.Models.Company", "Company")
                         .WithMany()
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CompanyId");
 
                     b.HasOne("SLRM_IT_Assest_Management.Models.Status", "AssetStatus")
                         .WithMany()
-                        .HasForeignKey("StatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("StatusId");
 
                     b.Navigation("AssetLocation");
 

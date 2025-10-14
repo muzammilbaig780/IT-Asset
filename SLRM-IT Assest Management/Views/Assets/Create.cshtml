@@ -148,18 +148,7 @@
                         <label asp-for="SlNo" class="form-label">Sl No *</label>
                         <input asp-for="SlNo" class="form-control" required />
                         <span asp-validation-for="SlNo" class="text-danger"></span>
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label class="form-label">Type *</label>
-                        <div class="input-group">
-                            <select asp-for="AssetTypeId" class="form-select" asp-items="@(new SelectList(ViewBag.AssetTypes, "TypeId", "Name"))" required>
-                                <option value="">-- Select Type --</option>
-                            </select>
-                            <a asp-controller="MasterData" asp-action="CreateAssetType" class="btn btn-outline-primary">New</a>
-                        </div>
-                        <span asp-validation-for="AssetTypeId" class="text-danger"></span>
-                    </div>
+                    </div>                    
 
                     <div class="form-group mb-3">
                         <label asp-for="Department" class="form-label">Department *</label>
@@ -190,45 +179,50 @@
                 <div class="col-md-6">
                     <h5 class="section-title">Organization Information</h5>
 
+                    <!-- Company -->
                     <div class="form-group mb-3">
-                        <label class="form-label">Company *</label>
-                        <div class="input-group">
-                            <select asp-for="CompanyId" class="form-select"
-                                    asp-items="@(new SelectList(ViewBag.Companies, "CompanyId", "CompanyName"))" required>
-                                <option value="">-- Select Company --</option>
-                            </select>
-                            <a asp-controller="MasterData" asp-action="CreateCompany" class="btn btn-outline-primary">New</a>
-                        </div>
+                        <label asp-for="CompanyId" class="form-label">Company</label>
+                        <select asp-for="CompanyId" class="form-select" asp-items="@(new SelectList((IEnumerable<dynamic>)ViewBag.Companies, "CompanyId", "CompanyName"))">
+                            <option value="">-- Select Company --</option>
+                        </select>
                         <span asp-validation-for="CompanyId" class="text-danger"></span>
                     </div>
 
+                    <!-- Asset Type -->
                     <div class="form-group mb-3">
-                        <label class="form-label">Status *</label>
-                        <div class="input-group">
-                            <select asp-for="AssetStatusId" class="form-select" asp-items="@(new SelectList(ViewBag.AssetStatuses, "StatusId", "Name"))" required>
-                                <option value="">-- Select Status --</option>
-                            </select>
-                            <a asp-controller="MasterData" asp-action="CreateStatus" class="btn btn-outline-primary">New</a>
-                        </div>
-                        <span asp-validation-for="AssetStatusId" class="text-danger"></span>
+                        <label asp-for="AssetTypeId" class="form-label">Asset Type</label>
+                        <select asp-for="AssetTypeId" class="form-select" asp-items="@(new SelectList((IEnumerable<dynamic>)ViewBag.AssetTypes, "AssetTypeId", "Name"))">
+                            <option value="">-- Select Asset Type --</option>
+                        </select>
+                        <span asp-validation-for="AssetTypeId" class="text-danger"></span>
                     </div>
 
+                    <!-- Status -->
                     <div class="form-group mb-3">
-                        <label class="form-label">Location *</label>
-                        <div class="input-group">
-                            <select asp-for="AssetLocationId" class="form-select" asp-items="@(new SelectList(ViewBag.AssetLocations, "AssetLocationId", "Name"))" required>
-                                <option value="">-- Select Location --</option>
-                            </select>
-                            <a asp-controller="MasterData" asp-action="CreateAssetLocation" class="btn btn-outline-primary">New</a>
-                        </div>
+                        <label asp-for="StatusId" class="form-label">Status</label>
+                        <select asp-for="StatusId" class="form-select" asp-items="@(new SelectList((IEnumerable<dynamic>)ViewBag.AssetStatuses, "StatusId", "Name"))">
+                            <option value="">-- Select Status --</option>
+                        </select>
+                        <span asp-validation-for="StatusId" class="text-danger"></span>
+                    </div>
+
+                    <!-- Asset Location -->
+                    <div class="form-group mb-3">
+                        <label asp-for="AssetLocationId" class="form-label">Location</label>
+                        <select asp-for="AssetLocationId" class="form-select" asp-items="@(new SelectList((IEnumerable<dynamic>)ViewBag.AssetLocations, "AssetLocationId", "Name"))">
+                            <option value="">-- Select Location --</option>
+                        </select>
                         <span asp-validation-for="AssetLocationId" class="text-danger"></span>
                     </div>
 
+                    <!-- Location -->
                     <div class="form-group mb-3">
                         <label asp-for="Block" class="form-label">BLOCK</label>
                         <input asp-for="Block" class="form-control" />
                         <span asp-validation-for="Block" class="text-danger"></span>
                     </div>
+
+                   
 
                     <div class="form-group mb-3">
                         <label asp-for="Division" class="form-label">DIVISION</label>
@@ -468,3 +462,8 @@
     </script>
 </body>
 </html>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

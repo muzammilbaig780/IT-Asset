@@ -5,7 +5,7 @@ namespace SLRM_IT_Assest_Management.Models
     public class AssetType
     {
         [Key]
-        public int TypeId { get; set; }
+        public int AssetTypeId { get; set; }
 
         [Required]
         [MaxLength(50)]

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
 using SLRM_IT_Assest_Management.Models;
+using SLRM_IT_Assest_Management.ViewModels;
 using System.Globalization;
 
 namespace AssetManagement.Controllers
@@ -26,38 +27,39 @@ namespace AssetManagement.Controllers
             return View(assets);
         }
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            // Simple initialization - no complex queries
-            ViewBag.AssetTypes = _context.AssetTypes?.ToList() ?? new List<AssetType>();
-            ViewBag.Companies = _context.Companies?.ToList() ?? new List<Company>();
-            ViewBag.AssetStatuses = _context.AssetStatuses?.ToList() ?? new List<Status>();
-            ViewBag.AssetLocations = _context.AssetLocations?.ToList() ?? new List<AssetLocation>();
+           ViewBag.AssetTypes = await _context.AssetTypes.ToListAsync();
+           ViewBag.AssetStatuses = await _context.AssetStatuses.ToListAsync();
+           ViewBag.Companies = await _context.Companies.ToListAsync();
+           ViewBag.AssetLocations = await _context.AssetLocations.ToListAsync();
 
-            return View(new Asset());
+            return View();
         }
 
-        // POST: Items/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Asset asset)
+        public async Task<IActionResult> Create(Asset model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                _context.Add(asset);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                ViewBag.AssetTypes = await _context.AssetTypes.ToListAsync();
+                ViewBag.AssetStatuses = await _context.AssetStatuses.ToListAsync();
+                ViewBag.Companies = await _context.Companies.ToListAsync();
+                ViewBag.AssetLocations = await _context.AssetLocations.ToListAsync();
+                return View(model);
             }
 
-            // Re-populate dropdowns when the form fails validation
-            ViewBag.AssetTypes = new SelectList(_context.AssetTypes, "TypeId", "Name", asset.AssetTypeId);
-            ViewBag.AssetStatuses = new SelectList(_context.AssetStatuses, "StatusId", "Name", asset.AssetStatusId);
-            ViewBag.AssetLocations = new SelectList(_context.AssetLocations, "AssetLocationId", "Name", asset.AssetLocationId);
-            ViewBag.Companies = new SelectList(_context.Companies, "CompanyId", "CompanyName", asset.CompanyId);
-
-            return View(asset);
+            _context.Assets.Add(model);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+        private async Task<int> GetNextSlNo()
+        {
+            var maxSlNo = await _context.Assets.MaxAsync(a => (int?)a.SlNo);
+            return (maxSlNo ?? 0) + 1;
         }
 
         // GET: Assets/Edit/5
@@ -279,19 +281,7 @@ namespace AssetManagement.Controllers
         }
 
 
-        //public IActionResult Laptops()
-        //{
-        //    var laptops = _context.Assets.Where(a => a.AssetType == "Laptop").ToList();
-        //    ViewBag.AssetType = "Laptop";
-        //    return View("Index", laptops);
-        //}
-
-        //public IActionResult Desktops()
-        //{
-        //    var desktops = _context.Assets.Where(a => a.Type == "Desktop").ToList();
-        //    ViewBag.AssetType = "Desktop"; // ← MUST be set!
-        //    return View("Index", desktops); // or View("Desktops", desktops)
-        //}
+      
 
 
 
