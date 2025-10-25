@@ -19,7 +19,7 @@ namespace SLRM_IT_Assest_Management.Controllers
 
         public IActionResult Index()
         {
-            var dashboardData = new DashbaordViewModel
+            var dashboardData = new DashboardViewModel
             {
                 AssetCount = _context.Assets.Count(),   // <-- Actual count from DB
                 LicenseCount = _context.Licenses.Count(),
@@ -29,6 +29,22 @@ namespace SLRM_IT_Assest_Management.Controllers
 
             return View(dashboardData);
         }
+
+
+        public IActionResult Dashboard()
+        {
+            var model = new DashboardViewModel
+            {
+                AssetCount = _context.Assets.Count(),
+                LicenseCount = _context.Licenses.Count(),
+                ReadyToDeployCount = _context.Assets.Count(a => a.StatusId == 1), // Example
+                ActiveCount = _context.Assets.Count(a => a.StatusId == 2),
+                NotActiveCount = _context.Assets.Count(a => a.StatusId == 3)
+            };
+
+            return View(model);
+        }
+
 
         public IActionResult Privacy()
         {
