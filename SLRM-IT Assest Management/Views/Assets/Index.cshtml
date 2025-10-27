@@ -134,7 +134,8 @@
                     <thead>
                         <tr>
                             <th>Sl No</th>
-                            <th>Type</th>
+                            <th>Company</th>
+                            <th>AssetType</th>
                             <th>Department</th>
                             <th>UserName</th>
                             <th>EmpCode</th>
@@ -144,13 +145,8 @@
                             <th>AssetTag</th>
                             <th>Make</th>
                             <th>Model</th>
-                            @* <th class="monitor-col @(ViewBag.AssetType == "Laptop" ? "d-none" : "")">Monitor Make</th>
-                            <th class="monitor-col @(ViewBag.AssetType == "Laptop" ? "d-none" : "")">Monitor Model</th> *@
-                            @if (ViewBag.AssetType == "Desktop")
-                            {
-                                <th>Monitor Make</th>
-                                <th>Monitor Model</th>
-                            }
+                            <th>MoniterMake</th>
+                            <th>MoniterModel</th>
                             <th>Serial No</th>
                             <th>Processor</th>
                             <th>RAM</th>
@@ -173,42 +169,26 @@
                         {
                             <tr data-type="@item.AssetType">
                                 <td>@item.SlNo</td>
-                                <td>@item.AssetType</td>
+                                <td>@item.Company?.CompanyName</td>
+                                <td>@item.AssetType?.Name</td>
                                 <td>@item.Department</td>
                                 <td>@item.UserName</td>
                                 <td>@item.EmpCode</td>
                                 <td>@item.HostName</td>
                                 <td>@item.Block</td>
-                                <td>@item.AssetLocation</td>
+                                <td>@item.AssetLocation?.Name</td>
                                 <td>@item.AssetTag</td>
                                 <td>@item.Make</td>
                                 <td>@item.Model</td>
-                                <td class="monitor-col @(ViewBag.AssetType == "Laptop" ? "d-none" : "")">@item.MoniterMake</td>
-                                <td class="monitor-col @(ViewBag.AssetType == "Laptop" ? "d-none" : "")">@item.MoniterModel</td>
+                                <td>@item.MoniterMake</td>
+                                <td>@item.MoniterModel</td>
                                 <td>@item.SerialNo</td>
                                 <td>@item.Processor</td>
                                 <td>@item.Ram</td>
                                 <td>@item.Hdd</td>
                                 <td>@item.Division</td>
                                 <td>@item.AntiVirus</td>
-                               @*  <td>
-                                    @if (item.Status == "ACTIVE")
-                                    {
-                                        <span class="badge bg-success">ACTIVE</span>
-                                    }
-                                    else if (item.Status == "Ready to Deploy")
-                                    {
-                                        <span class="badge bg-primary">Ready</span>
-                                    }
-                                    else if (!string.IsNullOrEmpty(item.Status))
-                                    {
-                                        <span class="badge bg-secondary">@item.Status</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge bg-light text-dark">Not Set</span>
-                                    }
-                                </td> *@
+                                <td>@item.AssetStatus?.Name</td>
                                 <td>@item.OSVersion</td>
                                 <td>@item.AutoCad</td>
                                 <td>@item.Office</td>

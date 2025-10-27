@@ -23,44 +23,54 @@ namespace AssetManagement.Controllers
         // GET: Assets
         public async Task<IActionResult> Index()
         {
-            var assets = await _context.Assets.ToListAsync();
+            var assets = await _context.Assets
+                .Include(a => a.AssetType)
+                .Include(a => a.AssetLocation)
+                .Include(a => a.AssetStatus)
+                .Include(a => a.Company)
+                .ToListAsync();
+
             return View(assets);
         }
         [HttpGet]
         public async Task<IActionResult> Create()
         {
-           ViewBag.AssetTypes = await _context.AssetTypes.ToListAsync();
-           ViewBag.AssetStatuses = await _context.AssetStatuses.ToListAsync();
-           ViewBag.Companies = await _context.Companies.ToListAsync();
-           ViewBag.AssetLocations = await _context.AssetLocations.ToListAsync();
+            ViewBag.AssetTypes = await _context.AssetTypes.ToListAsync();
+            ViewBag.AssetStatuses = await _context.AssetStatuses.ToListAsync();
+            ViewBag.Companies = await _context.Companies.ToListAsync();
+            ViewBag.AssetLocations = await _context.AssetLocations.ToListAsync();
 
             return View();
         }
 
-        
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Asset model)
+        public async Task<IActionResult> Create(Asset asset)
         {
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                ViewBag.AssetTypes = await _context.AssetTypes.ToListAsync();
-                ViewBag.AssetStatuses = await _context.AssetStatuses.ToListAsync();
-                ViewBag.Companies = await _context.Companies.ToListAsync();
-                ViewBag.AssetLocations = await _context.AssetLocations.ToListAsync();
-                return View(model);
+                asset.SlNo = (_context.Assets.Max(a => (int?)a.SlNo) ?? 0) + 1;
+                _context.Add(asset);
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Asset added successfully!";
+                return RedirectToAction(nameof(Index));
             }
 
-            _context.Assets.Add(model);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            // If validation fails, repopulate dropdowns
+            ViewBag.AssetTypes = _context.AssetTypes.ToList();
+            ViewBag.AssetStatuses = _context.AssetStatuses.ToList();
+            ViewBag.AssetLocations = _context.AssetLocations.ToList();
+            ViewBag.Companies = _context.Companies.ToList();
+
+            return View(asset);
         }
-        private async Task<int> GetNextSlNo()
-        {
-            var maxSlNo = await _context.Assets.MaxAsync(a => (int?)a.SlNo);
-            return (maxSlNo ?? 0) + 1;
-        }
+        //private async Task<int> GetNextSlNo()
+        //{
+        //    var maxSlNo = await _context.Assets.MaxAsync(a => (int?)a.SlNo);
+        //    return (maxSlNo ?? 0) + 1;
+        //}
 
         // GET: Assets/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -190,7 +200,7 @@ namespace AssetManagement.Controllers
 
             if (file == null || file.Length == 0)
             {
-                TempData["ErrorMessage"] = "Please select a valid file.";
+                TempData["ErrorMessage"] = "Please select a valid Excel file.";
                 return RedirectToAction(nameof(Import));
             }
 
@@ -207,62 +217,112 @@ namespace AssetManagement.Controllers
                         if (worksheet == null || worksheet.Dimension == null)
                             throw new Exception("The Excel file is empty or invalid.");
 
-                        var rowCount = worksheet.Dimension.Rows;
+                        int rowCount = worksheet.Dimension.Rows;
 
-                        for (int row = 2; row <= rowCount; row++)
+                        for (int row = 2; row <= rowCount; row++) // Skip header
                         {
-                            string type = worksheet.Cells[row, 2]?.Text?.Trim().ToUpper();
-                            if (string.IsNullOrWhiteSpace(type)) continue;
+                            if (string.IsNullOrWhiteSpace(worksheet.Cells[row, 1]?.Text)) continue;
 
-                            bool isDesktop = type == "DESKTOP";
+                            string type = worksheet.Cells[row, 2]?.Text?.Trim();
 
                             var asset = new Asset
                             {
                                 SlNo = int.TryParse(worksheet.Cells[row, 1]?.Text, out int slNo) ? slNo : 0,
-                                //Type = type,
+                                // TYPE column handled below
                                 Department = worksheet.Cells[row, 3]?.Text?.Trim(),
-                                UserName = worksheet.Cells[row, 4]?.Text?.Trim(),
-                                EmpCode = worksheet.Cells[row, 5]?.Text?.Trim(),
+                                EmpCode = worksheet.Cells[row, 4]?.Text?.Trim(),
+                                UserName = worksheet.Cells[row, 5]?.Text?.Trim(),
                                 HostName = worksheet.Cells[row, 6]?.Text?.Trim(),
                                 Block = worksheet.Cells[row, 7]?.Text?.Trim(),
-                                //AssetLocation = worksheet.Cells[row, 8]?.Text?.Trim(),
+                                // ASSET LOCATION/FLOOR
                                 AssetTag = worksheet.Cells[row, 9]?.Text?.Trim(),
                                 Make = worksheet.Cells[row, 10]?.Text?.Trim(),
                                 Model = worksheet.Cells[row, 11]?.Text?.Trim(),
-                                SerialNo = worksheet.Cells[row, 12]?.Text?.Trim(),
-                                Processor = worksheet.Cells[row, 13]?.Text?.Trim(),
-                                Ram = worksheet.Cells[row, 14]?.Text?.Trim(),
-                                Hdd = worksheet.Cells[row, 15]?.Text?.Trim(),
-                                Division = worksheet.Cells[row, 16]?.Text?.Trim(),
-                                AntiVirus = worksheet.Cells[row, 17]?.Text?.Trim(),
-                                //Status = worksheet.Cells[row, 18]?.Text?.Trim(),
-                                OSVersion = worksheet.Cells[row, 19]?.Text?.Trim(),
-                                AutoCad = worksheet.Cells[row, 20]?.Text?.Trim(),
-                                Office = worksheet.Cells[row, 21]?.Text?.Trim(),
-                                WindowLicenseKey = worksheet.Cells[row, 22]?.Text?.Trim(),
-                                IPAddress = worksheet.Cells[row, 23]?.Text?.Trim(),
-                                Nitro = worksheet.Cells[row, 24]?.Text?.Trim(),
-                                AuditStatus = worksheet.Cells[row, 25]?.Text?.Trim(),
+                                MoniterMake = worksheet.Cells[row, 12]?.Text?.Trim(),
+                                MoniterModel = worksheet.Cells[row, 13]?.Text?.Trim(),
+                                SerialNo = worksheet.Cells[row, 14]?.Text?.Trim(),
+                                Processor = worksheet.Cells[row, 15]?.Text?.Trim(),
+                                Ram = worksheet.Cells[row, 16]?.Text?.Trim(),
+                                Hdd = worksheet.Cells[row, 17]?.Text?.Trim(),
+                                Division = worksheet.Cells[row, 18]?.Text?.Trim(),
+                                AntiVirus = worksheet.Cells[row, 20]?.Text?.Trim(),
+                                OSVersion = worksheet.Cells[row, 21]?.Text?.Trim(),
+                                AutoCad = worksheet.Cells[row, 22]?.Text?.Trim(),
+                                Office = worksheet.Cells[row, 23]?.Text?.Trim(),
+                                WindowLicenseKey = worksheet.Cells[row, 24]?.Text?.Trim(),
+                                IPAddress = worksheet.Cells[row, 25]?.Text?.Trim(),
+                                Nitro = worksheet.Cells[row, 26]?.Text?.Trim(),
+                                AuditStatus = worksheet.Cells[row, 27]?.Text?.Trim()
                             };
 
-                            if (isDesktop)
+                            // STATUS (column 18) maps to AssetStatus if you have a related entity
+                            string statusText = worksheet.Cells[row, 19]?.Text?.Trim();
+
+                            if (!string.IsNullOrEmpty(statusText))
                             {
-                                asset.MoniterMake = worksheet.Cells[row, 26]?.Text?.Trim();
-                                asset.MoniterModel = worksheet.Cells[row, 27]?.Text?.Trim();
+                                // Try to find the status in the database
+                                var status = _context.AssetStatuses.FirstOrDefault(s => s.Name == statusText);
+
+                                // If found, use it — otherwise, assign a default one
+                                asset.StatusId = status != null
+                                    ? status.StatusId
+                                    : _context.AssetStatuses.FirstOrDefault(s => s.Name == "Active")?.StatusId
+                                        ?? _context.AssetStatuses.FirstOrDefault()?.StatusId; // final fallback
                             }
                             else
                             {
-                                asset.MoniterMake = "N/A"; // or "" if you prefer
-                                asset.MoniterModel = "N/A";
+                                // If Excel cell is empty, assign a default
+                                asset.StatusId = _context.AssetStatuses.FirstOrDefault(s => s.Name == "Active")?.StatusId
+                                    ?? _context.AssetStatuses.FirstOrDefault()?.StatusId;
                             }
 
+                            // TYPE mapping (AssetType)
+                            if (!string.IsNullOrEmpty(type))
+                            {
+                                var assetType = _context.AssetTypes.FirstOrDefault(t => t.Name == type);
+                                if (assetType != null)
+                                    asset.AssetTypeId = assetType.AssetTypeId;
+                            }
+
+                            // COMPANY handling (adjust column index as per your Excel)
+                            string companyText = worksheet.Cells[row, 2]?.Text?.Trim(); // Example column
+                            if (!string.IsNullOrEmpty(companyText))
+                            {
+                                var company = _context.Companies.FirstOrDefault(c => c.CompanyName == companyText);
+                                if (company != null)
+                                    asset.CompanyId = company.CompanyId;
+                                else
+                                    asset.CompanyId = _context.Companies.FirstOrDefault()?.CompanyId; // fallback
+                            }
+                            else
+                            {
+                                asset.CompanyId = _context.Companies.FirstOrDefault()?.CompanyId; // fallback if blank
+                            }
+
+
+
+
+                            // ASSET LOCATION mapping (column 8)
+                            string locationText = worksheet.Cells[row, 8]?.Text?.Trim();
+                            if (!string.IsNullOrEmpty(locationText))
+                            {
+                                var defaultLocation = _context.AssetLocations.FirstOrDefault();
+                                if (defaultLocation != null)
+                                {
+                                    asset.AssetLocationId = defaultLocation.AssetLocationId;
+                                }
+                            }
+
+                            
                             assets.Add(asset);
                         }
                     }
                 }
 
                 if (overwriteExisting)
+                {
                     _context.Assets.RemoveRange(_context.Assets);
+                }
 
                 if (assets.Any())
                 {
@@ -270,7 +330,7 @@ namespace AssetManagement.Controllers
                     await _context.SaveChangesAsync();
                 }
 
-                TempData["SuccessMessage"] = $"Imported {assets.Count} assets successfully.";
+                TempData["SuccessMessage"] = $"Successfully imported {assets.Count} assets.";
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
@@ -279,12 +339,6 @@ namespace AssetManagement.Controllers
                 return RedirectToAction(nameof(Import));
             }
         }
-
-
-      
-
-
-
 
     }
 }
