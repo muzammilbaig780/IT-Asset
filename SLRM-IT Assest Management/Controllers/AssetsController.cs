@@ -249,20 +249,23 @@ namespace AssetManagement.Controllers
                             string assetIdText = worksheet.Cells[row, 9]?.Text?.Trim();
                             string makeText = worksheet.Cells[row, 10]?.Text?.Trim();
                             string modelText = worksheet.Cells[row, 11]?.Text?.Trim();
-                            string serialText = worksheet.Cells[row, 12]?.Text?.Trim();
-                            string processorText = worksheet.Cells[row, 13]?.Text?.Trim();
-                            string ramText = worksheet.Cells[row, 14]?.Text?.Trim();
-                            string hddText = worksheet.Cells[row, 15]?.Text?.Trim();
-                            string divisionText = worksheet.Cells[row, 16]?.Text?.Trim();
-                            string antivirusText = worksheet.Cells[row, 17]?.Text?.Trim();
-                            string statusText = worksheet.Cells[row, 18]?.Text?.Trim();
-                            string osVersionText = worksheet.Cells[row, 19]?.Text?.Trim();
-                            string autoCadText = worksheet.Cells[row, 20]?.Text?.Trim();
-                            string officeText = worksheet.Cells[row, 21]?.Text?.Trim();
-                            string windowKeyText = worksheet.Cells[row, 22]?.Text?.Trim();
-                            string ipText = worksheet.Cells[row, 23]?.Text?.Trim();
-                            string nitroText = worksheet.Cells[row, 24]?.Text?.Trim();
-                            string auditText = worksheet.Cells[row, 25]?.Text?.Trim();
+                            string monitorMakeText = worksheet.Cells[row, 12]?.Text?.Trim();  // example column index
+                            string monitorModelText = worksheet.Cells[row, 13]?.Text?.Trim();
+
+                            string serialText = worksheet.Cells[row, 14]?.Text?.Trim();
+                            string processorText = worksheet.Cells[row, 15]?.Text?.Trim();
+                            string ramText = worksheet.Cells[row, 16]?.Text?.Trim();
+                            string hddText = worksheet.Cells[row, 17]?.Text?.Trim();
+                            string divisionText = worksheet.Cells[row, 18]?.Text?.Trim();
+                            string antivirusText = worksheet.Cells[row, 19]?.Text?.Trim();
+                            string statusText = worksheet.Cells[row, 20]?.Text?.Trim();
+                            string osVersionText = worksheet.Cells[row, 121]?.Text?.Trim();
+                            string autoCadText = worksheet.Cells[row, 22]?.Text?.Trim();
+                            string officeText = worksheet.Cells[row, 23]?.Text?.Trim();
+                            string windowKeyText = worksheet.Cells[row, 24]?.Text?.Trim();
+                            string ipText = worksheet.Cells[row, 25]?.Text?.Trim();
+                            string nitroText = worksheet.Cells[row, 26]?.Text?.Trim();
+                            string auditText = worksheet.Cells[row, 27]?.Text?.Trim();
 
                             var asset = new Asset
                             {
@@ -273,8 +276,13 @@ namespace AssetManagement.Controllers
                                 AssetTag = assetIdText,
                                 Make = makeText,
                                 Model = modelText,
-                                MoniterMake = "NA",
-                                MoniterModel = "NA",
+                                MoniterMake = (type?.Equals("Desktop", StringComparison.OrdinalIgnoreCase) ?? false)
+                    ? monitorMakeText   // from Excel
+                    : "NA",
+
+                                MoniterModel = (type?.Equals("Desktop", StringComparison.OrdinalIgnoreCase) ?? false)
+                    ? monitorModelText  // from Excel
+                    : "NA",
                                 // default SerialNo to "NA" if empty
                                 SerialNo = string.IsNullOrWhiteSpace(serialText) ? "NA" : serialText,
                                 Processor = processorText,
