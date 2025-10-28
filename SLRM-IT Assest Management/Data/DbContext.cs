@@ -15,5 +15,8 @@ namespace AssetManagement.Data
         public DbSet<Asset> Assets { get; set; }
         public DbSet<License> Licenses { get; set; }
         public DbSet<AssetLocation> AssetLocations { get; set; }
+        public DbSet<Department> Departments { get; set; }
+        public DbSet<Block> Blocks { get; set; }
+        public DbSet<Division> Divisions { get; set; }
     }
 }

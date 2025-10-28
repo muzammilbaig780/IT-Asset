@@ -90,4 +90,62 @@ public class MasterDataController : Controller
         }
         return View(status);
     }
+
+    [HttpGet]
+    public IActionResult CreateBlock()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CreateBlock(Block block)
+    {
+        if (ModelState.IsValid)
+        {
+            _context.Blocks.Add(block);
+            await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Blocks added!";
+            return RedirectToAction("Create", "Assets");
+        }
+        return View(block);
+    }
+
+    [HttpGet]
+    public IActionResult CreateDepartment()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CreateDepartment(Department department)
+    {
+        if (ModelState.IsValid)
+        {
+            _context.Departments.Add(department);
+            await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Departments added!";
+            return RedirectToAction("Create", "Assets");
+        }
+        return View(department);
+    }
+
+    [HttpGet]
+    public IActionResult CreateDivision()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CreateDivision(Division division)
+    {
+        if (ModelState.IsValid)
+        {
+            _context.Divisions.Add(division);
+            await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Divisions added!";
+            return RedirectToAction("Create", "Assets");
+        }
+        return View(division);
+    }
+
 }

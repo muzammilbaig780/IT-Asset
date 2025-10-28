@@ -150,11 +150,7 @@
                         <span asp-validation-for="SlNo" class="text-danger"></span>
                     </div>
 
-                    <div class="form-group mb-3">
-                        <label asp-for="Department" class="form-label">Department *</label>
-                        <input asp-for="Department" class="form-control" required />
-                        <span asp-validation-for="Department" class="text-danger"></span>
-                    </div>
+                  
 
                     <div class="form-group mb-3">
                         <label asp-for="UserName" class="form-label">UserName</label>
@@ -203,7 +199,7 @@
 
                     <!-- Status -->
                     <div class="form-group mb-3">
-                        <label asp-for="StatusId" class="form-label"></label>
+                        <label asp-for="StatusId" class="form-label">Status</label>
                         <select asp-for="StatusId"
                                 class="form-select"
                                 asp-items="@(new SelectList((IEnumerable<dynamic>)ViewBag.AssetStatuses, "StatusId", "Name"))">
@@ -214,7 +210,7 @@
 
                     <!-- Asset Location -->
                     <div class="form-group mb-3">
-                        <label asp-for="AssetLocationId" class="form-label"></label>
+                        <label class="form-label">Asset Location</label>
                         <select asp-for="AssetLocationId"
                                 class="form-select"
                                 asp-items="@(new SelectList((IEnumerable<dynamic>)ViewBag.AssetLocations, "AssetLocationId", "Name"))">
@@ -223,20 +219,38 @@
                         <span asp-validation-for="AssetLocationId" class="text-danger"></span>
                     </div>
 
-                    <!-- Location -->
+                    <!-- Block -->
                     <div class="form-group mb-3">
-                        <label asp-for="Block" class="form-label">BLOCK</label>
-                        <input asp-for="Block" class="form-control" />
-                        <span asp-validation-for="Block" class="text-danger"></span>
+                        <label class="form-label">Block</label>
+                        <select asp-for="BlockId"
+                                class="form-select"
+                                asp-items="@(new SelectList((IEnumerable<dynamic>)ViewBag.Blocks, "BlockId", "BlockName"))">
+                            <option value="">-- Select Block --</option>
+                        </select>
+                        <span asp-validation-for="BlockId" class="text-danger"></span>
                     </div>
 
-
+                    <!-- Division -->
+                    <div class="form-group mb-3">
+                        <label class="form-label">Division</label>
+                        <select asp-for="DivisionId"
+                                class="form-select"
+                                asp-items="@(new SelectList((IEnumerable<dynamic>)ViewBag.Divisions, "DivisionId", "DivisionName"))">
+                            <option value="">-- Select Division --</option>
+                        </select>
+                        <span asp-validation-for="DivisionId" class="text-danger"></span>
+                    </div>
 
                     <div class="form-group mb-3">
-                        <label asp-for="Division" class="form-label">DIVISION</label>
-                        <input asp-for="Division" class="form-control" />
-                        <span asp-validation-for="Division" class="text-danger"></span>
+                        <label class="form-label">Department</label>
+                        <select asp-for="DepartmentId"
+                                class="form-select"
+                                asp-items="@(new SelectList((IEnumerable<dynamic>)ViewBag.Departments, "DepartmentId", "DepartmentName"))">
+                            <option value="">-- Select Department --</option>
+                        </select>
+                        <span asp-validation-for="DepartmentId" class="text-danger"></span>
                     </div>
+
                 </div>
             </div>
 

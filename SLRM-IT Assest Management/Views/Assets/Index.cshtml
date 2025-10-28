@@ -145,8 +145,11 @@
                             <th>AssetTag</th>
                             <th>Make</th>
                             <th>Model</th>
-                            <th>MoniterMake</th>
-                            <th>MoniterModel</th>
+                            @if (ViewBag.SelectedType == "Desktop")
+                            {
+                                <th>MoniterMake</th>
+                                <th>MoniterModel</th>
+                            }
                             <th>Serial No</th>
                             <th>Processor</th>
                             <th>RAM</th>
@@ -171,22 +174,25 @@
                                 <td>@item.SlNo</td>
                                 <td>@item.Company?.CompanyName</td>
                                 <td>@item.AssetType?.Name</td>
-                                <td>@item.Department</td>
+                                <td>@item.Department?.DepartmentName</td>
                                 <td>@item.UserName</td>
                                 <td>@item.EmpCode</td>
                                 <td>@item.HostName</td>
-                                <td>@item.Block</td>
+                                <td>@item.Block?.BlockName</td>
                                 <td>@item.AssetLocation?.Name</td>
                                 <td>@item.AssetTag</td>
                                 <td>@item.Make</td>
                                 <td>@item.Model</td>
-                                <td>@item.MoniterMake</td>
-                                <td>@item.MoniterModel</td>
-                                <td>@item.SerialNo</td>
+                                @if (ViewBag.SelectedType == "Desktop")
+                                {
+                                    <td>@item.MoniterMake</td>
+                                    <td>@item.MoniterModel</td>
+                                }
+                                <td>@(string.IsNullOrEmpty(item.SerialNo) ? "NA" : item.SerialNo)</td>
                                 <td>@item.Processor</td>
                                 <td>@item.Ram</td>
                                 <td>@item.Hdd</td>
-                                <td>@item.Division</td>
+                                <td>@item.Division?.DivisionName</td>
                                 <td>@item.AntiVirus</td>
                                 <td>@item.AssetStatus?.Name</td>
                                 <td>@item.OSVersion</td>
