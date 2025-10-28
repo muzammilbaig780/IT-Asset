@@ -403,6 +403,9 @@ namespace AssetManagement.Controllers
                 .Include(a => a.AssetType)
                 .Include(a => a.AssetLocation)
                 .Include(a => a.AssetStatus)
+                .Include(a => a.Department)
+                .Include(a => a.Division)
+                .Include(a => a.Block)
                 .Where(a => a.AssetType.Name == "Laptop")
                 .ToListAsync();
 
@@ -417,6 +420,9 @@ namespace AssetManagement.Controllers
                 .Include(a => a.AssetType)
                 .Include(a => a.AssetLocation)
                 .Include(a => a.AssetStatus)
+                .Include(a => a.Department)
+                .Include(a => a.Division)
+                .Include(a => a.Block)
                 .Where(a => a.AssetType.Name == "Desktop")
                 .ToListAsync();
 
