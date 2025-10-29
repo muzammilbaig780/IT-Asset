@@ -88,32 +88,30 @@
     <!-- Dashboard Cards -->
     <!-- Dashboard Cards -->
     <div class="dashboard-cards">
-        <a href="https://localhost:7232/Assets" style="text-decoration: none; color: inherit;">
-
-        <div class="card">
-            <div class="card-header">
-                <div class="card-title">Assets</div>
-                <div class="card-icon assets">
-                    <i class="fas fa-server"></i>
+        <a asp-controller="Assets" asp-action="Index" style="text-decoration: none; color: inherit;">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Assets</div>
+                    <div class="card-icon assets">
+                        <i class="fas fa-server"></i>
+                    </div>
                 </div>
+                <div class="card-value">@Model.AssetCount</div>
+                <div class="card-text">Total IT Assets</div>
             </div>
-            <div class="card-value">@Model.AssetCount</div>
-            <div class="card-text">Total IT Assets</div>
-        </div>
         </a>
 
-        <a href="https://localhost:7232/Licenses" style="text-decoration: none; color: inherit;">
-
-        <div class="card">
-            <div class="card-header">
-                <div class="card-title">Licenses</div>
-                <div class="card-icon licenses">
-                    <i class="fas fa-certificate"></i>
+        <a asp-controller="Licenses" asp-action="Index" style="text-decoration: none; color: inherit;">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Licenses</div>
+                    <div class="card-icon licenses">
+                        <i class="fas fa-certificate"></i>
+                    </div>
                 </div>
+                <div class="card-value">@Model.LicenseCount</div>
+                <div class="card-text">Total IT Licenses</div>
             </div>
-            <div class="card-value">@Model.LicenseCount</div>
-            <div class="card-text">Total IT Licenses</div>
-        </div>
         </a>
 
 
