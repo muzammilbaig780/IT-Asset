@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
 using SLRM_IT_Assest_Management.Models;
 using SLRM_IT_Assest_Management.ViewModels;
+using System.Drawing.Printing;
 using System.Globalization;
 
 namespace AssetManagement.Controllers
@@ -20,17 +21,36 @@ namespace AssetManagement.Controllers
             _environment = environment;
         }
 
-        // GET: Assets
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string filter = "All", int page = 1, int pageSize = 10)
         {
-            var assets = await _context.Assets
+            ViewBag.Filter = filter;
+            ViewBag.PageSize = pageSize;
+            ViewBag.CurrentPage = page;
+
+            var query = _context.Assets
+                .Include(a => a.Company)
                 .Include(a => a.AssetType)
                 .Include(a => a.AssetLocation)
                 .Include(a => a.AssetStatus)
-                .Include(a => a.Company)
-                .Include(a => a.Block)
                 .Include(a => a.Department)
                 .Include(a => a.Division)
+                .Include(a => a.Block)
+                .AsQueryable();
+
+            // Apply filter
+            if (!string.IsNullOrEmpty(filter) && filter != "All")
+            {
+                query = query.Where(a => a.AssetType.Name == filter);
+            }
+
+            int totalRecords = await query.CountAsync();
+            ViewBag.TotalRecords = totalRecords;
+
+            // Apply pagination
+            var assets = await query
+                .OrderBy(a => a.AssetId)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .ToListAsync();
 
             return View(assets);
@@ -427,7 +447,7 @@ namespace AssetManagement.Controllers
         }
 
 
-        public async Task<IActionResult> Laptops()
+        public async Task<IActionResult> Laptops(int pageSize = 10)
         {
             var laptops = await _context.Assets
                 .Include(a => a.Company)
@@ -439,12 +459,12 @@ namespace AssetManagement.Controllers
                 .Include(a => a.Block)
                 .Where(a => a.AssetType.Name == "Laptop")
                 .ToListAsync();
-
-            ViewBag.SelectedType = "Laptop";
+            ViewBag.PageSize = pageSize;
+            ViewBag.Filter = "Laptop"; ;
             return View("Index", laptops); // reuse same Index view
         }
 
-        public async Task<IActionResult> Desktops()
+        public async Task<IActionResult> Desktops(int pageSize = 10)
         {
             var desktops = await _context.Assets
                 .Include(a => a.Company)
@@ -457,7 +477,8 @@ namespace AssetManagement.Controllers
                 .Where(a => a.AssetType.Name == "Desktop")
                 .ToListAsync();
 
-            ViewBag.SelectedType = "Desktop";
+            ViewBag.PageSize = pageSize;
+            ViewBag.Filter = "Desktop";
             return View("Index", desktops); // reuse same Index view
         }
 

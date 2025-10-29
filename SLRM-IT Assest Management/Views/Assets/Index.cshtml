@@ -133,28 +133,18 @@
             <a asp-action="Create" class="btn btn-primary btn-add">
                 <i class="fas fa-plus"></i> Add New Asset
             </a>
-
-            <div class="table-controls">
-                <div class="search-box">
-                    <i class="fas fa-search"></i>
-                    <input type="text" id="searchInput" placeholder="Search assets..." />
-                </div>
-                <select id="rowsPerPage">
-                    <option value="10">10 rows per page</option>
-                    <option value="25">25 rows per page</option>
-                    <option value="50">50 rows per page</option>
-                </select>
-            </div>
         </div>
 
         @{
             await Html.RenderPartialAsync("_BackButton");
         }
 
-        <div class="btn-group mb-3" role="group" aria-label="Asset Type Toggle">
+      @*   <div class="btn-group mb-3" role="group" aria-label="Asset Type Toggle">
             <a asp-action="Laptops" class="btn btn-outline-primary">Laptops</a>
             <a asp-action="Desktops" class="btn btn-outline-primary">Desktops</a>
-        </div>
+        </div> *@
+        @await Html.PartialAsync("_FilterToolbar")
+
         <div class="table-container">
             <div class="table-header">
                 <h2 class="table-title">Assets</h2>
