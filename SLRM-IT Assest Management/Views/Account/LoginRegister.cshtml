@@ -1,0 +1,219 @@
+﻿@model SLRM_IT_Assest_Management.Models.User
+@{
+    ViewData["Title"] = "Login / Register";
+}
+
+<style>
+    body, html {
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: #cde7e2;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .container {
+        background: white;
+        width: 900px;
+        height: 480px;
+        border-radius: 20px;
+        display: flex;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        position: relative;
+        transition: transform 0.5s ease-in-out;
+    }
+
+    .form-section {
+        flex: 1;
+        padding: 50px 40px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        transition: all 0.6s ease-in-out;
+    }
+
+    h2 {
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 25px;
+        font-size: 28px;
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        width: 80%;
+    }
+
+    input {
+        width: 100%;
+        padding: 12px;
+        border: 1.8px solid #d1d9d7;
+        border-radius: 10px;
+        font-size: 16px;
+        transition: border-color 0.3s;
+    }
+
+        input:focus {
+            outline: none;
+            border-color: #57b68b;
+        }
+
+    button {
+        background: #57b68b;
+        color: white;
+        font-weight: 700;
+        padding: 12px;
+        border: none;
+        border-radius: 14px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+        button:hover {
+            background: #44936b;
+        }
+
+    .message {
+        margin-top: 10px;
+        color: red;
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    .illustration-section {
+        flex: 1;
+        background: linear-gradient(135deg, #a0cdc0, #cde7e2);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 40px;
+        transition: all 0.6s ease-in-out;
+    }
+
+        .illustration-section img {
+            max-width: 320px;
+            user-select: none;
+        }
+
+    .switch-link {
+        margin-top: 15px;
+        font-size: 14px;
+    }
+
+        .switch-link a {
+            color: #57b68b;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+            .switch-link a:hover {
+                text-decoration: underline;
+            }
+
+    /* Hide register form by default */
+    .register-form {
+        display: none;
+    }
+
+    /* When toggled */
+    .container.register-active .login-form {
+        display: none;
+    }
+
+    .container.register-active .register-form {
+        display: block;
+    }
+</style>
+
+<div class="container" id="formContainer">
+    <div class="form-section">
+
+        <!-- Login Form -->
+        <div class="login-form">
+            <h2>Sign In</h2>
+            <form asp-action="Login" method="post">
+                <div>
+                    <label asp-for="Username"></label>
+                    <input asp-for="Username" placeholder="Enter your username" />
+                    <span asp-validation-for="Username" class="text-danger"></span>
+                </div>
+
+                <div>
+                    <label asp-for="Password"></label>
+                    <input asp-for="Password" type="password" placeholder="Enter your password" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+
+                <div>
+                    <label asp-for="Email"></label>
+                    <input asp-for="Email" placeholder="Enter your Email" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <button type="submit">Sign In</button>
+                <p class="message">@ViewBag.Message</p>
+
+                <div class="switch-link">
+                    Don’t have an account?
+                    <a onclick="toggleForms()">Sign Up</a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Register Form -->
+        <div class="register-form">
+            <h2>Create Account</h2>
+            <form asp-action="Register" method="post">
+                <div>
+                    <label asp-for="Username"></label>
+                    <input asp-for="Username" placeholder="Choose a username" />
+                    <span asp-validation-for="Username" class="text-danger"></span>
+                </div>
+
+                <div>
+                    <label asp-for="Email"></label>
+                    <input asp-for="Email" type="email" placeholder="Enter your email" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <div>
+                    <label asp-for="Password"></label>
+                    <input asp-for="Password" type="password" placeholder="Create a password" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+
+                <button type="submit">Sign Up</button>
+                <p class="message">@ViewBag.Message</p>
+
+                <div class="switch-link">
+                    Already have an account?
+                    <a onclick="toggleForms()">Sign In</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="illustration-section">
+        <img src="~/css/lpl.png" alt="Illustration" />
+    </div>
+</div>
+
+<script>
+    function toggleForms() {
+        const container = document.getElementById('formContainer');
+        container.classList.toggle('register-active');
+    }
+</script>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

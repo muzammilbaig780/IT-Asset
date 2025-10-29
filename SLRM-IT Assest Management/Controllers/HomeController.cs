@@ -1,50 +1,46 @@
 using AssetManagement.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SLRM_IT_Assest_Management.Models;
+using System.Linq;
 using System.Diagnostics;
 
 namespace SLRM_IT_Assest_Management.Controllers
 {
+    [Authorize] // Only logged-in users can access
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
         private readonly ApplicationDbContext _context;
 
-        // Inject ApplicationDbContext through constructor
         public HomeController(ILogger<HomeController> logger, ApplicationDbContext context)
         {
             _logger = logger;
             _context = context;
         }
 
+        // Main dashboard page
         public IActionResult Index()
         {
+            // Get the logged-in username from the cookie
+            var username = User.Identity.Name;
+
+            // Retrieve user details
+            var loggedInUser = _context.Users.FirstOrDefault(u => u.Username == username);
+
+            // Build the dashboard view model
             var dashboardData = new DashboardViewModel
             {
-                AssetCount = _context.Assets.Count(),   // <-- Actual count from DB
+                AssetCount = _context.Assets.Count(),
                 LicenseCount = _context.Licenses.Count(),
-                //AccessoriesCount = _context.Accessories.Count(),
-                //ConsumablesCount = _context.Consumables.Count()
+                ReadyToDeployCount = _context.Assets.Count(a => a.StatusId == 1),
+                ActiveCount = _context.Assets.Count(a => a.StatusId == 2),
+                NotActiveCount = _context.Assets.Count(a => a.StatusId == 3),
+                LoggedInUser = loggedInUser
             };
 
             return View(dashboardData);
         }
-
-
-        public IActionResult Dashboard()
-        {
-            var model = new DashboardViewModel
-            {
-                AssetCount = _context.Assets.Count(),
-                LicenseCount = _context.Licenses.Count(),
-                ReadyToDeployCount = _context.Assets.Count(a => a.StatusId == 1), // Example
-                ActiveCount = _context.Assets.Count(a => a.StatusId == 2),
-                NotActiveCount = _context.Assets.Count(a => a.StatusId == 3)
-            };
-
-            return View(model);
-        }
-
 
         public IActionResult Privacy()
         {

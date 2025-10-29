@@ -18,5 +18,6 @@ namespace AssetManagement.Data
         public DbSet<Department> Departments { get; set; }
         public DbSet<Block> Blocks { get; set; }
         public DbSet<Division> Divisions { get; set; }
+        public DbSet<User> Users { get; set; }
     }
 }

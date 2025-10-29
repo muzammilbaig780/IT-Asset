@@ -4,6 +4,7 @@
     {
         public int AssetCount { get; set; }
         public int LicenseCount { get; set; }
+        public User LoggedInUser { get; set; }
 
         // Deployment / Asset Status
         public int ReadyToDeployCount { get; set; }
