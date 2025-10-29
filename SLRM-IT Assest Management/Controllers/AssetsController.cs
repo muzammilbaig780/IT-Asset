@@ -240,6 +240,8 @@ namespace AssetManagement.Controllers
                             // 24=NITRO,25=AUDIT STATUS
 
                             string type = worksheet.Cells[row, 2]?.Text?.Trim();
+
+                            // Base columns (common to all)
                             string departmentText = worksheet.Cells[row, 3]?.Text?.Trim();
                             string empId = worksheet.Cells[row, 4]?.Text?.Trim();
                             string userName = worksheet.Cells[row, 5]?.Text?.Trim();
@@ -249,23 +251,44 @@ namespace AssetManagement.Controllers
                             string assetIdText = worksheet.Cells[row, 9]?.Text?.Trim();
                             string makeText = worksheet.Cells[row, 10]?.Text?.Trim();
                             string modelText = worksheet.Cells[row, 11]?.Text?.Trim();
-                            string monitorMakeText = worksheet.Cells[row, 12]?.Text?.Trim();  // example column index
-                            string monitorModelText = worksheet.Cells[row, 13]?.Text?.Trim();
 
-                            string serialText = worksheet.Cells[row, 14]?.Text?.Trim();
-                            string processorText = worksheet.Cells[row, 15]?.Text?.Trim();
-                            string ramText = worksheet.Cells[row, 16]?.Text?.Trim();
-                            string hddText = worksheet.Cells[row, 17]?.Text?.Trim();
-                            string divisionText = worksheet.Cells[row, 18]?.Text?.Trim();
-                            string antivirusText = worksheet.Cells[row, 19]?.Text?.Trim();
-                            string statusText = worksheet.Cells[row, 20]?.Text?.Trim();
-                            string osVersionText = worksheet.Cells[row, 121]?.Text?.Trim();
-                            string autoCadText = worksheet.Cells[row, 22]?.Text?.Trim();
-                            string officeText = worksheet.Cells[row, 23]?.Text?.Trim();
-                            string windowKeyText = worksheet.Cells[row, 24]?.Text?.Trim();
-                            string ipText = worksheet.Cells[row, 25]?.Text?.Trim();
-                            string nitroText = worksheet.Cells[row, 26]?.Text?.Trim();
-                            string auditText = worksheet.Cells[row, 27]?.Text?.Trim();
+                            string monitorMakeText = "";
+                            string monitorModelText = "";
+                            string serialText = "";
+                            string processorText = "";
+                            string ramText = "";
+                            string hddText = "";
+
+                            // ✅ Adjust column mapping based on type
+                            if (type?.Equals("Desktop", StringComparison.OrdinalIgnoreCase) ?? false)
+                            {
+                                monitorMakeText = worksheet.Cells[row, 12]?.Text?.Trim();
+                                monitorModelText = worksheet.Cells[row, 13]?.Text?.Trim();
+                                serialText = worksheet.Cells[row, 14]?.Text?.Trim();
+                                processorText = worksheet.Cells[row, 15]?.Text?.Trim();
+                                ramText = worksheet.Cells[row, 16]?.Text?.Trim();
+                                hddText = worksheet.Cells[row, 17]?.Text?.Trim();
+                            }
+                            else // Laptop or other
+                            {
+                                serialText = worksheet.Cells[row, 12]?.Text?.Trim();
+                                processorText = worksheet.Cells[row, 13]?.Text?.Trim();
+                                ramText = worksheet.Cells[row, 14]?.Text?.Trim();
+                                hddText = worksheet.Cells[row, 15]?.Text?.Trim();
+                            }
+
+                            // Continue with the rest:
+                            string divisionText = worksheet.Cells[row, 16]?.Text?.Trim();
+                            string antivirusText = worksheet.Cells[row, 17]?.Text?.Trim();
+                            string statusText = worksheet.Cells[row, 18]?.Text?.Trim();
+                            string osVersionText = worksheet.Cells[row, 19]?.Text?.Trim();
+                            string autoCadText = worksheet.Cells[row, 20]?.Text?.Trim();
+                            string officeText = worksheet.Cells[row, 21]?.Text?.Trim();
+                            string windowKeyText = worksheet.Cells[row, 22]?.Text?.Trim();
+                            string ipText = worksheet.Cells[row, 23]?.Text?.Trim();
+                            string nitroText = worksheet.Cells[row, 24]?.Text?.Trim();
+                            string auditText = worksheet.Cells[row, 25]?.Text?.Trim();
+
 
                             var asset = new Asset
                             {

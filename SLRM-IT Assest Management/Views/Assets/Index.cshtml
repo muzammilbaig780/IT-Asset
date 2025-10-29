@@ -9,6 +9,40 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
+
+
+
+        .table-controls {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+        }
+
+            .search-box input {
+                margin-left: 5px;
+                padding: 5px;
+            }
+
+        #pagination button {
+            margin: 3px;
+            padding: 5px 10px;
+        }
+
+            #pagination button.active {
+                background-color: #007bff;
+                color: white;
+            }
+
+
+
+
+
+
         body {
             background-color: #f8f9fa;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -103,12 +137,12 @@
             <div class="table-controls">
                 <div class="search-box">
                     <i class="fas fa-search"></i>
-                    <input type="text" placeholder="Search assets..." />
+                    <input type="text" id="searchInput" placeholder="Search assets..." />
                 </div>
-                <select>
-                    <option>10 rows per page</option>
-                    <option>25 rows per page</option>
-                    <option>50 rows per page</option>
+                <select id="rowsPerPage">
+                    <option value="10">10 rows per page</option>
+                    <option value="25">25 rows per page</option>
+                    <option value="50">50 rows per page</option>
                 </select>
             </div>
         </div>
@@ -130,7 +164,8 @@
             </div>
 
             <div class="table-responsive">
-                <table class="table table-hover">
+                <table id="assetsTable" class="table table-hover">
+
                     <thead>
                         <tr>
                             <th>Sl No</th>
@@ -214,6 +249,7 @@
 
                 </table>
             </div>
+            <div id="pagination" class="mt-3"></div>
 
             <div class="table-footer">
                 <div class="pagination-info">Total: @Model.Count() assets</div>
@@ -225,6 +261,63 @@
 </body>
 </html>
 <script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const searchInput = document.getElementById("searchInput");
+        const rowsPerPageSelect = document.getElementById("rowsPerPage");
+        const table = document.getElementById("assetsTable");
+        const pagination = document.getElementById("pagination");
+        const rows = Array.from(table.querySelectorAll("tbody tr"));
+
+        let currentPage = 1;
+        let rowsPerPage = parseInt(rowsPerPageSelect.value);
+
+        function displayTable() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const filteredRows = rows.filter(row =>
+                row.innerText.toLowerCase().includes(searchTerm)
+            );
+
+            const start = (currentPage - 1) * rowsPerPage;
+            const end = start + rowsPerPage;
+            const visibleRows = filteredRows.slice(start, end);
+
+            table.querySelector("tbody").innerHTML = "";
+            visibleRows.forEach(row => table.querySelector("tbody").appendChild(row));
+
+            renderPagination(filteredRows.length);
+        }
+
+        function renderPagination(totalRows) {
+            const totalPages = Math.ceil(totalRows / rowsPerPage);
+            pagination.innerHTML = "";
+
+            for (let i = 1; i <= totalPages; i++) {
+                const btn = document.createElement("button");
+                btn.textContent = i;
+                btn.className = (i === currentPage) ? "active" : "";
+                btn.addEventListener("click", () => {
+                    currentPage = i;
+                    displayTable();
+                });
+                pagination.appendChild(btn);
+            }
+        }
+
+        searchInput.addEventListener("input", () => {
+            currentPage = 1;
+            displayTable();
+        });
+
+        rowsPerPageSelect.addEventListener("change", () => {
+            rowsPerPage = parseInt(rowsPerPageSelect.value);
+            currentPage = 1;
+            displayTable();
+        });
+
+        displayTable();
+    });
+
+
     function goToDashboard() {
         // Replace with the correct dashboard route/path
         window.location.href = "/Home";
