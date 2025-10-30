@@ -1,174 +1,258 @@
 ﻿@{
-    ViewData["Title"] = "Filter Toolbar Only";
+    ViewData["Title"] = "Filter Toolbar (Styled)";
 }
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
-    .card {
-        border-radius: 12px;
-        margin-right: 20px;
+    .toolbar {
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 10px 15px;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
     }
 
-    .card-body {
-        padding: 20px 18px;
+        .toolbar select,
+        .toolbar input {
+            border-radius: 5px;
+        }
+
+        .toolbar .btn {
+            border: none;
+            border-radius: 6px;
+            padding: 6px 9px;
+            font-size: 0.85rem;
+            transition: all 0.2s ease-in-out;
+        }
+
+    /* Icon button colors */
+    .btn-view {
+        background-color: #0dcaf0;
+        color: white;
+    }
+
+    .btn-add {
+        background-color: #0d6efd;
+        color: white;
+    }
+
+    .btn-delete {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .btn-refresh {
+        background-color: #6c757d;
+        color: white;
+    }
+
+    .btn-download {
+        background-color: #198754;
+        color: white;
+    }
+
+    .btn-print {
+        background-color: #212529;
+        color: white;
+    }
+
+    .btn-zoom {
+        background-color: #0d6efd;
+        color: white;
+    }
+
+    .btn-columns {
+        background-color: #6c757d;
+        color: white;
+    }
+
+    /* Hover effects */
+    .toolbar .btn:hover {
+        filter: brightness(0.9);
+        transform: scale(1.05);
+    }
+
+    .toolbar .dropdown-menu {
+        min-width: 230px;
+        max-height: 280px;
+        overflow-y: auto;
+        border-radius: 8px;
+    }
+
+    /* Sticky search bar inside dropdown */
+    .dropdown-search {
+        position: sticky;
+        top: 0;
+        background: white;
+        padding: 5px 8px;
+        border-bottom: 1px solid #ddd;
+        z-index: 10;
+    }
+
+        .dropdown-search input {
+            width: 100%;
+            padding: 5px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+
+    /* Toggle All section */
+    .toggle-all {
+        position: sticky;
+        top: 45px;
+        background: white;
+        padding: 5px 8px;
+        border-bottom: 1px solid #ddd;
+        z-index: 9;
+    }
+
+    .dropdown-item {
+        padding: 4px 10px;
+        font-size: 0.9rem;
     }
 </style>
-<div class="container mt-3">
+
+<div class="container-fluid px-4 mt-3">
     <div class="d-flex justify-content-end">
-        <div class="card shadow-sm" style="width: fit-content; min-width: 650px; margin-right: 0;">
-            <div class="card-body d-flex justify-content-end align-items-center flex-wrap gap-3">
+        <div class="toolbar shadow-sm">
 
-                <!-- Filter dropdown -->
-                <div class="d-flex align-items-center mb-2">
-                    <label class="me-2">Filter By</label>
-                    <select id="filterOption" class="form-select me-2" style="width: 150px;">
-                        <option value="All" selected="@(ViewBag.Filter == "All")">All</option>
-                        <option value="Laptop" selected="@(ViewBag.Filter == "Laptop")">Laptop</option>
-                        <option value="Desktop" selected="@(ViewBag.Filter == "Desktop")">Desktop</option>
-                    </select>
-                    <button id="applyFilter" class="btn btn-secondary btn-sm">Go</button>
-                </div>
+            <!-- Filter -->
+            <div class="d-flex align-items-center">
+                <select id="filterOption" class="form-select form-select-sm me-2" style="width: 150px;">
+                    <option value="All" selected="@(ViewBag.Filter == "All")">All</option>
+                    <option value="Laptop" selected="@(ViewBag.Filter == "Laptop")">Laptop</option>
+                    <option value="Desktop" selected="@(ViewBag.Filter == "Desktop")">Desktop</option>
+                </select>
+                <button id="applyFilter" class="btn btn-outline-secondary btn-sm">Go</button>
+            </div>
 
-                <!-- Rows per page -->
-                <div class="d-flex align-items-center mb-2">
-                    <label class="me-2">Rows per page</label>
-                    <select id="rowsPerPage" class="form-select form-select-sm" style="width: 90px;">
-                        <option value="10" selected="@(ViewBag.PageSize == 10)">10</option>
-                        <option value="25" selected="@(ViewBag.PageSize == 25)">25</option>
-                        <option value="50" selected="@(ViewBag.PageSize == 50)">50</option>
-                        <option value="100" selected="@(ViewBag.PageSize == 100)">100</option>
-                    </select>
-                </div>
-                   
+            <!-- Rows per page -->
+            <div class="d-flex align-items-center">
+                <select id="rowsPerPage" class="form-select form-select-sm me-2" style="width: 80px;">
+                    <option value="10" selected="@(ViewBag.PageSize == 10)">10</option>
+                    <option value="25" selected="@(ViewBag.PageSize == 25)">25</option>
+                    <option value="50" selected="@(ViewBag.PageSize == 50)">50</option>
+                    <option value="100" selected="@(ViewBag.PageSize == 100)">100</option>
+                </select>
+                <span class="text-muted small">Rows per page</span>
+            </div>
 
+            <!-- Search -->
+            <div class="input-group input-group-sm" style="max-width: 220px;">
+                <input type="text" id="tableSearch" class="form-control" placeholder="Search">
+                <button class="btn btn-outline-secondary" id="clearSearch"><i class="fas fa-times"></i></button>
+            </div>
 
+            <!-- Buttons -->
+            <div class="btn-group btn-group-sm ms-auto" role="group">
+                <button class="btn btn-view" title="View Table"><i class="fas fa-table"></i></button>
+                <a asp-controller="Assets" asp-action="Create" class="btn btn-add" title="Add New"><i class="fas fa-plus"></i></a>
+                <button class="btn btn-delete" title="Delete"><i class="fas fa-trash"></i></button>
+                <button class="btn btn-refresh" title="Refresh"><i class="fas fa-sync"></i></button>
+                <button class="btn btn-download" title="Download"><i class="fas fa-download"></i></button>
+                <button class="btn btn-print" title="Print"><i class="fas fa-print"></i></button>
+                <button class="btn btn-zoom" title="Zoom"><i class="fas fa-search-plus"></i></button>
 
+                <!-- Column Toggle -->
+                <div class="dropdown">
+                    <button class="btn btn-columns dropdown-toggle" type="button" id="toggleColumnsBtn" data-bs-toggle="dropdown" aria-expanded="false" title="Show/Hide Columns">
+                        <i class="fas fa-columns"></i>
+                    </button>
 
+                    <ul class="dropdown-menu dropdown-menu-end p-0 shadow-sm" aria-labelledby="toggleColumnsBtn">
+                        <li class="p-2">
+                            <input type="text" id="columnSearch" class="form-control form-control-sm" placeholder="Search columns...">
+                        </li>
 
+                        <li class="p-2 border-top">
+                            <label><input type="checkbox" id="toggleAll" class="form-check-input me-2">Toggle all</label>
+                        </li>
 
-                <div class="d-flex align-items-center mb-3">
-                    <!-- 🔍 Search Box -->
-                    <div class="input-group input-group-sm me-3" style="max-width: 250px;">
-                        <input type="text" id="tableSearch" class="form-control" placeholder="Search">
-                        <button class="btn btn-outline-secondary" id="clearSearch"><i class="fas fa-times"></i></button>
-                    </div>
-
-                    <!-- 🔘 Action Buttons -->
-                    <div class="btn-group btn-group-sm align-items-center" role="group">
-                        <button class="btn btn-info" title="View Table"><i class="fas fa-table"></i></button>
-                        <a asp-controller="Assets" asp-action="Create" class="btn btn-primary" title="Add New">
-                            <i class="fas fa-plus"></i>
-                        </a>
-                        <button class="btn btn-danger" title="Delete"><i class="fas fa-trash"></i></button>
-                        <button class="btn btn-secondary" title="Refresh"><i class="fas fa-sync"></i></button>
-                        <button class="btn btn-success" title="Download"><i class="fas fa-download"></i></button>
-                        <button class="btn btn-dark" title="Print"><i class="fas fa-print"></i></button>
-                        <button class="btn btn-light border" title="Zoom"><i class="fas fa-search-plus"></i></button>
-
-                        <!-- 📊 Column Toggle Dropdown (merged inside group) -->
-                        <div class="dropdown">
-                            <button class="btn btn-outline-secondary dropdown-toggle" type="button"
-                                    id="toggleColumnsBtn" data-bs-toggle="dropdown" aria-expanded="false"
-                                    title="Show/Hide Columns">
-                                <i class="fas fa-columns"></i>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end p-2 shadow-sm" aria-labelledby="toggleColumnsBtn" style="min-width: 180px;">
+                        <!-- Column List -->
+                        <li class="p-2">
+                            <ul class="list-unstyled m-0">
                                 <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="1" checked>Company</label></li>
                                 <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="2" checked>Asset Type</label></li>
                                 <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="3" checked>Department</label></li>
                                 <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="4" checked>UserName</label></li>
                                 <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="5" checked>EmpCode</label></li>
-                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="7" checked>AssetLocation</label></li>
-                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="8" checked>AssetTag</label></li>
-                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="13" checked>Processor</label></li>
-                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="14" checked>Ram</label></li>
-                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="15" checked>HDD</label></li>
+                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="6" checked>Host Name</label></li>
+                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="7" checked>Block</label></li>
+                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="8" checked>AssetLocation</label></li>
+                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="9" checked>AssetTag</label></li>
+                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="11" checked>Make</label></li>
+                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="12" checked>Model</label></li>
+                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="13" checked>Serial No</label></li>
+                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="14" checked>Processor</label></li>
+                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="15" checked>RAM</label></li>
+                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="16" checked>HDD</label></li>
+                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="17" checked>Division</label></li>
+                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="18" checked>AntiVirus</label></li>
+                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="19" checked>Status</label></li>
+                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="20" checked>OS Version</label></li>
+                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="21" checked>AutoCad</label></li>
+                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="22" checked>Office</label></li>
+                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="23" checked>WindowsLicenseKey</label></li>
+                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="24" checked>Office</label></li>
+                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="25" checked>IPAddress</label></li>
+                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="26" checked>AuditStatus</label></li>
                             </ul>
-                        </div>
-                    </div>
+                        </li>
+                    </ul>
                 </div>
-
             </div>
         </div>
     </div>
 </div>
 
 
-
-@if (ViewBag.TotalRecords > ViewBag.PageSize)
-{
-    int totalPages = (int)Math.Ceiling((double)ViewBag.TotalRecords / ViewBag.PageSize);
-    int currentPage = ViewBag.CurrentPage;
-
-    <!-- Pagination below the filter/search card -->
-    <div class="d-flex justify-content-end pe-5 mt-2">
-        <nav>
-            <ul class="pagination mb-0">
-                <li class="page-item @(currentPage == 1 ? "disabled" : "")">
-                    <a class="page-link" href="/Assets/Index?filter=@ViewBag.Filter&page=@(currentPage - 1)&pageSize=@ViewBag.PageSize">Previous</a>
-                </li>
-
-                @for (int i = 1; i <= totalPages; i++)
-                {
-                    <li class="page-item @(i == currentPage ? "active" : "")">
-                        <a class="page-link" href="/Assets/Index?filter=@ViewBag.Filter&page=@i&pageSize=@ViewBag.PageSize">@i</a>
-                    </li>
-                }
-
-                <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
-                    <a class="page-link" href="/Assets/Index?filter=@ViewBag.Filter&page=@(currentPage + 1)&pageSize=@ViewBag.PageSize">Next</a>
-                </li>
-            </ul>
-        </nav>
-    </div>
-}
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    // Example event handlers (connect later to your table or grid)
+    // Filter and rows per page functionality
     $('#applyFilter').on('click', function () {
-        alert('Filter applied: ' + $('#filterOption').val());
-    });
-
-    $('#clearSearch').on('click', function () {
-        $('#tableSearch').val('');
-        alert('Search cleared');
-    });
-
-    $('#tableSearch').on('keyup', function () {
-        console.log('Searching for:', $(this).val());
-    });
-
-    $('#pageLength').on('change', function () {
-        console.log('Rows per page:', $(this).val());
-    });
-
-    document.getElementById("applyFilter").addEventListener("click", function () {
-        const filter = document.getElementById("filterOption").value;
-        const pageSize = document.getElementById("rowsPerPage").value;
+        const filter = $('#filterOption').val();
+        const pageSize = $('#rowsPerPage').val();
         window.location.href = `/Assets/Index?filter=${filter}&page=1&pageSize=${pageSize}`;
     });
 
-    document.getElementById("rowsPerPage").addEventListener("change", function () {
-        const filter = document.getElementById("filterOption").value;
+    $('#rowsPerPage').on('change', function () {
+        const filter = $('#filterOption').val();
         const pageSize = this.value;
         window.location.href = `/Assets/Index?filter=${filter}&page=1&pageSize=${pageSize}`;
     });
 
-     $(document).ready(function () {
-        // Toggle column visibility
-        $('.column-toggle').on('change', function () {
-            var columnIndex = $(this).data('column');
-            var isVisible = $(this).is(':checked');
-            var table = $('table');
+    // Clear Search
+    $('#clearSearch').on('click', function () {
+        $('#tableSearch').val('');
+    });
 
-            table.find('tr').each(function () {
-                $(this).find('th, td').eq(columnIndex).toggle(isVisible);
-            });
+    // Column search inside dropdown
+    $('#columnSearch').on('keyup', function () {
+        const value = $(this).val().toLowerCase();
+        $('#columnList li').filter(function () {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
         });
     });
 
-   </script>
+    // Toggle all checkboxes
+    $('#toggleAll').on('change', function () {
+        const checked = $(this).is(':checked');
+        $('.column-toggle').prop('checked', checked).trigger('change');
+    });
+
+    // Toggle columns dynamically
+    $('.column-toggle').on('change', function () {
+        var columnIndex = $(this).data('column');
+        var isVisible = $(this).is(':checked');
+        $('table tr').each(function () {
+            $(this).find('th, td').eq(columnIndex).toggle(isVisible);
+        });
+    });
+</script>
