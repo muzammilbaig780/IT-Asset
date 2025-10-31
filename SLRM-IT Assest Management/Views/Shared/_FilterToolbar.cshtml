@@ -255,4 +255,20 @@
             $(this).find('th, td').eq(columnIndex).toggle(isVisible);
         });
     });
+
+     $(document).ready(function () {
+        // Search Functionality
+        $("#tableSearch").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+            $("table tbody tr").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+            });
+        });
+
+        // Clear search and show all rows
+        $("#clearSearch").on("click", function () {
+            $("#tableSearch").val('');
+            $("table tbody tr").show();
+        });
+    });
 </script>

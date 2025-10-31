@@ -393,6 +393,31 @@
                 .sidebar.collapsed .menu-item span {
                     display: none;
                 }
+
+            /* --- Fix link color for sidebar menu --- */
+            .sidebar a.menu-item {
+                color: #fff !important;
+                text-decoration: none !important;
+                display: flex;
+                align-items: center;
+            }
+
+                .sidebar a.menu-item:hover {
+                    color: #1d9bf0 !important; /* light blue hover color like Snipe-IT */
+                    background-color: var(--secondary);
+                }
+
+                .sidebar a.menu-item i {
+                    margin-right: 10px;
+                    color: #fff !important;
+                }
+
+                /* Active menu item (currently selected page) */
+                .sidebar a.menu-item.active {
+                    background-color: var(--secondary);
+                    border-left: 4px solid var(--accent);
+                    color: #1d9bf0 !important;
+                }
     </style>
 </head>
 <body>
