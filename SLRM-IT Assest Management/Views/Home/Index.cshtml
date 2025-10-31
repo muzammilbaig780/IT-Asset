@@ -103,10 +103,16 @@
                 User Admin
             </button>
             <ul class="dropdown-menu dropdown-menu-end">
-                <li><a class="dropdown-item" href="#">Profile</a></li>
-                <li><a class="dropdown-item" href="#">Settings</a></li>
-                <li><a class="dropdown-item text-danger" href="#">Logout</a></li>
-            </ul>
+    <!-- Profile link -->
+    <li><a class="dropdown-item" href="@Url.Action("Profile", "Account")">Profile</a></li>
+
+    <!-- Settings link (replace with actual settings page URL if available) -->
+    <li><a class="dropdown-item" href="#">Settings</a></li>
+
+    <!-- Logout link -->
+    <li><a class="dropdown-item text-danger" href="@Url.Action("Logout", "Account")">Logout</a></li>
+</ul>
+
         </div>
     </div>
 </div>

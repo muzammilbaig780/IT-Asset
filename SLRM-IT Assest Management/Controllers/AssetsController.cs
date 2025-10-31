@@ -21,6 +21,17 @@ namespace AssetManagement.Controllers
             _environment = environment;
         }
 
+        private async Task PopulateDropDownsAsync()
+        {
+            ViewBag.AssetTypes = await _context.AssetTypes.ToListAsync();
+            ViewBag.AssetStatuses = await _context.AssetStatuses.ToListAsync();
+            ViewBag.Companies = await _context.Companies.ToListAsync();
+            ViewBag.AssetLocations = await _context.AssetLocations.ToListAsync();
+            ViewBag.Blocks = await _context.Blocks.ToListAsync();
+            ViewBag.Departments = await _context.Departments.ToListAsync();
+            ViewBag.Divisions = await _context.Divisions.ToListAsync();
+        }
+
         public async Task<IActionResult> Index(string filter = "All", int page = 1, int pageSize = 10)
         {
             ViewBag.Filter = filter;

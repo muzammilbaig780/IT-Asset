@@ -105,6 +105,8 @@ namespace SLRM_IT_Assest_Management.Controllers
             return View("LoginRegister", model);
         }
 
+
+
         // GET: /Account/Logout
         public async Task<IActionResult> Logout()
         {
