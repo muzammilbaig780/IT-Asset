@@ -18,7 +18,7 @@
     .container {
         background: white;
         width: 900px;
-        height: 480px;
+        height: 540px;
         border-radius: 20px;
         display: flex;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
@@ -41,6 +41,7 @@
         color: #333;
         margin-bottom: 25px;
         font-size: 28px;
+        text-align: center;
     }
 
     form {
@@ -48,6 +49,7 @@
         flex-direction: column;
         gap: 15px;
         width: 80%;
+        margin: 0 auto;
     }
 
     input {
@@ -85,6 +87,7 @@
         color: red;
         font-weight: 600;
         font-size: 14px;
+        text-align: center;
     }
 
     .illustration-section {
@@ -106,6 +109,7 @@
     .switch-link {
         margin-top: 15px;
         font-size: 14px;
+        text-align: center;
     }
 
         .switch-link a {
@@ -132,6 +136,17 @@
     .container.register-active .register-form {
         display: block;
     }
+
+    /* Logo styling */
+    .logo-container {
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+        .logo-container img {
+            max-width: 100px;
+            height: auto;
+        }
 </style>
 
 <div class="container" id="formContainer">
@@ -139,6 +154,9 @@
 
         <!-- Login Form -->
         <div class="login-form">
+            <div class="logo-container">
+                <img src="~/css/slrm-logo.png" alt="Company Logo" />
+            </div>
             <h2>Sign In</h2>
             <form asp-action="Login" method="post">
                 <div>
@@ -171,6 +189,9 @@
 
         <!-- Register Form -->
         <div class="register-form">
+            <div class="logo-container">
+                <img src="~/css/logo.png" alt="Company Logo" />
+            </div>
             <h2>Create Account</h2>
             <form asp-action="Register" method="post">
                 <div>
