@@ -130,7 +130,6 @@
     </div>
 
     <!-- Dashboard Cards -->
-    <!-- Dashboard Cards -->
     <div class="dashboard-cards">
         <a asp-controller="Assets" asp-action="Index" style="text-decoration: none; color: inherit;">
             <div class="card">
@@ -177,9 +176,24 @@
                 </div>
                 <div class="card-value">@Model.LicenseCount</div>
                 <div class="card-text">Total IT Licenses</div>
+
+                <!-- 👇 Dummy grid to match Asset card height -->
+                <div class="table-responsive mt-3">
+                    <table class="table table-sm table-bordered text-center mb-0" style="font-size: 13px; visibility: hidden;">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Placeholder</th>
+                                <th>Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>-</td><td>-</td></tr>
+                            <tr><td>-</td><td>-</td></tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </a>
-
 
 
         <div class="card">
@@ -216,13 +230,17 @@
         </div>
     </div>
 
-    <!-- Charts Section -->
+    <!-- Buttons + Chart Layout -->
     <div style="display: flex; gap: 40px; flex-wrap: wrap; margin-top: 20px; align-items: flex-start;">
 
         <!-- Pie Chart (Asset Status) -->
         <div style="flex: 1 1 400px; max-width: 400px;">
+            <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 10px;">
+                <button id="btnLaptop" class="btn btn-primary btn-sm">Laptop</button>
+                <button id="btnDesktop" class="btn btn-secondary btn-sm">Desktop</button>
+            </div>
             <h4 style="text-align: center;">Assets</h4>
-            <canvas id="assetStatusPieChart" width="400" height="300"></canvas>
+            <canvas id="assetPieChart" width="400" height="300"></canvas>
         </div>
 
         <!-- Bar Chart (Deployment Status) -->
@@ -230,56 +248,86 @@
             <h4 style="text-align: center;">Deployment Status</h4>
             <canvas id="deploymentBarChart" width="600" height="352"></canvas>
         </div>
-
     </div>
+
 
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
     <script>
-        // Pie Chart
-                         const ctx = document.getElementById('assetStatusPieChart').getContext('2d');
+             document.addEventListener("DOMContentLoaded", function () {
 
-        const assetStatusPieChart = new Chart(ctx, {
-            type: 'pie',
-            data: {
-                labels: ['Active', 'Not Active','Scrap' , 'NA'],
-                datasets: [{
-                    data: [@Model.ActiveCount, @Model.NotActiveCount ,@Model.ScrapCount, @Model.NACount],
-                    backgroundColor: ['#2ecc71', '#e74c3c' , '#95a5a6' , '#24aaff'],
-                    borderWidth: 0
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            usePointStyle: true,
-                            padding: 20,
-                            font: {
-                                size: 14
+            // Injected counts from your C# ViewModel
+            var laptopData = {
+                active: @Model.LaptopActive,
+                notActive: @Model.LaptopNotActive,
+                scrap: @Model.LaptopScrap,
+                na: @Model.LaptopNA
+            };
+
+            var desktopData = {
+                active: @Model.DesktopActive,
+                notActive: @Model.DesktopNotActive,
+                scrap: @Model.DesktopScrap,
+                na: @Model.DesktopNA
+            };
+
+            let pieChart;
+
+            function loadPieChart(data) {
+                const ctx = document.getElementById('assetPieChart').getContext('2d');
+                if (pieChart) pieChart.destroy(); // destroy previous chart if exists
+
+                pieChart = new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: ['Active', 'Not Active', 'Scrap', 'NA'],
+                        datasets: [{
+                            data: [data.active, data.notActive, data.scrap, data.na],
+                            backgroundColor: ['#28a745', '#dc3545', '#6c757d', '#007bff']
+                        }]
+                    },
+                    options: {
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function (tooltipItem) {
+                                        const total = tooltipItem.chart._metasets[tooltipItem.datasetIndex].total;
+                                        const value = tooltipItem.raw;
+                                        const percent = ((value / total) * 100).toFixed(1);
+                                        return tooltipItem.label + ': ' + value + ' (' + percent + '%)';
+                                    }
+                                }
                             }
                         }
-                    },
-                    datalabels: {
-                        color: '#fff',
-                        font: {
-                            weight: 'bold',
-                            size: 14
-                        },
-                        formatter: (value, ctx) => {
-                            const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
-                            const percentage = ((value / total) * 100).toFixed(1);
-                            const label = ctx.chart.data.labels[ctx.dataIndex];
-                            return label + ':' + value + '(' + percentage + '%)';
-                        }
                     }
-                }
-            },
-            plugins: [ChartDataLabels]
+                });
+            }
+
+            // Default chart on page load (Laptop)
+            loadPieChart(laptopData);
+
+            // Toggle Buttons
+            document.getElementById("btnLaptop").addEventListener("click", function () {
+                this.classList.add('btn-primary');
+                this.classList.remove('btn-secondary');
+                document.getElementById("btnDesktop").classList.remove('btn-primary');
+                document.getElementById("btnDesktop").classList.add('btn-secondary');
+                loadPieChart(laptopData);
+            });
+
+            document.getElementById("btnDesktop").addEventListener("click", function () {
+                this.classList.add('btn-primary');
+                this.classList.remove('btn-secondary');
+                document.getElementById("btnLaptop").classList.remove('btn-primary');
+                document.getElementById("btnLaptop").classList.add('btn-secondary');
+                loadPieChart(desktopData);
+            });
+
         });
                // Bar Chart
         const ctxBar = document.getElementById('deploymentBarChart').getContext('2d');

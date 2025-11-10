@@ -20,48 +20,57 @@ namespace SLRM_IT_Assest_Management.Controllers
             _context = context;
         }
 
-        // Main dashboard page
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var activeCount = _context.Assets
-             .Include(a => a.AssetStatus)
-             .Count(a => a.AssetStatus.Name == "Active");
-
-            var notActiveCount = _context.Assets
+            var assets = await _context.Assets
+                .Include(a => a.AssetType)
                 .Include(a => a.AssetStatus)
-                .Count(a => a.AssetStatus.Name == "Not Active");
+                .ToListAsync();
 
-            var scrapCount = _context.Assets
-    .Include(a => a.AssetStatus)
-    .Count(a => a.AssetStatus.Name == "Scrap");
+            var model = new DashboardViewModel();
 
-            var naCount = _context.Assets
-   .Include(a => a.AssetStatus)
-   .Count(a => a.AssetStatus.Name == "NA");
+            // Safe filtering for laptops and desktops
+            var laptops = assets
+                .Where(a => a.AssetType != null &&
+                            a.AssetType.Name.Contains("laptop", StringComparison.OrdinalIgnoreCase))
+                .ToList();
 
-            // Get the logged-in username from the cookie
-            var username = User.Identity.Name;
+            var desktops = assets
+                .Where(a => a.AssetType != null &&
+                            a.AssetType.Name.Contains("desktop", StringComparison.OrdinalIgnoreCase))
+                .ToList();
 
-            // Retrieve user details
-            var loggedInUser = _context.Users.FirstOrDefault(u => u.Username == username);
+            model.LaptopCount = laptops.Count;
+            model.DesktopCount = desktops.Count;
+            model.AssetCount = assets.Count;
 
-            // Build the dashboard view model
-            var dashboardData = new DashboardViewModel
-            {
-                AssetCount = _context.Assets.Count(),
-                LicenseCount = _context.Licenses.Count(),
-                ReadyToDeployCount = _context.Assets.Count(a => a.StatusId == 1),
-                LaptopCount = _context.Assets.Count(a => a.AssetType.Name == "Laptop"),
-                DesktopCount = _context.Assets.Count(a => a.AssetType.Name == "Desktop"),
-                ActiveCount = activeCount,
-                NotActiveCount = notActiveCount,
-                ScrapCount = scrapCount,                //ActiveAssetCount = _context.Assets.Count(),
-                NACount = naCount,                //ActiveAssetCount = _context.Assets.Count(),
-                //InactiveAssetCount = _context.Assets.Count(),
-                LoggedInUser = loggedInUser
-            };
+            // Laptop breakdown
+            model.LaptopActive = laptops.Count(a => a.AssetStatus != null &&
+                a.AssetStatus.Name.Equals("Active", StringComparison.OrdinalIgnoreCase));
 
-            return View(dashboardData);
+            model.LaptopNotActive = laptops.Count(a => a.AssetStatus != null &&
+                a.AssetStatus.Name.Equals("Not Active", StringComparison.OrdinalIgnoreCase));
+
+            model.LaptopScrap = laptops.Count(a => a.AssetStatus != null &&
+                a.AssetStatus.Name.Equals("Scrap", StringComparison.OrdinalIgnoreCase));
+
+            model.LaptopNA = laptops.Count(a => a.AssetStatus != null &&
+                a.AssetStatus.Name.Equals("NA", StringComparison.OrdinalIgnoreCase));
+
+            // Desktop breakdown
+            model.DesktopActive = desktops.Count(a => a.AssetStatus != null &&
+                a.AssetStatus.Name.Equals("Active", StringComparison.OrdinalIgnoreCase));
+
+            model.DesktopNotActive = desktops.Count(a => a.AssetStatus != null &&
+                a.AssetStatus.Name.Equals("Not Active", StringComparison.OrdinalIgnoreCase));
+
+            model.DesktopScrap = desktops.Count(a => a.AssetStatus != null &&
+                a.AssetStatus.Name.Equals("Scrap", StringComparison.OrdinalIgnoreCase));
+
+            model.DesktopNA = desktops.Count(a => a.AssetStatus != null &&
+                a.AssetStatus.Name.Equals("NA", StringComparison.OrdinalIgnoreCase));
+
+            return View(model);
         }
 
         public IActionResult Privacy()
