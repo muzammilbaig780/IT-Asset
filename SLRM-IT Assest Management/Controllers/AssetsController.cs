@@ -32,12 +32,8 @@ namespace AssetManagement.Controllers
             ViewBag.Divisions = await _context.Divisions.ToListAsync();
         }
 
-        public async Task<IActionResult> Index(string filter = "All", int page = 1, int pageSize = 10)
+        public async Task<IActionResult> Index(string filter = "All", int page = 1, string pageSize = "25")
         {
-            ViewBag.Filter = filter;
-            ViewBag.PageSize = pageSize;
-            ViewBag.CurrentPage = page;
-
             var query = _context.Assets
                 .Include(a => a.Company)
                 .Include(a => a.AssetType)
@@ -48,21 +44,34 @@ namespace AssetManagement.Controllers
                 .Include(a => a.Block)
                 .AsQueryable();
 
-            // Apply filter
-            if (!string.IsNullOrEmpty(filter) && filter != "All")
+            if (filter != "All" && !string.IsNullOrEmpty(filter))
             {
                 query = query.Where(a => a.AssetType.Name == filter);
             }
 
-            int totalRecords = await query.CountAsync();
-            ViewBag.TotalRecords = totalRecords;
+            var totalRecords = await query.CountAsync();
 
-            // Apply pagination
+            // ✅ Handle “All” case
+            int pageSizeValue;
+            if (pageSize.Equals("All", StringComparison.OrdinalIgnoreCase))
+            {
+                pageSizeValue = totalRecords;
+            }
+            else
+            {
+                pageSizeValue = int.TryParse(pageSize, out var ps) ? ps : 25;
+            }
+
             var assets = await query
                 .OrderBy(a => a.AssetId)
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
+                .Skip((page - 1) * pageSizeValue)
+                .Take(pageSizeValue)
                 .ToListAsync();
+
+            ViewBag.Page = page;
+            ViewBag.PageSize = pageSize;
+            ViewBag.TotalRecords = totalRecords;
+            ViewBag.Filter = filter;
 
             return View(assets);
         }
@@ -221,11 +230,8 @@ namespace AssetManagement.Controllers
             return _context.Assets.Any(e => e.AssetId == id);
         }
 
-        // GET: Import
-        //public IActionResult Import()
-        //{
-        //    return View();
-        //}
+        //GET: Import
+      
 
         public IActionResult Import()
         {
@@ -259,20 +265,12 @@ namespace AssetManagement.Controllers
 
                         int rowCount = worksheet.Dimension.Rows;
 
-                        for (int row = 2; row <= rowCount; row++) // Skip header
+                        for (int row = 2; row <= rowCount; row++) // skip header
                         {
                             if (string.IsNullOrWhiteSpace(worksheet.Cells[row, 1]?.Text)) continue;
 
-                            // NOTE: Column indexes updated to match the provided Excel:
-                            // 1=SLNO,2=TYPE,3=DEPARTMENT,4=EMP ID,5=USER NAME,6=HOST NAME,
-                            // 7=BLOCK,8=ASSET LOCATION,9=ASSET ID,10=MAKE,11=MODEL,12=SERIAL NO,
-                            // 13=PROCESSOR,14=RAM,15=HDD,16=DIVISION,17=ANTIVIRUS,18=STATUS,
-                            // 19=OS VERSION,20=AUTOCAD,21=OFFICE,22=WINDOW LICENSE KEY,23=IP ADDRESS,
-                            // 24=NITRO,25=AUDIT STATUS
-
-                            string type = worksheet.Cells[row, 2]?.Text?.Trim();
-
-                            // Base columns (common to all)
+                            // ===== Read Excel columns =====
+                            string assetTypeText = worksheet.Cells[row, 2]?.Text?.Trim();
                             string departmentText = worksheet.Cells[row, 3]?.Text?.Trim();
                             string empId = worksheet.Cells[row, 4]?.Text?.Trim();
                             string userName = worksheet.Cells[row, 5]?.Text?.Trim();
@@ -282,45 +280,106 @@ namespace AssetManagement.Controllers
                             string assetIdText = worksheet.Cells[row, 9]?.Text?.Trim();
                             string makeText = worksheet.Cells[row, 10]?.Text?.Trim();
                             string modelText = worksheet.Cells[row, 11]?.Text?.Trim();
+                            string monitorMakeText = worksheet.Cells[row, 12]?.Text?.Trim();
+                            string monitorModelText = worksheet.Cells[row, 13]?.Text?.Trim();
+                            string serialText = worksheet.Cells[row, 14]?.Text?.Trim();
+                            string processorText = worksheet.Cells[row, 15]?.Text?.Trim();
+                            string ramText = worksheet.Cells[row, 16]?.Text?.Trim();
+                            string hddText = worksheet.Cells[row, 17]?.Text?.Trim();
+                            string divisionText = worksheet.Cells[row, 18]?.Text?.Trim();
+                            string antivirusText = worksheet.Cells[row, 19]?.Text?.Trim();
+                            string statusText = worksheet.Cells[row, 20]?.Text?.Trim();
+                            string osVersionText = worksheet.Cells[row, 21]?.Text?.Trim();
+                            string autoCadText = worksheet.Cells[row, 22]?.Text?.Trim();
+                            string officeText = worksheet.Cells[row, 23]?.Text?.Trim();
+                            string windowKeyText = worksheet.Cells[row, 24]?.Text?.Trim();
+                            string ipText = worksheet.Cells[row, 25]?.Text?.Trim();
+                            string nitroText = worksheet.Cells[row, 26]?.Text?.Trim();
+                            string auditText = worksheet.Cells[row, 27]?.Text?.Trim();
 
-                            string monitorMakeText = "";
-                            string monitorModelText = "";
-                            string serialText = "";
-                            string processorText = "";
-                            string ramText = "";
-                            string hddText = "";
+                            // ===== Ensure master data exists =====
 
-                            // ✅ Adjust column mapping based on type
-                            if (type?.Equals("Desktop", StringComparison.OrdinalIgnoreCase) ?? false)
+                            // 🔹 Asset Type
+                            var assetType = await _context.AssetTypes
+                                .FirstOrDefaultAsync(a => a.Name == assetTypeText);
+                            if (assetType == null && !string.IsNullOrEmpty(assetTypeText))
                             {
-                                monitorMakeText = worksheet.Cells[row, 12]?.Text?.Trim();
-                                monitorModelText = worksheet.Cells[row, 13]?.Text?.Trim();
-                                serialText = worksheet.Cells[row, 14]?.Text?.Trim();
-                                processorText = worksheet.Cells[row, 15]?.Text?.Trim();
-                                ramText = worksheet.Cells[row, 16]?.Text?.Trim();
-                                hddText = worksheet.Cells[row, 17]?.Text?.Trim();
+                                assetType = new AssetType { Name = assetTypeText };
+                                _context.AssetTypes.Add(assetType);
+                                await _context.SaveChangesAsync();
                             }
-                            else // Laptop or other
+
+                            // 🔹 Department
+                            var department = await _context.Departments
+                                .FirstOrDefaultAsync(d => d.DepartmentName == departmentText);
+                            if (department == null && !string.IsNullOrEmpty(departmentText))
                             {
-                                serialText = worksheet.Cells[row, 12]?.Text?.Trim();
-                                processorText = worksheet.Cells[row, 13]?.Text?.Trim();
-                                ramText = worksheet.Cells[row, 14]?.Text?.Trim();
-                                hddText = worksheet.Cells[row, 15]?.Text?.Trim();
+                                department = new Department { DepartmentName = departmentText };
+                                _context.Departments.Add(department);
+                                await _context.SaveChangesAsync();
                             }
 
-                            // Continue with the rest:
-                            string divisionText = worksheet.Cells[row, 16]?.Text?.Trim();
-                            string antivirusText = worksheet.Cells[row, 17]?.Text?.Trim();
-                            string statusText = worksheet.Cells[row, 18]?.Text?.Trim();
-                            string osVersionText = worksheet.Cells[row, 19]?.Text?.Trim();
-                            string autoCadText = worksheet.Cells[row, 20]?.Text?.Trim();
-                            string officeText = worksheet.Cells[row, 21]?.Text?.Trim();
-                            string windowKeyText = worksheet.Cells[row, 22]?.Text?.Trim();
-                            string ipText = worksheet.Cells[row, 23]?.Text?.Trim();
-                            string nitroText = worksheet.Cells[row, 24]?.Text?.Trim();
-                            string auditText = worksheet.Cells[row, 25]?.Text?.Trim();
+                            // 🔹 Block
+                            var block = await _context.Blocks
+                                .FirstOrDefaultAsync(b => b.BlockName == blockText);
+                            if (block == null && !string.IsNullOrEmpty(blockText))
+                            {
+                                block = new Block { BlockName = blockText };
+                                _context.Blocks.Add(block);
+                                await _context.SaveChangesAsync();
+                            }
 
+                            // 🔹 Location
+                            var location = await _context.AssetLocations
+                                .FirstOrDefaultAsync(l => l.Name == locationText);
+                            if (location == null && !string.IsNullOrEmpty(locationText))
+                            {
+                                location = new AssetLocation { Name = locationText };
+                                _context.AssetLocations.Add(location);
+                                await _context.SaveChangesAsync();
+                            }
 
+                            // 🔹 Division
+                            var division = await _context.Divisions
+                                .FirstOrDefaultAsync(d => d.DivisionName == divisionText);
+                            if (division == null && !string.IsNullOrEmpty(divisionText))
+                            {
+                                division = new Division { DivisionName = divisionText };
+                                _context.Divisions.Add(division);
+                                await _context.SaveChangesAsync();
+                            }
+
+                            // 🔹 Company (Default = SLR Metaliks)
+                            string companyText = "SLR Metaliks";
+                            var company = await _context.Companies
+                                .FirstOrDefaultAsync(c => c.CompanyName == companyText);
+                            if (company == null)
+                            {
+                                company = new Company { CompanyName = companyText };
+                                _context.Companies.Add(company);
+                                await _context.SaveChangesAsync();
+                            }
+
+                            // 🔹 Status
+                            int statusId = 1;
+                            if (!string.IsNullOrEmpty(statusText))
+                            {
+                                var existingStatus = await _context.AssetStatuses
+                                    .FirstOrDefaultAsync(s => s.Name.ToLower() == statusText.ToLower());
+                                if (existingStatus == null)
+                                {
+                                    var newStatus = new Status { Name = statusText };
+                                    _context.AssetStatuses.Add(newStatus);
+                                    await _context.SaveChangesAsync();
+                                    statusId = newStatus.StatusId;
+                                }
+                                else
+                                {
+                                    statusId = existingStatus.StatusId;
+                                }
+                            }
+
+                            // ===== Build Asset Object =====
                             var asset = new Asset
                             {
                                 SlNo = int.TryParse(worksheet.Cells[row, 1]?.Text, out int slNo) ? slNo : 0,
@@ -330,106 +389,28 @@ namespace AssetManagement.Controllers
                                 AssetTag = assetIdText,
                                 Make = makeText,
                                 Model = modelText,
-                                MoniterMake = (type?.Equals("Desktop", StringComparison.OrdinalIgnoreCase) ?? false)
-                    ? monitorMakeText   // from Excel
-                    : "NA",
-
-                                MoniterModel = (type?.Equals("Desktop", StringComparison.OrdinalIgnoreCase) ?? false)
-                    ? monitorModelText  // from Excel
-                    : "NA",
-                                // default SerialNo to "NA" if empty
+                                MoniterMake = string.IsNullOrWhiteSpace(monitorMakeText) ? "NA" : monitorMakeText,
+                                MoniterModel = string.IsNullOrWhiteSpace(monitorModelText) ? "NA" : monitorModelText,
                                 SerialNo = string.IsNullOrWhiteSpace(serialText) ? "NA" : serialText,
-                                Processor = processorText,
-                                Ram = ramText,
-                                Hdd = hddText,
-                                AntiVirus = antivirusText,
-                                OSVersion = osVersionText,
-                                AutoCad = autoCadText,
-                                Office = officeText,
-                                WindowLicenseKey = windowKeyText,
-                                IPAddress = ipText,
-                                Nitro = nitroText,
-                                AuditStatus = auditText
+                                Processor = string.IsNullOrWhiteSpace(processorText) ? "NA" : processorText,
+                                Ram = string.IsNullOrWhiteSpace(ramText) ? "NA" : ramText,
+                                Hdd = string.IsNullOrWhiteSpace(hddText) ? "NA" : hddText,
+                                AntiVirus = string.IsNullOrWhiteSpace(antivirusText) ? "NA" : antivirusText,
+                                OSVersion = string.IsNullOrWhiteSpace(osVersionText) ? "NA" : osVersionText,
+                                AutoCad = string.IsNullOrWhiteSpace(autoCadText) ? "NA" : autoCadText,
+                                Office = string.IsNullOrWhiteSpace(officeText) ? "NA" : officeText,
+                                WindowLicenseKey = string.IsNullOrWhiteSpace(windowKeyText) ? "NA" : windowKeyText,
+                                IPAddress = string.IsNullOrWhiteSpace(ipText) ? "NA" : ipText,
+                                Nitro = string.IsNullOrWhiteSpace(nitroText) ? "NA" : nitroText,
+                                AuditStatus = string.IsNullOrWhiteSpace(auditText) ? "NA" : auditText,
+                                AssetTypeId = assetType?.AssetTypeId ?? 1,
+                                DepartmentId = department?.DepartmentId,
+                                BlockId = block?.BlockId,
+                                AssetLocationId = location?.AssetLocationId,
+                                DivisionId = division?.DivisionId,
+                                CompanyId = company.CompanyId,   // ✅ FIXED — always set to SLR Metaliks
+                                StatusId = statusId
                             };
-
-                            // STATUS mapping (col 18)
-                            if (!string.IsNullOrEmpty(statusText))
-                            {
-                                var status = _context.AssetStatuses.FirstOrDefault(s => s.Name == statusText);
-                                asset.StatusId = status?.StatusId
-                                    ?? _context.AssetStatuses.FirstOrDefault(s => s.Name == "Active")?.StatusId
-                                    ?? _context.AssetStatuses.FirstOrDefault()?.StatusId;
-                            }
-                            else
-                            {
-                                asset.StatusId = _context.AssetStatuses.FirstOrDefault(s => s.Name == "Active")?.StatusId
-                                    ?? _context.AssetStatuses.FirstOrDefault()?.StatusId;
-                            }
-
-                            // AssetType mapping (col 2)
-                            if (!string.IsNullOrEmpty(type))
-                            {
-                                var assetType = _context.AssetTypes.FirstOrDefault(t => t.Name == type);
-                                if (assetType != null)
-                                    asset.AssetTypeId = assetType.AssetTypeId;
-                            }
-
-                            // COMPANY handling: keep your current approach (col 2 used previously)
-                            string companyText = worksheet.Cells[row, 2]?.Text?.Trim();
-                            if (!string.IsNullOrEmpty(companyText))
-                            {
-                                var company = _context.Companies.FirstOrDefault(c => c.CompanyName == companyText);
-                                asset.CompanyId = company?.CompanyId ?? _context.Companies.FirstOrDefault()?.CompanyId;
-                            }
-                            else
-                            {
-                                asset.CompanyId = _context.Companies.FirstOrDefault()?.CompanyId;
-                            }
-
-                            // ASSET LOCATION mapping (col 8) - try to match by name first
-                            if (!string.IsNullOrEmpty(locationText))
-                            {
-                                var loc = _context.AssetLocations.FirstOrDefault(l => l.Name == locationText);
-                                asset.AssetLocationId = loc?.AssetLocationId ?? _context.AssetLocations.FirstOrDefault()?.AssetLocationId;
-                            }
-                            else
-                            {
-                                asset.AssetLocationId = _context.AssetLocations.FirstOrDefault()?.AssetLocationId;
-                            }
-
-                            // Department mapping (col 3)
-                            if (!string.IsNullOrEmpty(departmentText))
-                            {
-                                var dept = _context.Departments.FirstOrDefault(d => d.DepartmentName == departmentText);
-                                asset.DepartmentId = dept?.DepartmentId ?? _context.Departments.FirstOrDefault()?.DepartmentId;
-                            }
-                            else
-                            {
-                                asset.DepartmentId = _context.Departments.FirstOrDefault()?.DepartmentId;
-                            }
-
-                            // Block mapping (col 7)
-                            if (!string.IsNullOrEmpty(blockText))
-                            {
-                                var block = _context.Blocks.FirstOrDefault(b => b.BlockName == blockText);
-                                asset.BlockId = block?.BlockId ?? _context.Blocks.FirstOrDefault()?.BlockId;
-                            }
-                            else
-                            {
-                                asset.BlockId = _context.Blocks.FirstOrDefault()?.BlockId;
-                            }
-
-                            // Division mapping (col 16)
-                            if (!string.IsNullOrEmpty(divisionText))
-                            {
-                                // note: your Division model property name in migration is DivisionName; adjust matching as needed
-                                var division = _context.Divisions.FirstOrDefault(b => b.DivisionName == blockText);
-                                asset.DivisionId = division?.DivisionId ?? _context.Divisions.FirstOrDefault()?.DivisionId;
-                            }
-                            else
-                            {
-                                asset.DivisionId = _context.Divisions.FirstOrDefault()?.DivisionId;
-                            }
 
                             assets.Add(asset);
                         }
@@ -437,9 +418,7 @@ namespace AssetManagement.Controllers
                 }
 
                 if (overwriteExisting)
-                {
                     _context.Assets.RemoveRange(_context.Assets);
-                }
 
                 if (assets.Any())
                 {
@@ -456,7 +435,6 @@ namespace AssetManagement.Controllers
                 return RedirectToAction(nameof(Import));
             }
         }
-
 
         public async Task<IActionResult> Laptops(int pageSize = 10)
         {

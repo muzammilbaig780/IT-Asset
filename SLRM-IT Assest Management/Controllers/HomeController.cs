@@ -1,9 +1,10 @@
 using AssetManagement.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SLRM_IT_Assest_Management.Models;
-using System.Linq;
 using System.Diagnostics;
+using System.Linq;
 
 namespace SLRM_IT_Assest_Management.Controllers
 {
@@ -22,6 +23,22 @@ namespace SLRM_IT_Assest_Management.Controllers
         // Main dashboard page
         public IActionResult Index()
         {
+            var activeCount = _context.Assets
+             .Include(a => a.AssetStatus)
+             .Count(a => a.AssetStatus.Name == "Active");
+
+            var notActiveCount = _context.Assets
+                .Include(a => a.AssetStatus)
+                .Count(a => a.AssetStatus.Name == "Not Active");
+
+            var scrapCount = _context.Assets
+    .Include(a => a.AssetStatus)
+    .Count(a => a.AssetStatus.Name == "Scrap");
+
+            var naCount = _context.Assets
+   .Include(a => a.AssetStatus)
+   .Count(a => a.AssetStatus.Name == "NA");
+
             // Get the logged-in username from the cookie
             var username = User.Identity.Name;
 
@@ -34,8 +51,13 @@ namespace SLRM_IT_Assest_Management.Controllers
                 AssetCount = _context.Assets.Count(),
                 LicenseCount = _context.Licenses.Count(),
                 ReadyToDeployCount = _context.Assets.Count(a => a.StatusId == 1),
-                ActiveCount = _context.Assets.Count(a => a.StatusId == 2),
-                NotActiveCount = _context.Assets.Count(a => a.StatusId == 3),
+                LaptopCount = _context.Assets.Count(a => a.AssetType.Name == "Laptop"),
+                DesktopCount = _context.Assets.Count(a => a.AssetType.Name == "Desktop"),
+                ActiveCount = activeCount,
+                NotActiveCount = notActiveCount,
+                ScrapCount = scrapCount,                //ActiveAssetCount = _context.Assets.Count(),
+                NACount = naCount,                //ActiveAssetCount = _context.Assets.Count(),
+                //InactiveAssetCount = _context.Assets.Count(),
                 LoggedInUser = loggedInUser
             };
 

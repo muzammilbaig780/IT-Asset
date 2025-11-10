@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "Filter Toolbar (Styled)";
+    ViewData["Title"] = "Filter Toolbar1(Styled)";
 }
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
@@ -125,9 +125,9 @@
             <div class="d-flex align-items-center">
                 <select id="filterOption" class="form-select form-select-sm me-2" style="width: 150px;">
                     <option value="All" selected="@(ViewBag.Filter == "All")">All</option>
-                    <option value="Laptop" selected="@(ViewBag.Filter == "Laptop")">Laptop</option>
+                   @*  <option value="Laptop" selected="@(ViewBag.Filter == "Laptop")">Laptop</option>
                     <option value="Desktop" selected="@(ViewBag.Filter == "Desktop")">Desktop</option>
-                    <option value="Printer" selected="@(ViewBag.Filter == "Printer")">Printer</option>
+                    <option value="Printer" selected="@(ViewBag.Filter == "Printer")">Printer</option> *@
                 </select>
                 <button id="applyFilter" class="btn btn-outline-secondary btn-sm">Go</button>
             </div>
@@ -135,17 +135,16 @@
             <!-- Rows per page -->
             <div class="d-flex align-items-center">
                 <select id="rowsPerPage" class="form-select form-select-sm me-2" style="width: 80px;">
-                    <option value="10" selected="@(ViewBag.PageSize == "10")">10</option>
-                    <option value="25" selected="@(ViewBag.PageSize == "25")">25</option>
-                    <option value="50" selected="@(ViewBag.PageSize == "50")">50</option>
-                    <option value="100" selected="@(ViewBag.PageSize == "100")">100</option>
-                    <option value="150" selected="@(ViewBag.PageSize == "150")">150</option>
-                    <option value="200" selected="@(ViewBag.PageSize == "200")">200</option>
-                    <option value="250" selected="@(ViewBag.PageSize == "250")">250</option>
-                    <option value="300" selected="@(ViewBag.PageSize == "300")">300</option>
-                    <option value="350" selected="@(ViewBag.PageSize == "350")">350</option>
-                    <option value="400" selected="@(ViewBag.PageSize == "400")">400</option>
-                    <option value="All" selected="@(ViewBag.PageSize == "All")">All</option>
+                    <option value="10" selected="@(ViewBag.PageSize == 10)">10</option>
+                    <option value="25" selected="@(ViewBag.PageSize == 25)">25</option>
+                    <option value="50" selected="@(ViewBag.PageSize == 50)">50</option>
+                    <option value="100" selected="@(ViewBag.PageSize == 100)">150</option>
+                    <option value="100" selected="@(ViewBag.PageSize == 150)">150</option>
+                    <option value="100" selected="@(ViewBag.PageSize == 200)">200</option>
+                    <option value="100" selected="@(ViewBag.PageSize == 250)">250</option>
+                    <option value="100" selected="@(ViewBag.PageSize == 300)">300</option>
+                    <option value="100" selected="@(ViewBag.PageSize == 350)">350</option>
+                    <option value="100" selected="@(ViewBag.PageSize == 400)">400</option>
                 </select>
                 <span class="text-muted small">Rows per page</span>
             </div>
@@ -159,7 +158,7 @@
             <!-- Buttons -->
             <div class="btn-group btn-group-sm ms-auto" role="group">
                 <button class="btn btn-view" title="View Table"><i class="fas fa-table"></i></button>
-                <a asp-controller="Assets" asp-action="Create" class="btn btn-add" title="Add New"><i class="fas fa-plus"></i></a>
+                <a asp-controller="Licenses" asp-action="Create" class="btn btn-add" title="Add New"><i class="fas fa-plus"></i></a>
                 <button class="btn btn-delete" title="Delete"><i class="fas fa-trash"></i></button>
                 <button class="btn btn-refresh" title="Refresh"><i class="fas fa-sync"></i></button>
                 <button class="btn btn-download" title="Download"><i class="fas fa-download"></i></button>
@@ -184,31 +183,21 @@
                         <!-- Column List -->
                         <li class="p-2">
                             <ul class="list-unstyled m-0">
-                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="1" checked>Company</label></li>
-                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="2" checked>Asset Type</label></li>
-                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="3" checked>Department</label></li>
-                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="4" checked>UserName</label></li>
-                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="5" checked>EmpCode</label></li>
-                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="6" checked>Host Name</label></li>
-                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="7" checked>Block</label></li>
-                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="8" checked>AssetLocation</label></li>
-                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="9" checked>AssetTag</label></li>
-                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="10" checked>Make</label></li>
-                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="11" checked>Model</label></li>
-                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="12" checked>Serial No</label></li>
-                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="13" checked>Processor</label></li>
-                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="14" checked>RAM</label></li>
-                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="15" checked>HDD</label></li>
-                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="16" checked>Division</label></li>
-                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="17" checked>AntiVirus</label></li>
-                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="18" checked>Status</label></li>
-                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="19" checked>OS Version</label></li>
-                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="20" checked>AutoCad</label></li>
-                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="21" checked>Office</label></li>
-                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="22" checked>WindowsLicenseKey</label></li>
-                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="23" checked>Office</label></li>
-                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="24" checked>IPAddress</label></li>
-                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="25" checked>AuditStatus</label></li>
+                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="0" checked>Serial No</label></li>
+                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="1" checked>Machine/Service Details</label></li>
+                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="2" checked>Type</label></li>
+                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="3" checked>Division</label></li>
+                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="4" checked>User Dept</label></li>
+                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="5" checked>Qty</label></li>
+                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="6" checked>From Date</label></li>
+                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="7" checked>To Date</label></li>
+                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="8" checked>Work Order No</label></li>
+                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="9" checked>Renewal Before</label></li>
+                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="10" checked>Contact Person</label></li>
+                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="11" checked>Contact No</label></li>
+                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="12" checked>Office Contact No</label></li>
+                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="13" checked>Email ID</label></li>
+                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="14" checked>Address</label></li>
                             </ul>
                         </li>
                     </ul>
@@ -223,13 +212,14 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-       $('#applyFilter').on('click', function () {
+    // Filter and rows per page functionality
+    $('#applyFilter').on('click', function () {
         const filter = $('#filterOption').val();
         const pageSize = $('#rowsPerPage').val();
         window.location.href = `/Assets/Index?filter=${filter}&page=1&pageSize=${pageSize}`;
     });
 
-        $('#rowsPerPage').on('change', function () {
+    $('#rowsPerPage').on('change', function () {
         const filter = $('#filterOption').val();
         const pageSize = this.value;
         window.location.href = `/Assets/Index?filter=${filter}&page=1&pageSize=${pageSize}`;

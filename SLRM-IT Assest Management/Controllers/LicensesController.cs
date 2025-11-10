@@ -137,7 +137,7 @@ namespace AssetManagement.Controllers
             var licenses = new List<License>();
 
             try
-            {  
+            {
                 using var stream = new MemoryStream();
                 await file.CopyToAsync(stream);
                 using var package = new ExcelPackage(stream);
