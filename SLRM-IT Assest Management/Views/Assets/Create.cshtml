@@ -420,6 +420,41 @@
                                             <span asp-validation-for="AuditStatus" class="text-danger"></span>
                                         </div>
                                     </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group mb-3">
+                                            <label asp-for="GRNNumber" class="form-label">GRN Number</label>
+                                            <input asp-for="GRNNumber" class="form-control" placeholder="Enter GRN Number" />
+                                            <span asp-validation-for="GRNNumber" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+                                    <!-- GRN Date -->
+                                    <div class="col-md-4">
+                                        <div class="form-group mb-3">
+                                            <label asp-for="GRNDate" class="form-label">GRN Date</label>
+                                            <input asp-for="GRNDate" type="date" class="form-control" />
+                                            <span asp-validation-for="GRNDate" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Invoice Date -->
+                                    <div class="col-md-4">
+                                        <div class="form-group mb-3">
+                                            <label asp-for="InvoiceDate" class="form-label">Invoice Date</label>
+                                            <input asp-for="InvoiceDate" type="date" class="form-control" />
+                                            <span asp-validation-for="InvoiceDate" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Warranty Period -->
+                                    <div class="col-md-4">
+                                        <div class="form-group mb-3">
+                                            <label asp-for="Warranty" class="form-label">Warranty Period (Months)</label>
+                                            <input asp-for="Warranty" type="number" class="form-control" min="1" max="60" placeholder="Enter months" />
+                                            <span asp-validation-for="Warranty" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>

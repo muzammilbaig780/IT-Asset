@@ -27,7 +27,12 @@ namespace SLRM_IT_Assest_Management.Controllers
                 .Include(a => a.AssetStatus)
                 .ToListAsync();
 
+            var licenses = await _context.Licenses.ToListAsync(); // ? Add this line
+
+             
+
             var model = new DashboardViewModel();
+            model.LicenseCount = licenses.Count;
 
             // Safe filtering for laptops and desktops
             var laptops = assets

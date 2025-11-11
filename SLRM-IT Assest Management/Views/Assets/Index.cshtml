@@ -349,6 +349,10 @@
                         <th>IP Address</th>
                         <th>Nitro</th>
                         <th>Audit Status</th>
+                        <th>GRN Number</th>
+                        <th>GRN Date</th>
+                        <th>Invoice Date</th>
+                        <th>Warranty</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -387,6 +391,10 @@
                             <td>@item.IPAddress</td>
                             <td>@item.Nitro</td>
                             <td>@item.AuditStatus</td>
+                            <td>@item.GRNNumber</td>
+                            <td>@item.GRNDate</td>
+                            <td>@item.InvoiceDate</td>
+                            <td>@item.Warranty</td>
                             <td class="text-center">
                                 <div class="action-buttons">
                                     <a asp-action="Edit" asp-route-id="@item.AssetId" class="btn btn-warning btn-sm">

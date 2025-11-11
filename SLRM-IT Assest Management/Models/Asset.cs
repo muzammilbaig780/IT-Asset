@@ -133,5 +133,22 @@ namespace SLRM_IT_Assest_Management.Models
 
         [Required(ErrorMessage = "Audit Status is required.")]
         public string? AuditStatus { get; set; }
+
+
+        [Required(ErrorMessage = "Grn Number is required.")]
+        public string? GRNNumber { get; set; }
+
+
+        [Required(ErrorMessage = "Grn Date is required.")]
+        public DateOnly? GRNDate { get; set; }
+
+
+        [Required(ErrorMessage = "Invoice Date is required.")]
+        public DateOnly? InvoiceDate { get; set; }
+
+
+        [Required(ErrorMessage = "Warranty period is required.")]
+        [Range(1, 60, ErrorMessage = "Warranty period must be between 1 and 60 months.")]
+        public int? Warranty { get; set; }
     }
 }

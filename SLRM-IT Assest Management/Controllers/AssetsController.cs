@@ -307,6 +307,10 @@ namespace AssetManagement.Controllers
                             string ipText = worksheet.Cells[row, nextCol++]?.Text?.Trim();
                             string nitroText = worksheet.Cells[row, nextCol++]?.Text?.Trim();
                             string auditText = worksheet.Cells[row, nextCol++]?.Text?.Trim();
+                            string gRNNumbertext = worksheet.Cells[row, nextCol++]?.Text?.Trim();
+                            string gRNDatetext = worksheet.Cells[row, nextCol++]?.Text?.Trim();
+                            string invoiceDate = worksheet.Cells[row, nextCol++]?.Text?.Trim();
+                            string warranty = worksheet.Cells[row, nextCol++]?.Text?.Trim();
 
                             // ===== Ensure master data exists =====
                             var assetType = await _context.AssetTypes.FirstOrDefaultAsync(a => a.Name == assetTypeText);
@@ -370,6 +374,25 @@ namespace AssetManagement.Controllers
                                     statusId = status.StatusId;
                             }
 
+                            // --- Convert GRN Date ---
+                            DateOnly? grnDate = null;
+                            if (DateOnly.TryParse(gRNDatetext, out var parsedGRN))
+                                grnDate = parsedGRN;
+                            else if (double.TryParse(gRNDatetext, out var oaDateValue)) // handle Excel numeric date
+                                grnDate = DateOnly.FromDateTime(DateTime.FromOADate(oaDateValue));
+
+                            // --- Convert Invoice Date ---
+                            DateOnly? invoiceDateParsed = null;
+                            if (DateOnly.TryParse(invoiceDate, out var parsedInvoice))
+                                invoiceDateParsed = parsedInvoice;
+                            else if (double.TryParse(invoiceDate, out var oaInvoiceValue))
+                                invoiceDateParsed = DateOnly.FromDateTime(DateTime.FromOADate(oaInvoiceValue));
+
+                            // --- Convert Warranty (months) ---
+                            int? warrantyMonths = null;
+                            if (int.TryParse(warranty, out var parsedWarranty))
+                                warrantyMonths = parsedWarranty;
+
                             // ===== Build Asset =====
                             var asset = new Asset
                             {
@@ -394,6 +417,10 @@ namespace AssetManagement.Controllers
                                 IPAddress = string.IsNullOrWhiteSpace(ipText) ? "NA" : ipText,
                                 Nitro = string.IsNullOrWhiteSpace(nitroText) ? "NA" : nitroText,
                                 AuditStatus = string.IsNullOrWhiteSpace(auditText) ? "NA" : auditText,
+                                GRNNumber = gRNNumbertext,
+                                GRNDate = grnDate,
+                                InvoiceDate = invoiceDateParsed,
+                                Warranty = warrantyMonths,
                                 AssetTypeId = assetType?.AssetTypeId ?? 1,
                                 DepartmentId = department?.DepartmentId,
                                 BlockId = block?.BlockId,
