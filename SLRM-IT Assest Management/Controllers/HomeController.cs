@@ -45,17 +45,10 @@ namespace SLRM_IT_Assest_Management.Controllers
             model.AssetCount = assets.Count;
 
             // Laptop breakdown
-            model.LaptopActive = laptops.Count(a => a.AssetStatus != null &&
-                a.AssetStatus.Name.Equals("Active", StringComparison.OrdinalIgnoreCase));
-
-            model.LaptopNotActive = laptops.Count(a => a.AssetStatus != null &&
-                a.AssetStatus.Name.Equals("Not Active", StringComparison.OrdinalIgnoreCase));
-
-            model.LaptopScrap = laptops.Count(a => a.AssetStatus != null &&
-                a.AssetStatus.Name.Equals("Scrap", StringComparison.OrdinalIgnoreCase));
-
-            model.LaptopNA = laptops.Count(a => a.AssetStatus != null &&
-                a.AssetStatus.Name.Equals("NA", StringComparison.OrdinalIgnoreCase));
+            model.LaptopActive = laptops.Count(a => a.AssetStatus?.Name?.Trim().ToUpper() == "ACTIVE");
+            model.LaptopNotActive = laptops.Count(a => a.AssetStatus?.Name?.Trim().ToUpper() == "NOT ACTIVE");
+            model.LaptopScrap = laptops.Count(a => a.AssetStatus?.Name?.Trim().ToUpper() == "SCRAP");
+            model.LaptopNA = laptops.Count(a => a.AssetStatus?.Name?.Trim().ToUpper() == "NA");
 
             // Desktop breakdown
             model.DesktopActive = desktops.Count(a => a.AssetStatus != null &&

@@ -256,9 +256,9 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
     <script>
-             document.addEventListener("DOMContentLoaded", function () {
+                       document.addEventListener("DOMContentLoaded", function () {
 
-            // Injected counts from your C# ViewModel
+            // ✅ Injected counts from your ViewModel
             var laptopData = {
                 active: @Model.LaptopActive,
                 notActive: @Model.LaptopNotActive,
@@ -275,16 +275,21 @@
 
             let pieChart;
 
+            // ✅ Function to render pie chart
             function loadPieChart(data) {
                 const ctx = document.getElementById('assetPieChart').getContext('2d');
-                if (pieChart) pieChart.destroy(); // destroy previous chart if exists
+                if (pieChart) pieChart.destroy();
+
+                const labels = ['Active', 'Not Active', 'Scrap', 'NA'];
+                const values = [data.active, data.notActive, data.scrap, data.na];
+                const total = values.reduce((a, b) => a + b, 0);
 
                 pieChart = new Chart(ctx, {
                     type: 'pie',
                     data: {
-                        labels: ['Active', 'Not Active', 'Scrap', 'NA'],
+                        labels: labels,
                         datasets: [{
-                            data: [data.active, data.notActive, data.scrap, data.na],
+                            data: values,
                             backgroundColor: ['#28a745', '#dc3545', '#6c757d', '#007bff']
                         }]
                     },
@@ -296,22 +301,38 @@
                             tooltip: {
                                 callbacks: {
                                     label: function (tooltipItem) {
-                                        const total = tooltipItem.chart._metasets[tooltipItem.datasetIndex].total;
-                                        const value = tooltipItem.raw;
+                                        const dataset = tooltipItem.chart.data.datasets[tooltipItem.datasetIndex];
+                                        const total = dataset.data.reduce((a, b) => a + b, 0);
+                                        const value = dataset.data[tooltipItem.dataIndex];
                                         const percent = ((value / total) * 100).toFixed(1);
-                                        return tooltipItem.label + ': ' + value + ' (' + percent + '%)';
+                                        return `${tooltipItem.label}: ${value} (${percent}%)`;
                                     }
+                                }
+                            },
+                            datalabels: {
+                                color: '#fff',
+                                font: {
+                                    weight: 'bold',
+                                    size: 13
+                                },
+                                formatter: function (value, context) {
+                                    const label = context.chart.data.labels[context.dataIndex];
+                                    if (value > 0) {
+                                        return `${label}\n${value}`; // show both text + count
+                                    }
+                                    return '';
                                 }
                             }
                         }
-                    }
+                    },
+                    plugins: [ChartDataLabels]
                 });
             }
 
-            // Default chart on page load (Laptop)
+            // ✅ Default: Laptop chart on load
             loadPieChart(laptopData);
 
-            // Toggle Buttons
+            // ✅ Toggle Buttons
             document.getElementById("btnLaptop").addEventListener("click", function () {
                 this.classList.add('btn-primary');
                 this.classList.remove('btn-secondary');
