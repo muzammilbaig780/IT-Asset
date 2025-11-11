@@ -1,10 +1,10 @@
-using AssetManagement.Data; // <-- ApplicationDbContext
+using AssetManagement.Data; // ApplicationDbContext
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Add services to the container
 builder.Services.AddControllersWithViews();
 
 // Register EF Core DbContext
@@ -20,20 +20,29 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.LogoutPath = "/Account/Logout";        // Path to logout action
     });
 
+// Register IConfiguration for dependency injection
+builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configure the HTTP request pipeline
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Home/Error");
+    app.UseHsts();
+}
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
-app.UseAuthentication();  // Ensure authentication is used before authorization
+app.UseAuthentication();  // Authentication must come before Authorization
 app.UseAuthorization();
 
 // Default route configuration
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Account}/{action=LoginRegister}/{id?}" // Default to LoginRegister action in Account controller
+    pattern: "{controller=Account}/{action=LoginRegister}/{id?}"
 );
 
 app.Run();

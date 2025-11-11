@@ -44,10 +44,7 @@
             <i class="fas fa-briefcase"></i>
             <span>Predefined Kits</span>
         </li>
-        <li class="menu-item">
-            <i class="fas fa-chart-bar"></i>
-            <span>Graphs</span>
-        </li>
+        
         <li class="menu-item">
             <a href="@Url.Action("Import", "Assets")" style="text-decoration: none; color: inherit;">
                 <i class="fas fa-file-import"></i>
@@ -104,7 +101,8 @@
             </button>
             <ul class="dropdown-menu dropdown-menu-end">
     <!-- Profile link -->
-    <li><a class="dropdown-item" href="@Url.Action("Profile", "Account")">Profile</a></li>
+                <li>
+                    <a class="dropdown-item" href="@Url.Action( "Index", "Profile")">Profile</a></li>
 
     <!-- Settings link (replace with actual settings page URL if available) -->
     <li><a class="dropdown-item" href="#">Settings</a></li>

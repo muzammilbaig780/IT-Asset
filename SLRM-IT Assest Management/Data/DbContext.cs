@@ -5,6 +5,10 @@ namespace AssetManagement.Data
 {
     public class ApplicationDbContext : DbContext
     {
+        public ApplicationDbContext()
+        {
+        }
+
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
@@ -19,5 +23,7 @@ namespace AssetManagement.Data
         public DbSet<Block> Blocks { get; set; }
         public DbSet<Division> Divisions { get; set; }
         public DbSet<User> Users { get; set; }
+       // public object UserProfiles { get; internal set; }
+        public DbSet<UserProfile> UserProfile { get; set; }
     }
 }

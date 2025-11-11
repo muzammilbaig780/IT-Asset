@@ -171,18 +171,18 @@
                     <span asp-validation-for="Password" class="text-danger"></span>
                 </div>
 
-                <div>
-                    <label asp-for="Email"></label>
-                    <input asp-for="Email" placeholder="Enter your Email" />
-                    <span asp-validation-for="Email" class="text-danger"></span>
-                </div>
-
                 <button type="submit">Sign In</button>
+
                 <p class="message">@ViewBag.Message</p>
 
                 <div class="switch-link">
                     Don’t have an account?
-                    <a onclick="toggleForms()">Sign Up</a>
+                    <a href="/Account/Register">Sign Up</a> <!-- Direct link to register page -->
+                </div>
+
+                <!-- Forgot Password Link -->
+                <div class="forgot-password-link">
+                    <a href="/Account/ForgotPassword">Forgot Password?</a>
                 </div>
             </form>
         </div>
