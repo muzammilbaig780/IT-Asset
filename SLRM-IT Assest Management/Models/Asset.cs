@@ -150,5 +150,8 @@ namespace SLRM_IT_Assest_Management.Models
         [Required(ErrorMessage = "Warranty period is required.")]
         [Range(1, 60, ErrorMessage = "Warranty period must be between 1 and 60 months.")]
         public int? Warranty { get; set; }
+
+        [Required(ErrorMessage = "Expiry Date is required.")]
+        public DateOnly? ExpiryDate { get; set; }
     }
 }

@@ -97,6 +97,15 @@ namespace AssetManagement.Controllers
         {
             if (ModelState.IsValid)
             {
+
+                // ✅ Auto-calculate expiry date
+                if (asset.InvoiceDate.HasValue && asset.Warranty.HasValue)
+                {
+                    asset.ExpiryDate = asset.InvoiceDate.Value.AddMonths(asset.Warranty.Value);
+                }
+
+
+
                 asset.SlNo = (_context.Assets.Max(a => (int?)a.SlNo) ?? 0) + 1;
                 _context.Add(asset);
                 await _context.SaveChangesAsync();

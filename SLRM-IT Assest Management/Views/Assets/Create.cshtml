@@ -449,9 +449,24 @@
                                     <!-- Warranty Period -->
                                     <div class="col-md-4">
                                         <div class="form-group mb-3">
-                                            <label asp-for="Warranty" class="form-label">Warranty Period (Months)</label>
-                                            <input asp-for="Warranty" type="number" class="form-control" min="1" max="60" placeholder="Enter months" />
+                                            <label asp-for="Warranty" class="form-label">Warranty Period</label>
+                                            <select asp-for="Warranty" class="form-control">
+                                                <option value="">--Select Warranty--</option>
+                                                <option value="6">6 Months</option>
+                                                <option value="12">1 Year</option>
+                                                <option value="24">2 Years</option>
+                                                <option value="36">3 Years</option>
+                                            </select>
                                             <span asp-validation-for="Warranty" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="col-md-4">
+                                        <div class="form-group mb-3">
+                                            <label asp-for="ExpiryDate" class="form-label">Expiry Date</label>
+                                            <input asp-for="ExpiryDate" type="Date" class="form-control" min="1" max="60" placeholder="Enter months" />
+                                            <span asp-validation-for="ExpiryDate" class="text-danger"></span>
                                         </div>
                                     </div>
 

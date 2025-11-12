@@ -12,7 +12,7 @@
 
     <style>
         body {
-            background-color: #f4f6f9; /* Softer background */
+            background-color: #f4f6f9;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             padding: 20px;
         }
@@ -40,6 +40,7 @@
         }
 
         .table-container {
+            overflow-x: auto;
             margin-top: 20px;
             background: #ffffff;
             padding: 15px;
@@ -55,31 +56,18 @@
             margin-bottom: 10px;
         }
 
-        .table-header,
-        .table-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .pagination-info {
-            font-size: 14px;
-            color: #6c757d;
-        }
-
-        .action-buttons .btn {
-            margin-right: 5px;
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         /* === TABLE STYLES === */
         .table {
-            table-layout: fixed;
+            table-layout: auto; /* ✅ Let browser auto-fit columns */
             width: 100%;
             border-collapse: collapse;
-            font-size: 14px;
+            font-size: 13px;
             background-color: #fbfcfd;
-            white-space: normal;
-            word-wrap: break-word;
             border-radius: 8px;
             overflow: hidden;
         }
@@ -87,27 +75,26 @@
             .table th,
             .table td {
                 border: 0.5px solid #dee2e6 !important;
-                padding: 8px;
+                padding: 6px 10px; /* ✅ tighter spacing */
                 text-align: center;
                 vertical-align: middle;
                 color: #333;
+                white-space: nowrap; /* ✅ prevents wrapping */
             }
-
-                .table th + th,
-                .table td + td {
-                    border-left: 0.5px solid #dee2e6 !important;
-                }
 
         th {
             background-color: #2a4d8c;
             color: #ffffff;
             font-weight: 600;
-            font-size: 13px;
+            font-size: 12px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            position: sticky;
+            top: 0; /* ✅ Keep header visible while scrolling */
+            z-index: 2;
         }
 
-        /* === Alternate Row Color + Hover === */
+        /* Alternate Row + Hover */
         .table tr:nth-child(even) td {
             background-color: #f8faff;
         }
@@ -117,131 +104,20 @@
             transition: background 0.3s ease;
         }
 
-        /* === COLUMN WIDTHS === */
-        th:nth-child(1), td:nth-child(1) {
-            width: 60px;
-        }
-
-        th:nth-child(2), td:nth-child(2) {
-            width: 140px;
-        }
-
-        th:nth-child(3), td:nth-child(3) {
-            width: 120px;
-        }
-
-        th:nth-child(4), td:nth-child(4) {
-            width: 130px;
-        }
-
-        th:nth-child(5), td:nth-child(5) {
-            width: 120px;
-        }
-
-        th:nth-child(6), td:nth-child(6) {
-            width: 100px;
-        }
-
-        th:nth-child(7), td:nth-child(7) {
-            width: 120px;
-        }
-
-        th:nth-child(8), td:nth-child(8) {
-            width: 100px;
-        }
-
-        th:nth-child(9), td:nth-child(9) {
-            width: 130px;
-        }
-
-        th:nth-child(10), td:nth-child(10) {
-            width: 130px;
-        }
-
-        th:nth-child(11), td:nth-child(11) {
-            width: 120px;
-        }
-
-        th:nth-child(12), td:nth-child(12) {
-            width: 120px;
-        }
-
-        th:nth-child(13), td:nth-child(13) {
-            width: 120px;
-        }
-
-        th:nth-child(14), td:nth-child(14) {
-            width: 120px;
-        }
-
-        th:nth-child(15), td:nth-child(15) {
-            width: 80px;
-        }
-
-        th:nth-child(16), td:nth-child(16) {
-            width: 80px;
-        }
-
-        th:nth-child(17), td:nth-child(17) {
-            width: 120px;
-        }
-
-        th:nth-child(18), td:nth-child(18) {
-            width: 120px;
-        }
-
-        th:nth-child(19), td:nth-child(19) {
-            width: 120px;
-        }
-
-        th:nth-child(20), td:nth-child(20) {
-            width: 120px;
-        }
-
-        th:nth-child(21), td:nth-child(21) {
-            width: 100px;
-        }
-
-        th:nth-child(22), td:nth-child(22) {
-            width: 100px;
-        }
-
-        th:nth-child(23), td:nth-child(23) {
-            width: 150px;
-        }
-
-        th:nth-child(24), td:nth-child(24) {
-            width: 130px;
-        }
-
-        th:nth-child(25), td:nth-child(25) {
-            width: 100px;
-        }
-
-        th:nth-child(26), td:nth-child(26) {
-            width: 100px;
-        }
-
-        th:nth-child(27), td:nth-child(27) {
-            width: 130px;
-        }
-
-        /* === TEXT ALIGNMENT === */
-        td:nth-child(1),
-        td:nth-child(6),
+        /* Make long text wrap in certain columns */
         td:nth-child(15),
         td:nth-child(16),
-        td:nth-child(23),
-        td:nth-child(24),
-        td:nth-child(27) {
-            text-align: center;
+        td:nth-child(17) {
+            white-space: normal;
+            word-wrap: break-word;
         }
 
-        /* === RESPONSIVENESS === */
-        .table-responsive {
-            overflow-x: auto;
+        /* Action buttons */
+        .action-buttons .btn {
+            margin-right: 5px;
         }
 
+        /* Responsive tweaks */
         media (max-width: 992px) {
             th, td
 
@@ -251,7 +127,6 @@
         }
 
         }
-        
 
         media (max-width: 768px) {
             .action-bar
@@ -264,7 +139,7 @@
 
         }
 
-        /* === PAGINATION BUTTONS === */
+        /* Pagination (if any) */
         #pagination button {
             margin: 3px;
             padding: 6px 10px;
@@ -285,8 +160,8 @@
                 color: #fff;
             }
     </style>
-
 </head>
+
 <body>
     <div class="container-fluid">
         <h1 class="page-title">SLRM IT-ASSET MANAGEMENT &gt; Assets</h1>
@@ -298,6 +173,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         }
+
         <!-- Back Button -->
         @{
             await Html.RenderPartialAsync("_BackButton");
@@ -312,103 +188,139 @@
             </a>
             <span class="text-muted small">Total: @Model.Count() assets</span>
         </div>
-        
 
         <div class="table-container">
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>Sl No</th>
-                        <th>Company</th>
-                        <th>Asset Type</th>
-                        <th>Department</th>
-                        <th>Emp Code</th>
-                        <th>User Name</th>
-                        <th>Host Name</th>
-                        <th>Block</th>
-                        <th>Asset Location</th>
-                        <th>Asset Tag</th>
-                        <th>Make</th>
-                        <th>Model</th>
-                        @if (ViewBag.SelectedType == "Desktop")
-                        {
-                            <th>Monitor Make</th>
-                            <th>Monitor Model</th>
-                        }
-                        <th>Serial No</th>
-                        <th>Processor</th>
-                        <th>RAM</th>
-                        <th>HDD</th>
-                        <th>Division</th>
-                        <th>Antivirus</th>
-                        <th>Status</th>
-                        <th>OS Version</th>
-                        <th>AutoCAD</th>
-                        <th>Office</th>
-                        <th>Windows License Key</th>
-                        <th>IP Address</th>
-                        <th>Nitro</th>
-                        <th>Audit Status</th>
-                        <th>GRN Number</th>
-                        <th>GRN Date</th>
-                        <th>Invoice Date</th>
-                        <th>Warranty</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model)
-                    {
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
                         <tr>
-                            <td>@item.SlNo</td>
-                            <td>@item.Company?.CompanyName</td>
-                            <td>@item.AssetType?.Name</td>
-                            <td>@item.Department?.DepartmentName</td>
-                            <td>@item.EmpCode</td>
-                            <td>@item.UserName</td>
-                            <td>@item.HostName</td>
-                            <td>@item.Block?.BlockName</td>
-                            <td>@item.AssetLocation?.Name</td>
-                            <td>@item.AssetTag</td>
-                            <td>@item.Make</td>
-                            <td>@item.Model</td>
+                            <th>Sl No</th>
+                            <th>Company</th>
+                            <th>Asset Type</th>
+                            <th>Department</th>
+                            <th>Emp Code</th>
+                            <th>User Name</th>
+                            <th>Host Name</th>
+                            <th>Block</th>
+                            <th>Asset Location</th>
+                            <th>Asset Tag</th>
+                            <th>Make</th>
+                            <th>Model</th>
                             @if (ViewBag.SelectedType == "Desktop")
                             {
-                                <td>@item.MoniterMake</td>
-                                <td>@item.MoniterModel</td>
+                                <th>Monitor Make</th>
+                                <th>Monitor Model</th>
                             }
-                            <td>@(string.IsNullOrEmpty(item.SerialNo) ? "NA" : item.SerialNo)</td>
-                            <td>@item.Processor</td>
-                            <td>@item.Ram</td>
-                            <td>@item.Hdd</td>
-                            <td>@item.Division?.DivisionName</td>
-                            <td>@item.AntiVirus</td>
-                            <td>@item.AssetStatus?.Name</td>
-                            <td>@item.OSVersion</td>
-                            <td>@item.AutoCad</td>
-                            <td>@item.Office</td>
-                            <td>@item.WindowLicenseKey</td>
-                            <td>@item.IPAddress</td>
-                            <td>@item.Nitro</td>
-                            <td>@item.AuditStatus</td>
-                            <td>@item.GRNNumber</td>
-                            <td>@item.GRNDate</td>
-                            <td>@item.InvoiceDate</td>
-                            <td>@item.Warranty</td>
-                            <td class="text-center">
-                                <div class="action-buttons">
-                                    <a asp-action="Edit" asp-route-id="@item.AssetId" class="btn btn-warning btn-sm">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <a asp-action="Delete" asp-route-id="@item.AssetId" class="btn btn-danger btn-sm">
-                                        <i class="fas fa-trash-alt"></i>
-                                    </a>
-                                </div>
-                            </td>
+                            <th>Serial No</th>
+                            <th>Processor</th>
+                            <th>RAM</th>
+                            <th>HDD</th>
+                            <th>Division</th>
+                            <th>Antivirus</th>
+                            <th>Status</th>
+                            <th>OS Version</th>
+                            <th>AutoCAD</th>
+                            <th>Office</th>
+                            <th>Windows License Key</th>
+                            <th>IP Address</th>
+                            <th>Nitro</th>
+                            <th>Audit Status</th>
+                            <th>GRN Number</th>
+                            <th>GRN Date</th>
+                            <th>Invoice Date</th>
+                            <th>Warranty</th>
+                            <th>ExpiryDate</th>
+                            <th>Actions</th>
                         </tr>
-                    }
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.SlNo</td>
+                                <td>@item.Company?.CompanyName</td>
+                                <td>@item.AssetType?.Name</td>
+                                <td>@item.Department?.DepartmentName</td>
+                                <td>@item.EmpCode</td>
+                                <td>@item.UserName</td>
+                                <td>@item.HostName</td>
+                                <td>@item.Block?.BlockName</td>
+                                <td>@item.AssetLocation?.Name</td>
+                                <td>@item.AssetTag</td>
+                                <td>@item.Make</td>
+                                <td>@item.Model</td>
+                                @if (ViewBag.SelectedType == "Desktop")
+                                {
+                                    <td>@item.MoniterMake</td>
+                                    <td>@item.MoniterModel</td>
+                                }
+                                <td>@(string.IsNullOrEmpty(item.SerialNo) ? "NA" : item.SerialNo)</td>
+                                <td>@item.Processor</td>
+                                <td>@item.Ram</td>
+                                <td>@item.Hdd</td>
+                                <td>@item.Division?.DivisionName</td>
+                                <td>@item.AntiVirus</td>
+                                <td>@item.AssetStatus?.Name</td>
+                                <td>@item.OSVersion</td>
+                                <td>@item.AutoCad</td>
+                                <td>@item.Office</td>
+                                <td>@item.WindowLicenseKey</td>
+                                <td>@item.IPAddress</td>
+                                <td>@item.Nitro</td>
+                                <td>@item.AuditStatus</td>
+                                <td>@(string.IsNullOrEmpty(item.GRNNumber) ? "NA" : item.GRNNumber)</td>
+                                <td>@(item.GRNDate.HasValue? item.GRNDate.Value.ToString("dd/MM/yyyy") : "NA")</td>
+                                <td>@(item.InvoiceDate.HasValue? item.InvoiceDate.Value.ToString("dd/MM/yyyy") : "NA")</td>
+                                <td>@(item.Warranty.HasValue ? $"{item.Warranty} Months" : "NA")</td>
+<td>
+    @if (item.ExpiryDate.HasValue)
+    {
+        var daysLeft = (item.ExpiryDate.Value.ToDateTime(TimeOnly.MinValue) - DateTime.Today).Days;
+        string status;
+        string color;
+
+        if (daysLeft <= 0)
+        {
+            status = "❌ Expired";
+            color = "text-danger";
+        }
+        else if (daysLeft <= 30)
+        {
+            status = "⚠️ Expiring Soon";
+            color = "text-warning";
+        }
+        else
+        {
+            status = "✅ Active";
+            color = "text-success";
+        }
+
+        <span>@item.ExpiryDate.Value.ToString("dd/MM/yyyy")</span><br />
+        <small class="@color fw-semibold">@status</small><br />
+        <small>(@daysLeft days left)</small>
+    }
+    else
+    {
+        <span>NA</span>
+    }
+</td>
+
+
+                                <td class="text-center">
+                                    <div class="action-buttons">
+                                        <a asp-action="Edit" asp-route-id="@item.AssetId" class="btn btn-warning btn-sm">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@item.AssetId" class="btn btn-danger btn-sm">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
