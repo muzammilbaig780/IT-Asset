@@ -1,5 +1,4 @@
 ﻿@model IEnumerable<SLRM_IT_Assest_Management.Models.Asset>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -63,7 +62,7 @@
 
         /* === TABLE STYLES === */
         .table {
-            table-layout: auto; /* ✅ Let browser auto-fit columns */
+            table-layout: auto;
             width: 100%;
             border-collapse: collapse;
             font-size: 13px;
@@ -75,22 +74,22 @@
             .table th,
             .table td {
                 border: 0.5px solid #dee2e6 !important;
-                padding: 6px 10px; /* ✅ tighter spacing */
+                padding: 6px 10px;
                 text-align: center;
                 vertical-align: middle;
                 color: #333;
-                white-space: nowrap; /* ✅ prevents wrapping */
+                white-space: nowrap;
             }
 
         th {
             background-color: #2a4d8c;
             color: #ffffff;
             font-weight: 600;
-            font-size: 12px;
+            font-size: 16px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             position: sticky;
-            top: 0; /* ✅ Keep header visible while scrolling */
+            top: 0;
             z-index: 2;
         }
 
@@ -139,7 +138,7 @@
 
         }
 
-        /* Pagination (if any) */
+        /* Pagination */
         #pagination button {
             margin: 3px;
             padding: 6px 10px;
@@ -159,6 +158,132 @@
                 background-color: #3459b1;
                 color: #fff;
             }
+
+        /* === EXCEL-STYLE FILTER STYLES === */
+        .filter-header {
+            position: relative;
+            cursor: pointer;
+            padding-right: 25px !important; /* Space for filter icon */
+        }
+
+        .filter-icon {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 12px;
+            opacity: 0.8;
+            transition: opacity 0.2s ease;
+        }
+
+        .filter-header:hover .filter-icon {
+            opacity: 1;
+        }
+
+        .filter-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1000;
+            min-width: 200px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 10px;
+            display: none;
+            margin-top: 2px;
+        }
+
+            .filter-dropdown.active {
+                display: block;
+            }
+
+        .filter-options {
+            max-height: 200px;
+            overflow-y: auto;
+            margin-bottom: 10px;
+        }
+
+        .filter-option {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+            padding: 5px 8px;
+            cursor: pointer;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+
+            .filter-option:hover {
+                background-color: #f5f5f5;
+            }
+
+            .filter-option input {
+                margin-right: 8px;
+                flex-shrink: 0;
+            }
+
+            .filter-option label {
+                cursor: pointer;
+                margin: 0;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                flex: 1;
+            }
+
+        .filter-search {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 6px 8px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+
+        .filter-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+        }
+
+            .filter-actions button {
+                padding: 5px 12px;
+                font-size: 11px;
+                border: none;
+                border-radius: 3px;
+                cursor: pointer;
+            }
+
+        .filtered-column {
+            background-color: #1a3a7a !important; /* Darker blue for filtered columns */
+        }
+
+            .filtered-column .filter-icon {
+                color: #ffeb3b; /* Yellow icon for filtered columns */
+            }
+
+        /* Ensure dropdown doesn't get cut off by table container */
+        .table-responsive {
+            position: relative;
+        }
+
+        .table-scroll {
+            width: 100%;
+            overflow-x: auto;
+            overflow-y: hidden;
+        }
+
+        #assets-table {
+            min-width: 2000px; /* Increase if more columns */
+            white-space: nowrap;
+        }
     </style>
 </head>
 
@@ -186,50 +311,158 @@
             <a asp-action="Create" class="btn btn-primary btn-add">
                 <i class="fas fa-plus"></i> Add New Asset
             </a>
-            <span class="text-muted small">Total: @Model.Count() assets</span>
+            <span class="text-muted small">Total: <span id="total-count">@Model.Count()</span> assets</span>
         </div>
-
+     
         <div class="table-container">
             <div class="table-responsive">
-                <table class="table table-hover">
+                <table class="table table-hover" id="assets-table">
                     <thead>
                         <tr>
-                            <th>Sl No</th>
-                            <th>Company</th>
-                            <th>Asset Type</th>
-                            <th>Department</th>
-                            <th>Emp Code</th>
-                            <th>User Name</th>
-                            <th>Host Name</th>
-                            <th>Block</th>
-                            <th>Asset Location</th>
-                            <th>Asset Tag</th>
-                            <th>Make</th>
-                            <th>Model</th>
-                            @if (ViewBag.SelectedType == "Desktop")
+                            <th class="filter-header">
+                                Sl No
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th>
+                            <th class="filter-header">
+                                Status
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th>
+                            <th class="filter-header">
+                                Asset Tag
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th>
+                            <th class="filter-header">
+                                Asset Type
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th>
+                            <th class="filter-header">
+                                Department
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th>
+                            <th class="filter-header">
+                                Emp Code
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th>
+                            <th class="filter-header">
+                                User Name
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th>
+                            <th class="filter-header">
+                                Host Name
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th>
+                            <th class="filter-header">
+                                Block
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th>
+                            <th class="filter-header">
+                                Asset Location
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th>
+                           
+                            <th class="filter-header">
+                                Make
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th>
+                            <th class="filter-header">
+                                Model
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th>
+
+                            
+                            @if (ViewBag.Filter?.ToString() == "Desktop")
                             {
-                                <th>Monitor Make</th>
-                                <th>Monitor Model</th>
+                                <th class="filter-header">
+                                    Monitor Make
+                                    <i class="fas fa-filter filter-icon"></i>
+                                </th>
+                                <th class="filter-header">
+                                    Monitor Model
+                                    <i class="fas fa-filter filter-icon"></i>
+                                </th>
+
+                                <th class="filter-header">
+                                    CPU Serial No
+                                    <i class="fas fa-filter filter-icon"></i>
+                                </th>
                             }
-                            <th>Serial No</th>
-                            <th>Processor</th>
-                            <th>RAM</th>
-                            <th>HDD</th>
-                            <th>Division</th>
-                            <th>Antivirus</th>
-                            <th>Status</th>
-                            <th>OS Version</th>
-                            <th>AutoCAD</th>
-                            <th>Office</th>
-                            <th>Windows License Key</th>
-                            <th>IP Address</th>
-                            <th>Nitro</th>
-                            <th>Audit Status</th>
-                            <th>GRN Number</th>
-                            <th>GRN Date</th>
-                            <th>Invoice Date</th>
-                            <th>Warranty</th>
-                            <th>ExpiryDate</th>
+                            <th class="filter-header">
+                                Serial No
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th>
+                            <th class="filter-header">
+                                Processor
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th>
+                            <th class="filter-header">
+                                RAM
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th>
+                            <th class="filter-header">
+                                HDD
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th>
+                            <th class="filter-header">
+                                Division
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th>
+                            <th class="filter-header">
+                                Antivirus
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th>
+                          
+                            <th class="filter-header">
+                                OS Version
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th>
+                            <th class="filter-header">
+                                AutoCAD
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th>
+                            <th class="filter-header">
+                                Office
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th>
+                            <th class="filter-header">
+                                Windows License Key
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th>
+                            <th class="filter-header">
+                                IP Address
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th>
+                            <th class="filter-header">
+                                Nitro
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th>
+                           @*  <th class="filter-header">
+                                Audit Status
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th> *@
+                            <th class="filter-header">
+                                CatridgeType
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th>
+                            <th class="filter-header">
+                                GRN Number
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th>
+                            <th class="filter-header">
+                                GRN Date
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th>
+                            <th class="filter-header">
+                                Invoice Date
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th>
+                            <th class="filter-header">
+                                Warranty
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th>
+                            <th class="filter-header">
+                                ExpiryDate
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -238,21 +471,24 @@
                         {
                             <tr>
                                 <td>@item.SlNo</td>
-                                <td>@item.Company?.CompanyName</td>
+                                <td>@item.AssetStatus?.Name</td>
+                                <td>@item.AssetTag</td>
+                            @*     <td>@item.Company?.CompanyName</td> *@
                                 <td>@item.AssetType?.Name</td>
                                 <td>@item.Department?.DepartmentName</td>
                                 <td>@item.EmpCode</td>
                                 <td>@item.UserName</td>
                                 <td>@item.HostName</td>
                                 <td>@item.Block?.BlockName</td>
-                                <td>@item.AssetLocation?.Name</td>
-                                <td>@item.AssetTag</td>
+                                <td>@item.AssetLocation?.Name</td>                             
                                 <td>@item.Make</td>
                                 <td>@item.Model</td>
-                                @if (ViewBag.SelectedType == "Desktop")
+
+                                @if (ViewBag.Filter?.ToString() == "Desktop")
                                 {
                                     <td>@item.MoniterMake</td>
                                     <td>@item.MoniterModel</td>
+                                    <td>@item.CPUSerialNo</td>
                                 }
                                 <td>@(string.IsNullOrEmpty(item.SerialNo) ? "NA" : item.SerialNo)</td>
                                 <td>@item.Processor</td>
@@ -260,52 +496,55 @@
                                 <td>@item.Hdd</td>
                                 <td>@item.Division?.DivisionName</td>
                                 <td>@item.AntiVirus</td>
-                                <td>@item.AssetStatus?.Name</td>
+                             
                                 <td>@item.OSVersion</td>
                                 <td>@item.AutoCad</td>
                                 <td>@item.Office</td>
                                 <td>@item.WindowLicenseKey</td>
                                 <td>@item.IPAddress</td>
                                 <td>@item.Nitro</td>
-                                <td>@item.AuditStatus</td>
+                            @*     <td>@item.AuditStatus</td> *@
+                                <td>@item.CatridgeType</td>
                                 <td>@(string.IsNullOrEmpty(item.GRNNumber) ? "NA" : item.GRNNumber)</td>
                                 <td>@(item.GRNDate.HasValue? item.GRNDate.Value.ToString("dd/MM/yyyy") : "NA")</td>
                                 <td>@(item.InvoiceDate.HasValue? item.InvoiceDate.Value.ToString("dd/MM/yyyy") : "NA")</td>
                                 <td>@(item.Warranty.HasValue ? $"{item.Warranty} Months" : "NA")</td>
-<td>
-    @if (item.ExpiryDate.HasValue)
-    {
-        var daysLeft = (item.ExpiryDate.Value.ToDateTime(TimeOnly.MinValue) - DateTime.Today).Days;
-        string status;
-        string color;
+                                <td>
+                                    @if (item.ExpiryDate.HasValue)
+                                    {
+                                        var daysLeft = (item.ExpiryDate.Value.ToDateTime(TimeOnly.MinValue) - DateTime.Today).Days;
+                                        string status;
+                                        string color;
 
-        if (daysLeft <= 0)
-        {
-            status = "❌ Expired";
-            color = "text-danger";
-        }
-        else if (daysLeft <= 30)
-        {
-            status = "⚠️ Expiring Soon";
-            color = "text-warning";
-        }
-        else
-        {
-            status = "✅ Active";
-            color = "text-success";
-        }
+                                        if (daysLeft <= 0)
+                                        {
+                                            status = " Expired";
+                                            color = "text-danger";
+                                        }
+                                        else if (daysLeft <= 30)
+                                        {
+                                            status = "⚠️ Expiring Soon";
+                                            color = "text-warning";
+                                        }
+                                        else
+                                        {
+                                            status = "✅ Active";
+                                            color = "text-success";
+                                        }
 
-        <span>@item.ExpiryDate.Value.ToString("dd/MM/yyyy")</span><br />
-        <small class="@color fw-semibold">@status</small><br />
-        <small>(@daysLeft days left)</small>
-    }
-    else
-    {
-        <span>NA</span>
-    }
-</td>
+                                        <span>@item.ExpiryDate.Value.ToString("dd/MM/yyyy")</span>
+                                
+                                        <br />
+                                        <small class="@color fw-semibold">@status</small>
 
-
+                                        <br />
+                                        <small>(@daysLeft days left)</small>
+                                    }
+                                    else
+                                    {
+                                        <span>NA</span>
+                                    }
+                                </td>
                                 <td class="text-center">
                                     <div class="action-buttons">
                                         <a asp-action="Edit" asp-route-id="@item.AssetId" class="btn btn-warning btn-sm">
@@ -313,6 +552,11 @@
                                         </a>
                                         <a asp-action="Delete" asp-route-id="@item.AssetId" class="btn btn-danger btn-sm">
                                             <i class="fas fa-trash-alt"></i>
+                                        </a>
+                                        <a asp-action="TransferHistory"
+                                           asp-route-id="@item.AssetId"
+                                           class="btn btn-info btn-sm ms-1">
+                                            <i class="fas fa-history"></i>
                                         </a>
                                     </div>
                                 </td>
@@ -323,7 +567,241 @@
             </div>
         </div>
     </div>
-
+   
+  
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Create filter dropdowns for each column
+            const filterHeaders = document.querySelectorAll('.filter-header');
+
+            filterHeaders.forEach((header, index) => {
+                // Create filter dropdown container
+                const dropdown = document.createElement('div');
+                dropdown.className = 'filter-dropdown';
+                dropdown.dataset.columnIndex = index;
+
+                // Add search input for text columns
+                const searchInput = document.createElement('input');
+                searchInput.type = 'text';
+                searchInput.className = 'filter-search';
+                searchInput.placeholder = 'Search...';
+                dropdown.appendChild(searchInput);
+
+                // Add options container
+                const optionsContainer = document.createElement('div');
+                optionsContainer.className = 'filter-options';
+                dropdown.appendChild(optionsContainer);
+
+                // Add action buttons
+                const actionsDiv = document.createElement('div');
+                actionsDiv.className = 'filter-actions';
+
+                const applyBtn = document.createElement('button');
+                applyBtn.type = 'button';
+                applyBtn.className = 'btn btn-primary btn-sm';
+                applyBtn.textContent = 'Apply';
+                applyBtn.onclick = function() { applyFilter(index); };
+
+                const clearBtn = document.createElement('button');
+                clearBtn.type = 'button';
+                clearBtn.className = 'btn btn-secondary btn-sm';
+                clearBtn.textContent = 'Clear';
+                clearBtn.onclick = function() { clearFilter(index); };
+
+                actionsDiv.appendChild(applyBtn);
+                actionsDiv.appendChild(clearBtn);
+                dropdown.appendChild(actionsDiv);
+
+                // Append dropdown to header
+                header.appendChild(dropdown);
+
+                // Populate filter options
+                populateFilterOptions(index);
+
+                // Toggle dropdown on click
+                header.addEventListener('click', function(e) {
+                    // Close all other dropdowns
+                    document.querySelectorAll('.filter-dropdown.active').forEach(d => {
+                        if (d !== dropdown) d.classList.remove('active');
+                    });
+
+                    // Toggle current dropdown
+                    dropdown.classList.toggle('active');
+
+                    // Focus search input when dropdown opens
+                    if (dropdown.classList.contains('active')) {
+                        setTimeout(() => searchInput.focus(), 100);
+                    }
+
+                    e.stopPropagation();
+                });
+            });
+
+            // Close dropdowns when clicking outside
+            document.addEventListener('click', function() {
+                document.querySelectorAll('.filter-dropdown.active').forEach(d => {
+                    d.classList.remove('active');
+                });
+            });
+
+                   function populateFilterOptions(columnIndex) {
+            const dropdown = document.querySelector(`.filter-dropdown[data-column-index="${columnIndex}"]`);
+            const optionsContainer = dropdown.querySelector('.filter-options');
+            const searchInput = dropdown.querySelector('.filter-search');
+
+            optionsContainer.innerHTML = '';
+
+            const table = document.getElementById('assets-table');
+            const rows = table.querySelectorAll('tbody tr');
+
+            const valueCount = {}; // ✅ store value + count
+
+            rows.forEach(row => {
+                const cell = row.cells[columnIndex];
+                if (!cell) return;
+
+                let value = cell.textContent.trim();
+
+                // ✅ ExpiryDate special handling
+                if (columnIndex === 33) {
+                    const dateMatch = value.match(/\d{2}\/\d{2}\/\d{4}/);
+                    if (dateMatch) value = dateMatch[0];
+                }
+
+                if (value && value !== 'NA') {
+                    valueCount[value] = (valueCount[value] || 0) + 1;
+                }
+            });
+
+            const sortedValues = Object.keys(valueCount).sort();
+
+            sortedValues.forEach(value => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'filter-option';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.value = value;
+                checkbox.id = `filter-${columnIndex}-${value.replace(/\s+/g, '-')}`;
+
+                const label = document.createElement('label');
+                label.htmlFor = checkbox.id;
+                label.textContent = `${value} (${valueCount[value]})`; // ✅ COUNT SHOWN
+
+                optionDiv.appendChild(checkbox);
+                optionDiv.appendChild(label);
+                optionsContainer.appendChild(optionDiv);
+            });
+
+            // ✅ Search inside filter
+            searchInput.addEventListener('input', function () {
+                const searchTerm = this.value.toLowerCase();
+                const options = optionsContainer.querySelectorAll('.filter-option');
+
+                options.forEach(option => {
+                    const text = option.textContent.toLowerCase();
+                    option.style.display = text.includes(searchTerm) ? 'flex' : 'none';
+                });
+            });
+        }
+
+                     // ✅ Search inside filter
+        searchInput.addEventListener('input', function () {
+            const searchTerm = this.value.toLowerCase();
+            const options = optionsContainer.querySelectorAll('.filter-option');
+
+            options.forEach(option => {
+                const text = option.textContent.toLowerCase();
+                option.style.display = text.includes(searchTerm) ? 'flex' : 'none';
+            });
+        });
+
+            // Function to apply filter
+            function applyFilter(columnIndex) {
+                const dropdown = document.querySelector(`.filter-dropdown[data-column-index="${columnIndex}"]`);
+                const checkedOptions = dropdown.querySelectorAll('input[type="checkbox"]:checked');
+
+                // Get selected values
+                const selectedValues = Array.from(checkedOptions).map(option => option.value);
+
+                if (selectedValues.length === 0) {
+                    // No filter applied
+                    clearFilter(columnIndex);
+                    return;
+                }
+
+                // Apply filter to table rows
+                const table = document.getElementById('assets-table');
+                const rows = table.querySelectorAll('tbody tr');
+                let visibleCount = 0;
+
+                rows.forEach(row => {
+                    const cell = row.cells[columnIndex];
+                    let cellValue = cell.textContent.trim();
+
+                    // For expiry date column, extract just the date part
+                    if (columnIndex === 33) { // ExpiryDate column
+                        const dateMatch = cellValue.match(/\d{2}\/\d{2}\/\d{4}/);
+                        if (dateMatch) cellValue = dateMatch[0];
+                    }
+
+                    if (selectedValues.includes(cellValue)) {
+                        row.style.display = '';
+                        visibleCount++;
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+
+                // Update total count
+                document.getElementById('total-count').textContent = visibleCount;
+
+                // Highlight filtered column
+                document.querySelectorAll('.filtered-column').forEach(el => {
+                    el.classList.remove('filtered-column');
+                });
+                document.querySelectorAll('.filter-header')[columnIndex].classList.add('filtered-column');
+
+                // Close dropdown
+                dropdown.classList.remove('active');
+            }
+
+            // Function to clear filter
+            function clearFilter(columnIndex) {
+                const dropdown = document.querySelector(`.filter-dropdown[data-column-index="${columnIndex}"]`);
+
+                // Uncheck all checkboxes
+                dropdown.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+
+                // Show all rows
+                const table = document.getElementById('assets-table');
+                const rows = table.querySelectorAll('tbody tr');
+                rows.forEach(row => {
+                    row.style.display = '';
+                });
+
+                // Update total count
+                document.getElementById('total-count').textContent = rows.length;
+
+                // Remove highlight from column
+                document.querySelectorAll('.filtered-column').forEach(el => {
+                    el.classList.remove('filtered-column');
+                });
+
+                // Close dropdown
+                dropdown.classList.remove('active');
+            }
+               });
+
+                       $('#assets-table').DataTable({
+            scrollX: false,
+            autoWidth: false
+        });
+            
+    </script>
 </body>
 </html>

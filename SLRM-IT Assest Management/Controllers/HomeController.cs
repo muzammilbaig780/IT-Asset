@@ -50,23 +50,23 @@ namespace SLRM_IT_Assest_Management.Controllers
             model.AssetCount = assets.Count;
 
             // Laptop breakdown
-            model.LaptopActive = laptops.Count(a => a.AssetStatus?.Name?.Trim().ToUpper() == "ACTIVE");
-            model.LaptopNotActive = laptops.Count(a => a.AssetStatus?.Name?.Trim().ToUpper() == "NOT ACTIVE");
+            model.LaptopWorking = laptops.Count(a => a.AssetStatus?.Name?.Trim().ToUpper() == "WORKING");
+            model.LaptopUnderRepair = laptops.Count(a => a.AssetStatus?.Name?.Trim().ToUpper() == "UNDER REPAIR");
             model.LaptopScrap = laptops.Count(a => a.AssetStatus?.Name?.Trim().ToUpper() == "SCRAP");
-            model.LaptopNA = laptops.Count(a => a.AssetStatus?.Name?.Trim().ToUpper() == "NA");
+            model.LaptopMissing = laptops.Count(a => a.AssetStatus?.Name?.Trim().ToUpper() == "MISSING");
 
             // Desktop breakdown
-            model.DesktopActive = desktops.Count(a => a.AssetStatus != null &&
-                a.AssetStatus.Name.Equals("Active", StringComparison.OrdinalIgnoreCase));
+            model.DesktopWorking = desktops.Count(a => a.AssetStatus != null &&
+                a.AssetStatus.Name.Equals("Working", StringComparison.OrdinalIgnoreCase));
 
-            model.DesktopNotActive = desktops.Count(a => a.AssetStatus != null &&
-                a.AssetStatus.Name.Equals("Not Active", StringComparison.OrdinalIgnoreCase));
+            model.DesktopUnderRepair = desktops.Count(a => a.AssetStatus != null &&
+                a.AssetStatus.Name.Equals("Under Repair", StringComparison.OrdinalIgnoreCase));
 
             model.DesktopScrap = desktops.Count(a => a.AssetStatus != null &&
                 a.AssetStatus.Name.Equals("Scrap", StringComparison.OrdinalIgnoreCase));
 
-            model.DesktopNA = desktops.Count(a => a.AssetStatus != null &&
-                a.AssetStatus.Name.Equals("NA", StringComparison.OrdinalIgnoreCase));
+            model.DesktopMissing = desktops.Count(a => a.AssetStatus != null &&
+                a.AssetStatus.Name.Equals("Missing", StringComparison.OrdinalIgnoreCase));
 
             return View(model);
         }

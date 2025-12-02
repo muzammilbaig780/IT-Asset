@@ -1,12 +1,9 @@
 ﻿using AssetManagement.Data;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
 using SLRM_IT_Assest_Management.Models;
-using SLRM_IT_Assest_Management.ViewModels;
-using System.Drawing.Printing;
-using System.Globalization;
+
 
 namespace AssetManagement.Controllers
 {
@@ -133,72 +130,230 @@ namespace AssetManagement.Controllers
         // GET: Assets/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+
+
             if (id == null)
             {
                 return NotFound();
             }
 
-            var asset = await _context.Assets.FindAsync(id);
+            var asset = await _context.Assets
+       .Include(a => a.AssetType)
+       .Include(a => a.Company)
+       .Include(a => a.AssetStatus)
+       .Include(a => a.AssetLocation)
+       .Include(a => a.Department)
+       .Include(a => a.Block)
+       .Include(a => a.Division)
+       .Include(a => a.TransferLogs)
+       .FirstOrDefaultAsync(a => a.AssetId == id);
+
+
+
+        
             if (asset == null)
             {
                 return NotFound();
             }
-            return View(asset);
-        }
 
-        // POST: Assets/Edit/5
+
+
+            // Initialize ViewBag with empty lists if null
+            ViewBag.AssetTypes = await _context.AssetTypes.ToListAsync() ?? new List<AssetType>();
+            ViewBag.Companies = await _context.Companies.ToListAsync() ?? new List<Company>();
+            ViewBag.AssetStatuses = await _context.AssetStatuses.ToListAsync() ?? new List<Status>();
+            ViewBag.AssetLocations = await _context.AssetLocations.ToListAsync() ?? new List<AssetLocation>();
+            ViewBag.Departments = await _context.Departments.ToListAsync() ?? new List<Department>();
+            ViewBag.Blocks = await _context.Blocks.ToListAsync() ?? new List<Block>();
+            ViewBag.Divisions = await _context.Divisions.ToListAsync() ?? new List<Division>();
+
+            return View(asset);
+
+         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("\"AssetId,SlNo,Type,Department,UserName,HostName,Block,AssetLocation,AssetTag,Make,Model,SerialNo,Processor,Ram,Hdd,Division,AntiVirus,Status,OSVersion,AutoCad,Office,WindowLicenseKey,IPAddress,Nitro,AuditStatus")] Asset asset, IFormFile? imageFile)
+        public async Task<IActionResult> Edit(
+     int id,
+     Asset asset,
+        string? transferReason,
+        string? transferredBy,
+        string? remarks,
+        string? toUserName,
+        string? toEmpCode,
+        string? toDepartment,
+        string? toLocation,
+     bool isTransfer)
         {
             if (id != asset.AssetId)
-            {
                 return NotFound();
-            }
 
-            if (ModelState.IsValid)
+            // ✅ Remove navigation validation
+            ModelState.Remove("AssetType");
+            ModelState.Remove("Company");
+            ModelState.Remove("AssetStatus");
+            ModelState.Remove("Department");
+            ModelState.Remove("AssetLocation");
+            ModelState.Remove("Block");
+            ModelState.Remove("Division");
+            ModelState.Remove("TransferLogs");
+            ModelState.Remove("Warranty");
+            ModelState.Remove("GRNDate");
+            ModelState.Remove("InvoiceDate");
+            ModelState.Remove("ExpiryDate");
+
+            var errors = ModelState
+    .Where(x => x.Value.Errors.Count > 0)
+    .Select(x => new {
+        Field = x.Key,
+        Errors = x.Value.Errors.Select(e => e.ErrorMessage).ToList()
+    }).ToList();
+
+
+
+            if (!ModelState.IsValid)
             {
-                try
-                {
-                    // Handle file upload if a new file is provided
-                    if (imageFile != null && imageFile.Length > 0)
-                    {
-                        var uploadsFolder = Path.Combine(_environment.WebRootPath, "images");
-                        if (!Directory.Exists(uploadsFolder))
-                        {
-                            Directory.CreateDirectory(uploadsFolder);
-                        }
-
-                        var fileName = Guid.NewGuid().ToString() + Path.GetExtension(imageFile.FileName);
-                        var filePath = Path.Combine(uploadsFolder, fileName);
-
-                        using (var stream = new FileStream(filePath, FileMode.Create))
-                        {
-                            await imageFile.CopyToAsync(stream);
-                        }
-
-                        //asset.DeviceImage = "/images/" + fileName;
-                    }
-
-                    _context.Update(asset);
-                    await _context.SaveChangesAsync();
-
-                    TempData["SuccessMessage"] = "Asset updated successfully!";
-                    return RedirectToAction(nameof(Index));
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!AssetExists(asset.AssetId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                await LoadViewBags();
+                return View(asset);
             }
-            return View(asset);
+
+            using var transaction = await _context.Database.BeginTransactionAsync();
+
+            try
+            {
+                var existingAsset = await _context.Assets
+                    .FirstOrDefaultAsync(a => a.AssetId == id);
+
+                if (existingAsset == null)
+                    return NotFound();
+
+                // ✅ Store OLD values safely
+                var oldUserName = existingAsset.UserName;
+                var oldEmpCode = existingAsset.EmpCode;
+                var oldDepartmentId = existingAsset.DepartmentId;
+                var oldLocationId = existingAsset.AssetLocationId;
+
+                // ✅ Apply new values ONLY if transfer is checked
+                if (isTransfer && !string.IsNullOrWhiteSpace(toUserName))
+                {
+                    existingAsset.UserName = toUserName;
+                    existingAsset.EmpCode = toEmpCode;
+
+                    if (!string.IsNullOrWhiteSpace(toDepartment))
+                    {
+                        var dept = await _context.Departments
+                            .FirstOrDefaultAsync(x => x.DepartmentName == toDepartment);
+                        if (dept != null)
+                            existingAsset.DepartmentId = dept.DepartmentId;
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(toLocation))
+                    {
+                        var loc = await _context.AssetLocations
+                            .FirstOrDefaultAsync(x => x.Name == toLocation);
+                        if (loc != null)
+                            existingAsset.AssetLocationId = loc.AssetLocationId;
+                    }
+                }
+
+                // ✅ Detect real transfer
+                bool isActualTransfer =
+    (oldUserName != existingAsset.UserName ||
+     oldEmpCode != existingAsset.EmpCode ||
+     oldDepartmentId != existingAsset.DepartmentId ||
+     oldLocationId != existingAsset.AssetLocationId);
+
+                if (isTransfer && isActualTransfer)
+                {
+                    var log = new AssetTransferLog
+                    {
+                        AssetId = existingAsset.AssetId,
+                        FromUserName = oldUserName,
+                        FromEmpCode = oldEmpCode,
+                        FromDepartmentId = oldDepartmentId,
+                        ToUserName = existingAsset.UserName,
+                        ToEmpCode = existingAsset.EmpCode,
+                        ToDepartmentId = existingAsset.DepartmentId,
+                        TransferReason = transferReason ?? "Not specified",
+                        TransferredBy = transferredBy ?? User.Identity?.Name ?? "System",
+                        Remarks = remarks,
+                        TransferDate = DateTime.Now
+                    };
+
+                    _context.AssetTransferLogs.Add(log);
+                    TempData["SuccessMessage"] = "Asset transferred successfully!";
+                }
+
+                else
+                {
+                    TempData["SuccessMessage"] = "Asset updated successfully!";
+                }
+
+                // ✅ Update remaining asset fields (SAFE)
+                existingAsset.Make = asset.Make;
+                existingAsset.Model = asset.Model;
+                existingAsset.SerialNo = asset.SerialNo;
+                existingAsset.Processor = asset.Processor;
+                existingAsset.Ram = asset.Ram;
+                existingAsset.Hdd = asset.Hdd;
+                existingAsset.OSVersion = asset.OSVersion;
+                existingAsset.Office = asset.Office;
+                existingAsset.AntiVirus = asset.AntiVirus;
+                existingAsset.WindowLicenseKey = asset.WindowLicenseKey;
+                existingAsset.IPAddress = asset.IPAddress;
+                existingAsset.Nitro = asset.Nitro;
+                existingAsset.AuditStatus = asset.AuditStatus;
+                existingAsset.GRNNumber = asset.GRNNumber;
+                existingAsset.ExpiryDate = asset.ExpiryDate;
+
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                ModelState.AddModelError("", "Update failed: " + ex.Message);
+                await LoadViewBags();
+                return View(asset);
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> TransferHistory(int? id)
+        {
+            if (id == null)
+                return BadRequest("Asset ID is required");
+
+            var asset = await _context.Assets
+                .Include(a => a.AssetType)
+                .Include(a => a.Department)
+                .Include(a => a.AssetStatus)
+                .FirstOrDefaultAsync(a => a.AssetId == id);
+
+            if (asset == null)
+                return NotFound("Asset not found");
+
+            var history = await _context.AssetTransferLogs
+                .Include(x => x.FromDepartment)
+                .Include(x => x.ToDepartment)
+                .Where(x => x.AssetId == id)
+                .OrderByDescending(x => x.TransferDate)
+                .ToListAsync();
+
+            ViewBag.Asset = asset;
+            return View(history);
+        }
+
+
+        private async Task LoadViewBags()
+        {
+            ViewBag.AssetTypes = await _context.AssetTypes.ToListAsync();
+            ViewBag.Companies = await _context.Companies.ToListAsync();
+            ViewBag.AssetStatuses = await _context.AssetStatuses.ToListAsync();
+            ViewBag.AssetLocations = await _context.AssetLocations.ToListAsync();
+            ViewBag.Departments = await _context.Departments.ToListAsync();
+            ViewBag.Blocks = await _context.Blocks.ToListAsync();
+            ViewBag.Divisions = await _context.Divisions.ToListAsync();
         }
 
         // GET: Assets/Delete/5
@@ -296,6 +451,7 @@ namespace AssetManagement.Controllers
                             // ===== Conditional column mapping =====
                             string monitorMakeText = isLaptop ? "NA" : worksheet.Cells[row, 12]?.Text?.Trim();
                             string monitorModelText = isLaptop ? "NA" : worksheet.Cells[row, 13]?.Text?.Trim();
+                            string cpuSerialNoModelText = isLaptop ? "NA" : worksheet.Cells[row, 14]?.Text?.Trim();
                             string serialText = isLaptop
                                 ? worksheet.Cells[row, 12]?.Text?.Trim()   // For laptops, serial is in col 12
                                 : worksheet.Cells[row, 14]?.Text?.Trim();  // For desktops, serial is in col 14
@@ -303,6 +459,7 @@ namespace AssetManagement.Controllers
                             // Continue reading other columns (shifted)
                             int nextCol = isLaptop ? 13 : 15;
 
+                            string cpuSerialNo = worksheet.Cells[row, nextCol++]?.Text?.Trim();
                             string processorText = worksheet.Cells[row, nextCol++]?.Text?.Trim();
                             string ramText = worksheet.Cells[row, nextCol++]?.Text?.Trim();
                             string hddText = worksheet.Cells[row, nextCol++]?.Text?.Trim();
@@ -316,10 +473,12 @@ namespace AssetManagement.Controllers
                             string ipText = worksheet.Cells[row, nextCol++]?.Text?.Trim();
                             string nitroText = worksheet.Cells[row, nextCol++]?.Text?.Trim();
                             string auditText = worksheet.Cells[row, nextCol++]?.Text?.Trim();
+                            string catridgeType = worksheet.Cells[row, nextCol++]?.Text?.Trim();
                             string gRNNumbertext = worksheet.Cells[row, nextCol++]?.Text?.Trim();
                             string gRNDatetext = worksheet.Cells[row, nextCol++]?.Text?.Trim();
                             string invoiceDate = worksheet.Cells[row, nextCol++]?.Text?.Trim();
                             string warranty = worksheet.Cells[row, nextCol++]?.Text?.Trim();
+                            string expiryDate = worksheet.Cells[row, nextCol++]?.Text?.Trim();
 
                             // ===== Ensure master data exists =====
                             var assetType = await _context.AssetTypes.FirstOrDefaultAsync(a => a.Name == assetTypeText);
@@ -372,35 +531,103 @@ namespace AssetManagement.Controllers
                                 await _context.SaveChangesAsync();
                             }
 
-                            // ===== Status (from DB dynamically) =====
-                            int statusId = 16; // default to NA
+                            // ===== Status (SAFE FK HANDLING) =====
+                            int statusId = 0;
+
                             if (!string.IsNullOrWhiteSpace(statusText))
                             {
                                 string normalized = statusText.Trim().ToUpper();
+
                                 var status = await _context.AssetStatuses
                                     .FirstOrDefaultAsync(s => s.Name.ToUpper() == normalized);
-                                if (status != null)
-                                    statusId = status.StatusId;
+
+                                if (status == null)
+                                {
+                                    // ✅ AUTO INSERT if status does not exist
+                                    status = new Status
+                                    {
+                                        Name = normalized
+                                    };
+
+                                    _context.AssetStatuses.Add(status);
+                                    await _context.SaveChangesAsync();
+                                }
+
+                                statusId = status.StatusId;
+                            }
+                            else
+                            {
+                                // ✅ SAFE DEFAULT STATUS (must exist in DB)
+                                var defaultStatus = await _context.AssetStatuses.FirstOrDefaultAsync();
+                                statusId = defaultStatus?.StatusId ?? 1;
                             }
 
+
+                            // --- Convert GRN Date ---
                             // --- Convert GRN Date ---
                             DateOnly? grnDate = null;
-                            if (DateOnly.TryParse(gRNDatetext, out var parsedGRN))
-                                grnDate = parsedGRN;
-                            else if (double.TryParse(gRNDatetext, out var oaDateValue)) // handle Excel numeric date
-                                grnDate = DateOnly.FromDateTime(DateTime.FromOADate(oaDateValue));
+
+                            if (!string.IsNullOrWhiteSpace(gRNDatetext) &&
+                                gRNDatetext.Trim().ToUpper() != "NA")
+                            {
+                                if (DateOnly.TryParse(gRNDatetext, out var parsed))
+                                {
+                                    grnDate = parsed;
+                                }
+                                else if (double.TryParse(gRNDatetext, out var oa))
+                                {
+                                    grnDate = DateOnly.FromDateTime(DateTime.FromOADate(oa));
+                                }
+                            }
 
                             // --- Convert Invoice Date ---
                             DateOnly? invoiceDateParsed = null;
-                            if (DateOnly.TryParse(invoiceDate, out var parsedInvoice))
-                                invoiceDateParsed = parsedInvoice;
-                            else if (double.TryParse(invoiceDate, out var oaInvoiceValue))
-                                invoiceDateParsed = DateOnly.FromDateTime(DateTime.FromOADate(oaInvoiceValue));
+
+                            if (!string.IsNullOrWhiteSpace(invoiceDate) &&
+                                invoiceDate.Trim().ToUpper() != "NA")
+                            {
+                                // Try parse as normal date
+                                if (DateOnly.TryParse(invoiceDate, out var parsedInvoice))
+                                    invoiceDateParsed = parsedInvoice;
+                                // Try parse as Excel numeric date
+                                else if (double.TryParse(invoiceDate, out var oaInvoice))
+                                    invoiceDateParsed = DateOnly.FromDateTime(DateTime.FromOADate(oaInvoice));
+                            }
+
 
                             // --- Convert Warranty (months) ---
                             int? warrantyMonths = null;
+
                             if (int.TryParse(warranty, out var parsedWarranty))
                                 warrantyMonths = parsedWarranty;
+
+                            // 🚀 FIX: Prevent NULL value going to SQL
+                            if (warrantyMonths == null)
+                            {
+                                warrantyMonths = 0; // or 12 (set default you prefer)
+                            }
+
+
+                            DateOnly? expiryDateParsed = null;
+
+                            // If Excel has a real date (not NA)
+                            if (!string.IsNullOrWhiteSpace(expiryDate) &&
+                                expiryDate.Trim().ToUpper() != "NA")
+                            {
+                                if (DateOnly.TryParse(expiryDate, out var parsedExpiry))
+                                    expiryDateParsed = parsedExpiry;
+                                else if (double.TryParse(expiryDate, out var oaExpiry))
+                                    expiryDateParsed = DateOnly.FromDateTime(DateTime.FromOADate(oaExpiry));
+                            }
+
+                            // If Excel expiry is empty (not NA), then compute using invoice date + warranty
+                            if (expiryDateParsed == null &&
+                                string.IsNullOrWhiteSpace(expiryDate))  // Only if no NA
+                            {
+                                if (invoiceDateParsed != null && warrantyMonths != null)
+                                    expiryDateParsed = invoiceDateParsed.Value.AddMonths(warrantyMonths.Value);
+                            }
+
 
                             // ===== Build Asset =====
                             var asset = new Asset
@@ -415,6 +642,7 @@ namespace AssetManagement.Controllers
                                 MoniterMake = monitorMakeText,
                                 MoniterModel = monitorModelText,
                                 SerialNo = string.IsNullOrWhiteSpace(serialText) ? "NA" : serialText,
+                                CPUSerialNo = string.IsNullOrWhiteSpace(cpuSerialNo) ? "NA" : cpuSerialNo,
                                 Processor = string.IsNullOrWhiteSpace(processorText) ? "NA" : processorText,
                                 Ram = string.IsNullOrWhiteSpace(ramText) ? "NA" : ramText,
                                 Hdd = string.IsNullOrWhiteSpace(hddText) ? "NA" : hddText,
@@ -426,10 +654,12 @@ namespace AssetManagement.Controllers
                                 IPAddress = string.IsNullOrWhiteSpace(ipText) ? "NA" : ipText,
                                 Nitro = string.IsNullOrWhiteSpace(nitroText) ? "NA" : nitroText,
                                 AuditStatus = string.IsNullOrWhiteSpace(auditText) ? "NA" : auditText,
+                                CatridgeType = catridgeType,
                                 GRNNumber = gRNNumbertext,
                                 GRNDate = grnDate,
                                 InvoiceDate = invoiceDateParsed,
                                 Warranty = warrantyMonths,
+                                ExpiryDate = expiryDateParsed,
                                 AssetTypeId = assetType?.AssetTypeId ?? 1,
                                 DepartmentId = department?.DepartmentId,
                                 BlockId = block?.BlockId,

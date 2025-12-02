@@ -11,22 +11,26 @@
         public int ActiveCount { get; set; }
         public int NotActiveCount { get; set; }
         public int ScrapCount { get; set; }
-        public int NACount { get; set; }
+        //public int NACount { get; set; }
 
         // Device Type Counts
         public int LaptopCount { get; set; }
         public int DesktopCount { get; set; }
 
-        // Laptop-specific status counts
-        public int LaptopActive { get; set; }
-        public int LaptopNotActive { get; set; }
+        //// Laptop-specific status counts
+        public int LaptopWorking { get; set; }
+        public int LaptopUnderRepair { get; set; }
         public int LaptopScrap { get; set; }
-        public int LaptopNA { get; set; }
+        public int LaptopMissing { get; set; }
 
-        // Desktop-specific status counts
-        public int DesktopActive { get; set; }
-        public int DesktopNotActive { get; set; }
+        //// Desktop-specific status counts
+        public int DesktopWorking { get; set; }
+        public int DesktopUnderRepair { get; set; }
         public int DesktopScrap { get; set; }
-        public int DesktopNA { get; set; }
+        public int DesktopMissing { get; set; }
+
+
+
+
     }
 }

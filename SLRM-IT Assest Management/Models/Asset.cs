@@ -19,8 +19,8 @@ namespace SLRM_IT_Assest_Management.Models
         public AssetType? AssetType { get; set; }
 
 
-        [Required(ErrorMessage = "Please select a Company.")]
-        [Display(Name = "Company")]
+        //[Required(ErrorMessage = "Please select a Company.")]
+        //[Display(Name = "Company")]
         public int? CompanyId { get; set; }
         [ForeignKey("CompanyId")]
         public Company? Company { get; set; }
@@ -64,7 +64,6 @@ namespace SLRM_IT_Assest_Management.Models
         [Required(ErrorMessage = "Asset Tag is required.")]
         public string? AssetTag { get; set; }
 
-
         [Required(ErrorMessage = "Make is required.")]
         public string? Make { get; set; }
 
@@ -73,85 +72,70 @@ namespace SLRM_IT_Assest_Management.Models
         public string? Model { get; set; }
 
 
-        [Required(ErrorMessage = "Monitor Make is required.")]
+
+        public string? CPUSerialNo { get; set; }
+
         public string? MoniterMake { get; set; }
 
-
-        [Required(ErrorMessage = "Monitor Model is required.")]
         public string? MoniterModel { get; set; }
-
 
         [Required(ErrorMessage = "Serial No is required.")]
         public string? SerialNo { get; set; }
-        
-
+     
         [Required(ErrorMessage = "Processor is required.")]
         public string? Processor { get; set; }
-
 
         [Required(ErrorMessage = "RAM is required.")]
         public string? Ram { get; set; }
 
-
         [Required(ErrorMessage = "HDD is required.")]
         public string? Hdd { get; set; }
-
 
         [Required(ErrorMessage = "Division is required.")]
         public int? DivisionId { get; set; }
         [ForeignKey("DivisionId")]
         public Division? Division { get; set; }
 
-
         [Required(ErrorMessage = "Antivirus info is required.")]
         public string? AntiVirus { get; set; }
-
 
         [Required(ErrorMessage = "OS Version is required.")]
         public string? OSVersion { get; set; }
 
-
         [Required(ErrorMessage = "AutoCAD version is required.")]
         public string? AutoCad { get; set; }
-
 
         [Required(ErrorMessage = "Office version is required.")]
         public string? Office { get; set; }
 
-
         [Required(ErrorMessage = "Windows License Key is required.")]
         public string? WindowLicenseKey { get; set; }
-
 
         [Required(ErrorMessage = "IP Address is required.")]
         public string? IPAddress { get; set; }
 
-
         [Required(ErrorMessage = "Nitro info is required.")]
         public string? Nitro { get; set; }
-
 
         [Required(ErrorMessage = "Audit Status is required.")]
         public string? AuditStatus { get; set; }
 
-
         [Required(ErrorMessage = "Grn Number is required.")]
         public string? GRNNumber { get; set; }
-
-
-        [Required(ErrorMessage = "Grn Date is required.")]
+     
         public DateOnly? GRNDate { get; set; }
 
-
-        [Required(ErrorMessage = "Invoice Date is required.")]
         public DateOnly? InvoiceDate { get; set; }
-
 
         [Required(ErrorMessage = "Warranty period is required.")]
         [Range(1, 60, ErrorMessage = "Warranty period must be between 1 and 60 months.")]
         public int? Warranty { get; set; }
 
-        [Required(ErrorMessage = "Expiry Date is required.")]
         public DateOnly? ExpiryDate { get; set; }
+
+        [Required(ErrorMessage = "CatridgeType is required.")]
+        public string? CatridgeType { get; set; }
+
+        public ICollection<AssetTransferLog>? TransferLogs { get; set; }
     }
 }

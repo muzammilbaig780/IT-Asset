@@ -4,6 +4,7 @@ using AssetManagement.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace SLRM_IT_Assest_Management.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251114053322_AddedCatridgeType")]
+    partial class AddedCatridgeType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -55,14 +58,11 @@ namespace SLRM_IT_Assest_Management.Migrations
                     b.Property<int>("BlockId")
                         .HasColumnType("int");
 
-                    b.Property<string>("CPUSerialNo")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("CatridgeType")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("CompanyId")
+                    b.Property<int>("CompanyId")
                         .HasColumnType("int");
 
                     b.Property<int>("DepartmentId")
@@ -75,10 +75,10 @@ namespace SLRM_IT_Assest_Management.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateOnly?>("ExpiryDate")
+                    b.Property<DateOnly>("ExpiryDate")
                         .HasColumnType("date");
 
-                    b.Property<DateOnly?>("GRNDate")
+                    b.Property<DateOnly>("GRNDate")
                         .HasColumnType("date");
 
                     b.Property<string>("GRNNumber")
@@ -97,7 +97,7 @@ namespace SLRM_IT_Assest_Management.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateOnly?>("InvoiceDate")
+                    b.Property<DateOnly>("InvoiceDate")
                         .HasColumnType("date");
 
                     b.Property<string>("Make")
@@ -109,9 +109,11 @@ namespace SLRM_IT_Assest_Management.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("MoniterMake")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("MoniterModel")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Nitro")
@@ -190,63 +192,6 @@ namespace SLRM_IT_Assest_Management.Migrations
                     b.HasKey("AssetLocationId");
 
                     b.ToTable("AssetLocations");
-                });
-
-            modelBuilder.Entity("SLRM_IT_Assest_Management.Models.AssetTransferLog", b =>
-                {
-                    b.Property<int>("TransferLogId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TransferLogId"));
-
-                    b.Property<int>("AssetId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("FromDepartmentId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("FromEmpCode")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FromUserName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Remarks")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("ToDepartmentId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ToEmpCode")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ToUserName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("TransferDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("TransferReason")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TransferredBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("TransferLogId");
-
-                    b.HasIndex("AssetId");
-
-                    b.HasIndex("FromDepartmentId");
-
-                    b.HasIndex("ToDepartmentId");
-
-                    b.ToTable("AssetTransferLogs");
                 });
 
             modelBuilder.Entity("SLRM_IT_Assest_Management.Models.AssetType", b =>
@@ -335,48 +280,6 @@ namespace SLRM_IT_Assest_Management.Migrations
                     b.HasKey("DivisionId");
 
                     b.ToTable("Divisions");
-                });
-
-            modelBuilder.Entity("SLRM_IT_Assest_Management.Models.ITAssetDetail", b =>
-                {
-                    b.Property<int>("ITAssetDetailId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ITAssetDetailId"));
-
-                    b.Property<int>("AssetId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("FrequencyNo")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("LicenseNo")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("ParallelConnection")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("Ports")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("ScreenSize")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("TelephoneNo")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.HasKey("ITAssetDetailId");
-
-                    b.HasIndex("AssetId");
-
-                    b.ToTable("ITAssetDetails");
                 });
 
             modelBuilder.Entity("SLRM_IT_Assest_Management.Models.License", b =>
@@ -547,7 +450,9 @@ namespace SLRM_IT_Assest_Management.Migrations
 
                     b.HasOne("SLRM_IT_Assest_Management.Models.Company", "Company")
                         .WithMany()
-                        .HasForeignKey("CompanyId");
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("SLRM_IT_Assest_Management.Models.Department", "Department")
                         .WithMany()
@@ -582,40 +487,6 @@ namespace SLRM_IT_Assest_Management.Migrations
                     b.Navigation("Division");
                 });
 
-            modelBuilder.Entity("SLRM_IT_Assest_Management.Models.AssetTransferLog", b =>
-                {
-                    b.HasOne("SLRM_IT_Assest_Management.Models.Asset", "Asset")
-                        .WithMany("TransferLogs")
-                        .HasForeignKey("AssetId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("SLRM_IT_Assest_Management.Models.Department", "FromDepartment")
-                        .WithMany()
-                        .HasForeignKey("FromDepartmentId");
-
-                    b.HasOne("SLRM_IT_Assest_Management.Models.Department", "ToDepartment")
-                        .WithMany()
-                        .HasForeignKey("ToDepartmentId");
-
-                    b.Navigation("Asset");
-
-                    b.Navigation("FromDepartment");
-
-                    b.Navigation("ToDepartment");
-                });
-
-            modelBuilder.Entity("SLRM_IT_Assest_Management.Models.ITAssetDetail", b =>
-                {
-                    b.HasOne("SLRM_IT_Assest_Management.Models.Asset", "Asset")
-                        .WithMany()
-                        .HasForeignKey("AssetId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Asset");
-                });
-
             modelBuilder.Entity("SLRM_IT_Assest_Management.Models.UserProfile", b =>
                 {
                     b.HasOne("SLRM_IT_Assest_Management.Models.Department", "Department")
@@ -625,11 +496,6 @@ namespace SLRM_IT_Assest_Management.Migrations
                         .IsRequired();
 
                     b.Navigation("Department");
-                });
-
-            modelBuilder.Entity("SLRM_IT_Assest_Management.Models.Asset", b =>
-                {
-                    b.Navigation("TransferLogs");
                 });
 #pragma warning restore 612, 618
         }

@@ -25,5 +25,7 @@ namespace AssetManagement.Data
         public DbSet<User> Users { get; set; }
        // public object UserProfiles { get; internal set; }
         public DbSet<UserProfile> UserProfile { get; set; }
+        public DbSet<AssetTransferLog> AssetTransferLogs { get; set; }
+        public DbSet<ITAssetDetail> ITAssetDetails { get; set; }
     }
 }

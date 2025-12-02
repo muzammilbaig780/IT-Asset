@@ -4,6 +4,7 @@ using AssetManagement.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace SLRM_IT_Assest_Management.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251202093428_AddeNewColumnCPUserialNo")]
+    partial class AddeNewColumnCPUserialNo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -337,48 +340,6 @@ namespace SLRM_IT_Assest_Management.Migrations
                     b.ToTable("Divisions");
                 });
 
-            modelBuilder.Entity("SLRM_IT_Assest_Management.Models.ITAssetDetail", b =>
-                {
-                    b.Property<int>("ITAssetDetailId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ITAssetDetailId"));
-
-                    b.Property<int>("AssetId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("FrequencyNo")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("LicenseNo")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("ParallelConnection")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("Ports")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("ScreenSize")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("TelephoneNo")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.HasKey("ITAssetDetailId");
-
-                    b.HasIndex("AssetId");
-
-                    b.ToTable("ITAssetDetails");
-                });
-
             modelBuilder.Entity("SLRM_IT_Assest_Management.Models.License", b =>
                 {
                     b.Property<int>("LicenseId")
@@ -603,17 +564,6 @@ namespace SLRM_IT_Assest_Management.Migrations
                     b.Navigation("FromDepartment");
 
                     b.Navigation("ToDepartment");
-                });
-
-            modelBuilder.Entity("SLRM_IT_Assest_Management.Models.ITAssetDetail", b =>
-                {
-                    b.HasOne("SLRM_IT_Assest_Management.Models.Asset", "Asset")
-                        .WithMany()
-                        .HasForeignKey("AssetId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Asset");
                 });
 
             modelBuilder.Entity("SLRM_IT_Assest_Management.Models.UserProfile", b =>

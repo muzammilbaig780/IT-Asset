@@ -238,138 +238,140 @@
                 <button id="btnDesktop" class="btn btn-secondary btn-sm">Desktop</button>
             </div>
             <h4 style="text-align: center;">Assets</h4>
-            <canvas id="assetPieChart" width="400" height="300"></canvas>
+            <canvas id="assetPieChart" width="380" height="280"></canvas>
         </div>
 
         <!-- Bar Chart (Deployment Status) -->
         <div style="flex: 1 1 600px; max-width: 600px;">
             <h4 style="text-align: center;">Deployment Status</h4>
-            <canvas id="deploymentBarChart" width="600" height="352"></canvas>
+            <canvas id="deploymentBarChart" width="600" height="300"></canvas>
         </div>
     </div>
 
 
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
     <script>
-                       document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function () {
 
-            // ✅ Injected counts from your ViewModel
             var laptopData = {
-                active: @Model.LaptopActive,
-                notActive: @Model.LaptopNotActive,
+                working: @Model.LaptopWorking,
+                underRepair: @Model.LaptopUnderRepair,
                 scrap: @Model.LaptopScrap,
-                na: @Model.LaptopNA
+                missing: @Model.LaptopMissing
             };
 
             var desktopData = {
-                active: @Model.DesktopActive,
-                notActive: @Model.DesktopNotActive,
+                working: @Model.DesktopWorking,
+                underRepair: @Model.DesktopUnderRepair,
                 scrap: @Model.DesktopScrap,
-                na: @Model.DesktopNA
+                missing: @Model.DesktopMissing
             };
 
             let pieChart;
+            let barChart;
 
-            // ✅ Function to render pie chart
+            // ================= PIE CHART =================
             function loadPieChart(data) {
                 const ctx = document.getElementById('assetPieChart').getContext('2d');
-                if (pieChart) pieChart.destroy();
 
-                const labels = ['Active', 'Not Active', 'Scrap', 'NA'];
-                const values = [data.active, data.notActive, data.scrap, data.na];
-                const total = values.reduce((a, b) => a + b, 0);
+                if (pieChart) pieChart.destroy();
 
                 pieChart = new Chart(ctx, {
                     type: 'pie',
                     data: {
-                        labels: labels,
+                        labels: ['Working', 'UnderRepair', 'Scrap', 'Missing'],
                         datasets: [{
-                            data: values,
-                            backgroundColor: ['#28a745', '#dc3545', '#6c757d', '#007bff']
+                            data: [
+                                data.working,
+                                data.underRepair,
+                                data.scrap,
+                                data.missing
+                            ],
+                            backgroundColor: ['#28a745', '#dc3545', '#6c757d', '#AFF8A2']
                         }]
                     },
                     options: {
+                        responsive: true,
                         plugins: {
-                            legend: {
-                                position: 'bottom'
-                            },
-                            tooltip: {
-                                callbacks: {
-                                    label: function (tooltipItem) {
-                                        const dataset = tooltipItem.chart.data.datasets[tooltipItem.datasetIndex];
-                                        const total = dataset.data.reduce((a, b) => a + b, 0);
-                                        const value = dataset.data[tooltipItem.dataIndex];
-                                        const percent = ((value / total) * 100).toFixed(1);
-                                        return `${tooltipItem.label}: ${value} (${percent}%)`;
-                                    }
-                                }
-                            },
-                            datalabels: {
-                                color: '#fff',
-                                font: {
-                                    weight: 'bold',
-                                    size: 13
-                                },
-                                formatter: function (value, context) {
-                                    const label = context.chart.data.labels[context.dataIndex];
-                                    if (value > 0) {
-                                        return `${label}\n${value}`; // show both text + count
-                                    }
-                                    return '';
-                                }
-                            }
+                            legend: { position: 'bottom' }
                         }
-                    },
-                    plugins: [ChartDataLabels]
+                    }
                 });
             }
 
-            // ✅ Default: Laptop chart on load
-            loadPieChart(laptopData);
+            // ================= BAR CHART =================
+                  function loadBarChart(data) {
+            const ctxBar = document.getElementById('deploymentBarChart').getContext('2d');
 
-            // ✅ Toggle Buttons
-            document.getElementById("btnLaptop").addEventListener("click", function () {
-                this.classList.add('btn-primary');
-                this.classList.remove('btn-secondary');
-                document.getElementById("btnDesktop").classList.remove('btn-primary');
-                document.getElementById("btnDesktop").classList.add('btn-secondary');
-                loadPieChart(laptopData);
-            });
+            if (barChart) barChart.destroy();
 
-            document.getElementById("btnDesktop").addEventListener("click", function () {
-                this.classList.add('btn-primary');
-                this.classList.remove('btn-secondary');
-                document.getElementById("btnLaptop").classList.remove('btn-primary');
-                document.getElementById("btnLaptop").classList.add('btn-secondary');
-                loadPieChart(desktopData);
-            });
-
-        });
-               // Bar Chart
-        const ctxBar = document.getElementById('deploymentBarChart').getContext('2d');
-        const deploymentBarChart = new Chart(ctxBar, {
-            type: 'bar',
-            data: {
-                labels: [ 'Active', 'Not Active', 'Scrap' , 'NA'],
-                datasets: [{
-                    data: [@Model.ActiveCount, @Model.NotActiveCount, @Model.ScrapCount,@Model.NACount],
-                    backgroundColor: [ '#3498db', '#e74c3c', '#95a5a6','#24aaff'],
-                    barPercentage: 0.5 // Add this line to reduce bar width
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: { legend: { display: false } },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        stepSize: 1
+            barChart = new Chart(ctxBar, {
+                type: 'bar',
+                data: {
+                    labels: ['Working', 'UnderRepair', 'Scrap', 'Missing'],
+                    datasets: [{
+                        label: 'Assets',
+                        data: [
+                            data.working,
+                            data.underRepair,
+                            data.scrap,
+                            data.missing
+                        ],
+                        backgroundColor: ['#28a745', '#dc3545', '#6c757d', '#AFF8A2'],
+                        barPercentage: 0.6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            min: 0,
+                            max: 400,              // ✅ FORCE MAX TO 400
+                            ticks: {
+                                stepSize: 25        // ✅ 0,25,50,75,100...400
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
                     }
                 }
-            }
+            });
+        }
+
+            // ✅ DEFAULT LOAD = LAPTOP FOR BOTH
+            loadPieChart(laptopData);
+            loadBarChart(laptopData);
+
+            // ✅ LAPTOP BUTTON → UPDATES BOTH CHARTS
+            document.getElementById("btnLaptop").addEventListener("click", function () {
+                loadPieChart(laptopData);
+                loadBarChart(laptopData);
+
+                this.classList.add("btn-primary");
+                this.classList.remove("btn-secondary");
+
+                document.getElementById("btnDesktop").classList.remove("btn-primary");
+                document.getElementById("btnDesktop").classList.add("btn-secondary");
+            });
+
+            // ✅ DESKTOP BUTTON → UPDATES BOTH CHARTS
+            document.getElementById("btnDesktop").addEventListener("click", function () {
+                loadPieChart(desktopData);
+                loadBarChart(desktopData);
+
+                this.classList.add("btn-primary");
+                this.classList.remove("btn-secondary");
+
+                document.getElementById("btnLaptop").classList.remove("btn-primary");
+                document.getElementById("btnLaptop").classList.add("btn-secondary");
+            });
+
         });
     </script>
+
+
 
