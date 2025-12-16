@@ -9,13 +9,18 @@ namespace SLRM_IT_Assest_Management.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ITAssetDetailId { get; set; }
 
+        public int SlNo { get; set; }
+        public string? UserName { get; set; }
 
-        [Required]
-        [Display(Name = "Asset")]
-        public int AssetId { get; set; }
+        public string? Department { get; set; }
+        public string? Division { get; set; }
+        public string? AssetLocation { get; set; }
+        public string? AssetType { get; set; }
 
-        [ForeignKey("AssetId")]
-        public Asset? Asset { get; set; }
+        public string? Status { get; set; }
+        public string? Make { get; set; }
+        public string? Model { get; set; }
+        public string? SerialNo { get; set; }
 
         [Display(Name = "Telephone No")]
         [MaxLength(20)]

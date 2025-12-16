@@ -4,6 +4,7 @@ using AssetManagement.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace SLRM_IT_Assest_Management.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251203050112_RemovedAssetinITassetDetail")]
+    partial class RemovedAssetinITassetDetail
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -325,18 +328,6 @@ namespace SLRM_IT_Assest_Management.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ITAssetDetailId"));
 
-                    b.Property<string>("AssetLocation")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("AssetType")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Department")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Division")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("FrequencyNo")
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
@@ -344,12 +335,6 @@ namespace SLRM_IT_Assest_Management.Migrations
                     b.Property<string>("LicenseNo")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("Make")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Model")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ParallelConnection")
                         .HasMaxLength(50)
@@ -363,21 +348,9 @@ namespace SLRM_IT_Assest_Management.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
-                    b.Property<string>("SerialNo")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("SlNo")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Status")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("TelephoneNo")
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("UserName")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ITAssetDetailId");
 
