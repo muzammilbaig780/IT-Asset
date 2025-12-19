@@ -1,0 +1,383 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Printers - SLRM IT-ASSET MANAGEMENT</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <style>
+        body {
+            background-color: #f4f6f9;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #1f3c88;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e3e6ef;
+            letter-spacing: 0.5px;
+        }
+
+        .action-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            background: #ffffff;
+            padding: 10px 15px;
+            border-radius: 10px;
+            border: 1px solid #e0e4eb;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin-top: 20px;
+            background: #ffffff;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid #e0e4eb;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+        }
+
+        .table-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1f3c88;
+            margin-bottom: 10px;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* === TABLE STYLES === */
+        .table {
+            table-layout: auto;
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            background-color: #fbfcfd;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+            .table th, .table td {
+                border: 0.5px solid #dee2e6 !important;
+                padding: 8px 12px;
+                text-align: center;
+                vertical-align: middle;
+                color: #333;
+                white-space: nowrap;
+            }
+
+        th {
+            background-color: #2a4d8c;
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: sticky;
+            top: 0;
+            z-index: 2;
+        }
+
+        /* Alternate Row + Hover */
+        .table tr:nth-child(even) td {
+            background-color: #f8faff;
+        }
+
+        .table tr:hover td {
+            background-color: #eaf1fb;
+            transition: background 0.3s ease;
+        }
+
+        /* Action buttons */
+        .action-buttons .btn {
+            margin-right: 5px;
+        }
+
+        /* Pagination */
+        .pagination-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+            .pagination-container select {
+                width: 60px;
+                font-size: 14px;
+            }
+
+        /* Pagination Buttons */
+        #pagination button {
+            margin: 3px;
+            padding: 6px 10px;
+            border: none;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+            #pagination button.active {
+                background-color: #1f3c88;
+                color: white;
+            }
+
+            #pagination button:hover {
+                background-color: #3459b1;
+                color: #fff;
+            }
+
+        /* Filter Styles */
+        .filter-header {
+            position: relative;
+            cursor: pointer;
+            padding-right: 25px !important;
+        }
+
+        .filter-icon {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 12px;
+            opacity: 0.8;
+            transition: opacity 0.2s ease;
+        }
+
+        .filter-header:hover .filter-icon {
+            opacity: 1;
+        }
+
+        /* Responsive Styles */
+        media (max-width: 992px) {
+            th, td
+
+        {
+            font-size: 12px;
+            padding: 6px;
+        }
+
+        }
+
+        media (max-width: 768px) {
+            .action-bar
+
+        {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .table th, .table td {
+            font-size: 12px;
+            padding: 6px 8px;
+        }
+
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <h1 class="page-title">SLRM IT-ASSET MANAGEMENT &gt; Printers</h1>
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        <!-- Back Button -->
+        @{
+            await Html.RenderPartialAsync("_BackButton");
+        }
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <a asp-action="Create" class="btn btn-primary btn-add">
+                <i class="fas fa-plus"></i> Add New Printer
+            </a>
+            <span class="text-muted small">Total: <span id="total-count">@Model.Count</span> printers</span>
+        </div>
+
+        <!-- Table with Pagination and Search -->
+        <div class="table-container">
+            <div class="table-responsive">
+                <table class="table table-hover" id="printers-table">
+                    <thead>
+                        <tr>
+                            <th class="filter-header">
+                                IT Asset Tag
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th>
+                            <th class="filter-header">
+                                Printer Make
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th>
+                            <th class="filter-header">
+                                Printer Model
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th>
+                            <th class="filter-header">
+                                Serial Number
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th>
+                            <th class="filter-header">
+                                Cartridge Type
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th>
+                            @* <th class="filter-header">
+                                Vendor Name
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th> *@
+                            <th class="filter-header">
+                                Asset Type
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th>
+                            <th class="filter-header">
+                                Location
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th>
+                            <th class="filter-header">
+                                Department
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th>
+                            <th class="filter-header">
+                                Division
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th>
+                            <th class="filter-header">
+                                Status
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th>
+                            <th class="filter-header">
+                                Warranty
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th>
+                            <th class="filter-header">
+                                GRN Date
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th>
+                            <th class="filter-header">
+                                GRNNumber
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th>
+                           <th class="filter-header">
+                                InvoiceDate
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th> 
+                            <th class="filter-header">
+                                End Date
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th>
+                            <th class="filter-header">
+                                Actions
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var printer in Model)
+                        {
+                            <tr>
+                                <td>@printer.ITAssetTag</td> <!-- Display IT Asset Tag -->
+                                <td>@printer.PrinterMake</td>
+                                <td>@printer.PrinterModel</td>
+                                <td>@printer.SerialNumber</td>
+                                <td>@printer.CartridgeType</td>
+                                
+                                <td>
+                                    @if (printer.AssetType != null)
+                                    {
+                                        @printer.AssetType.Name
+                                    }
+                                    else
+                                    {
+                                        <span class="text-warning">No AssetType</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (printer.AssetLocation != null)
+                                    {
+                                        @printer.AssetLocation.Name
+                                    }
+                                    else
+                                    {
+                                        <span class="text-warning">No AssetLocation</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (printer.Department != null)
+                                    {
+                                        @printer.Department.DepartmentName
+                                    }
+                                    else
+                                    {
+                                        <span class="text-warning">No Department</span>
+                                    }
+                                </td>
+                                <td>@printer.Division</td> <!-- Display Division -->
+                                <td>@printer.Status</td> <!-- Display Status -->
+                                <td>@printer.Warranty</td> <!-- Display Warranty -->
+                                <td>@printer.GRNDate.ToString("yyyy-MM-dd")</td>
+                                <td>@printer.GRNNumber</td>
+                                <td>@printer.InvoiceDate.ToString("yyyy-MM-dd")</td>
+                                <td>@printer.EndDate.ToString("yyyy-MM-dd")</td>
+                                @* <td>@printer.EndDate</td>  *@
+                                
+                                <td class="action-buttons">
+                                    <a href="@Url.Action("Edit", "Printers", new { id = printer.PrinterId })" class="btn btn-warning btn-sm">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </a>
+                                    <a href="@Url.Action("Delete", "Printers", new { id = printer.PrinterId })" class="btn btn-danger btn-sm">
+                                        <i class="fas fa-trash-alt"></i> Delete
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="pagination-container" id="pagination">
+                <button class="page-item" onclick="navigatePage('previous')">Previous</button>
+                <button class="page-item" onclick="navigatePage('next')">Next</button>
+            </div>
+        </div>
+
+
+    </div>
+
+    <script>
+        function navigatePage(direction) {
+            // JavaScript logic to handle pagination based on current page
+            let currentPage = @ViewData["CurrentPage"];
+            let totalPages = @ViewData["TotalPages"];
+
+            if (direction === "previous" && currentPage > 1) {
+                currentPage -= 1;
+            } else if (direction === "next" && currentPage < totalPages) {
+                currentPage += 1;
+            }
+
+            // Redirect to the new page
+            window.location.href = '@Url.Action("Index", "Printers")?page=' + currentPage;
+        }
+    </script>
+
+</body>
+</html>

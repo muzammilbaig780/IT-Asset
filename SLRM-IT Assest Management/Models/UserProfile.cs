@@ -1,31 +1,25 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SLRM_IT_Assest_Management.Models
-
 {
     public class UserProfile
     {
-        public int Id { get; set; }
+        [Key]
+        public int Id { get; set; }  // Ensure there's a primary key
 
-        [Required, Display(Name = "Full Name")]
+        [Required]
         public string FullName { get; set; }
 
-        [Required, EmailAddress]
+        [Required]
         public string Email { get; set; }
 
-        // Foreign key
-        [Display(Name = "Department")]
-        public int DepartmentId { get; set; }
-
-        public Department Department { get; set; } // navigation property
-
-        [Display(Name = "Role")]
         public string Role { get; set; }
 
-        [Display(Name = "Profile Picture")]
+        public int DepartmentId { get; set; }
+        [ForeignKey("DepartmentId")]
+        public Department Department { get; set; }
+
         public string ProfilePicturePath { get; set; }
     }
-
-
 }
-

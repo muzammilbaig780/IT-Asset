@@ -39,6 +39,7 @@ app.UseRouting();
 app.UseAuthentication();  // Authentication must come before Authorization
 app.UseAuthorization();
 
+
 // Default route configuration
 app.MapControllerRoute(
     name: "default",

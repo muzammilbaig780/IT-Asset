@@ -1,0 +1,32 @@
+﻿@model IEnumerable<SLRM_IT_Assest_Management.Models.PrinterType>
+
+@{
+    ViewData["Title"] = "Printer Types";
+}
+
+<h1>Printer Types</h1>
+
+<p>
+    <a href="@Url.Action("Create")" class="btn btn-primary">Create New Printer Type</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>
+                    <a href="@Url.Action("Edit", new { id = item.PrinterTypeId })" class="btn btn-warning">Edit</a>
+                    <a href="@Url.Action("Delete", new { id = item.PrinterTypeId })" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

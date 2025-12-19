@@ -5,14 +5,11 @@ namespace AssetManagement.Data
 {
     public class ApplicationDbContext : DbContext
     {
-        public ApplicationDbContext()
-        {
-        }
-
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
         }
+
         public DbSet<AssetType> AssetTypes { get; set; }
         public DbSet<Status> AssetStatuses { get; set; }
         public DbSet<Company> Companies { get; set; }
@@ -23,10 +20,24 @@ namespace AssetManagement.Data
         public DbSet<Block> Blocks { get; set; }
         public DbSet<Division> Divisions { get; set; }
         public DbSet<User> Users { get; set; }
-       // public object UserProfiles { get; internal set; }
-        public DbSet<UserProfile> UserProfile { get; set; }
+        public DbSet<UserProfile> UserProfiles { get; set; }
         public DbSet<AssetTransferLog> AssetTransferLogs { get; set; }
-        public DbSet<ITAssetDetail> ITAssetDetails { get; set; } = default!;
-       
+        public DbSet<ITAssetDetail> ITAssetDetails { get; set; }
+        public DbSet<Printer> Printers { get; set; }
+        public DbSet<UserProfile> UserProfile { get; internal set; }
+        public DbSet<PrinterType> PrinterTypes { get; set; }  // Add PrinterType DbSet
+
+
+        // Override the OnModelCreating method to configure the model
+        //protected override void OnModelCreating(ModelBuilder modelBuilder)
+        //{
+        //    base.OnModelCreating(modelBuilder);
+
+        //    // Explicitly configure the primary key for Status
+        //    modelBuilder.Entity<Status>()
+        //        .HasKey(s => s.StatusId); // Specify the primary key explicitly
+
+        //    // You can add more model configurations here if needed.
+        //}
     }
 }

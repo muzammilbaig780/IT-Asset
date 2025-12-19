@@ -1,0 +1,229 @@
+﻿@model SLRM_IT_Assest_Management.Models.Printer
+
+@{
+    ViewData["Title"] = "Create Printer";
+}
+
+<h2 class="text-center">Create Printer</h2>
+
+<form asp-action="Create" method="post" class="form-container">
+    @* IT Asset Tag Field *@
+    <div class="form-group">
+        <label asp-for="ITAssetTag" class="control-label">IT Asset Tag</label>
+        <input asp-for="ITAssetTag" class="form-control" />
+        <span asp-validation-for="ITAssetTag" class="text-danger"></span>
+    </div>
+
+    @* Division Field *@
+    <div class="form-group">
+        <label asp-for="Division" class="control-label">Division</label>
+        <input asp-for="Division" class="form-control" />
+        <span asp-validation-for="Division" class="text-danger"></span>
+    </div>
+
+    @* Printer Make Field *@
+    <div class="form-group">
+        <label asp-for="PrinterMake" class="control-label">Printer Make</label>
+        <input asp-for="PrinterMake" class="form-control" />
+        <span asp-validation-for="PrinterMake" class="text-danger"></span>
+    </div>
+
+    @* Printer Model Field *@
+    <div class="form-group">
+        <label asp-for="PrinterModel" class="control-label">Printer Model</label>
+        <input asp-for="PrinterModel" class="form-control" />
+        <span asp-validation-for="PrinterModel" class="text-danger"></span>
+    </div>
+
+    @* Serial Number Field *@
+    <div class="form-group">
+        <label asp-for="SerialNumber" class="control-label">Serial Number</label>
+        <input asp-for="SerialNumber" class="form-control" />
+        <span asp-validation-for="SerialNumber" class="text-danger"></span>
+    </div>
+
+    @* Cartridge Type Field *@
+    <div class="form-group">
+        <label asp-for="CartridgeType" class="control-label">Cartridge Type</label>
+        <input asp-for="CartridgeType" class="form-control" />
+        <span asp-validation-for="CartridgeType" class="text-danger"></span>
+    </div>
+
+    @* Status Field *@
+    <div class="form-group">
+        <label asp-for="Status" class="control-label">Status</label>
+        <input asp-for="Status" class="form-control" />
+        <span asp-validation-for="Status" class="text-danger"></span>
+    </div>
+
+    @* Dropdown for Asset Type *@
+    
+    <!-- Dropdown for Asset Type -->
+    <!-- Asset Type Dropdown -->
+    <div class="form-group">
+        <label asp-for="AssetTypeId" class="control-label">Asset Type</label>
+        <select asp-for="AssetTypeId" class="form-control">
+            <option value="">Select Asset Type</option>
+            @if (ViewData["AssetTypes"] != null)
+            {
+                var assetTypes = ViewData["AssetTypes"] as List<AssetType>;
+                if (assetTypes != null && assetTypes.Any())
+                {
+                    foreach (var item in assetTypes)
+                    {
+                        <option value="@item.AssetTypeId">@item.Name</option>
+                    }
+                }
+                else
+                {
+                    <option disabled>No Asset Types available</option>
+                }
+            }
+            else
+            {
+                <option disabled>No Asset Types available</option>
+            }
+        </select>
+        <span asp-validation-for="AssetTypeId" class="text-danger"></span>
+    </div>
+
+    <!-- Asset Location Dropdown -->
+    <div class="form-group">
+        <label asp-for="AssetLocationId" class="control-label">Location</label>
+        <select asp-for="AssetLocationId" class="form-control">
+            <option value="">Select Location</option>
+            @if (ViewData["AssetLocations"] != null)
+            {
+                var assetLocations = ViewData["AssetLocations"] as List<AssetLocation>;
+                if (assetLocations != null && assetLocations.Any())
+                {
+                    foreach (var item in assetLocations)
+                    {
+                        <option value="@item.AssetLocationId">@item.Name</option>
+                    }
+                }
+                else
+                {
+                    <option disabled>No Asset Locations available</option>
+                }
+            }
+            else
+            {
+                <option disabled>No Asset Locations available</option>
+            }
+        </select>
+        <span asp-validation-for="AssetLocationId" class="text-danger"></span>
+    </div>
+
+    <!-- Department Dropdown -->
+    <div class="form-group">
+        <label asp-for="DepartmentId" class="control-label">Department</label>
+        <select asp-for="DepartmentId" class="form-control">
+            <option value="">Select Department</option>
+            @if (ViewData["Departments"] != null)
+            {
+                var departments = ViewData["Departments"] as List<Department>;
+                if (departments != null && departments.Any())
+                {
+                    foreach (var item in departments)
+                    {
+                        <option value="@item.DepartmentId">@item.DepartmentName</option>
+                    }
+                }
+                else
+                {
+                    <option disabled>No Departments available</option>
+                }
+            }
+            else
+            {
+                <option disabled>No Departments available</option>
+            }
+        </select>
+        <span asp-validation-for="DepartmentId" class="text-danger"></span>
+    </div>
+
+    @* GRN Date Field *@
+    <div class="form-group">
+        <label asp-for="GRNDate" class="control-label">GRN Date</label>
+        <input asp-for="GRNDate" class="form-control" type="date" />
+        <span asp-validation-for="GRNDate" class="text-danger"></span>
+    </div>
+    
+    <div class="form-group">
+        <label asp-for="GRNNumber" class="control-label">GRNNumber</label>
+        <input asp-for="GRNNumber" class="form-control" />
+        <span asp-validation-for="GRNNumber" class="text-danger"></span>
+    </div>
+    @* Invoice Date Field *@
+    <div class="form-group">
+        <label asp-for="InvoiceDate" class="control-label">Invoice Date</label>
+        <input asp-for="InvoiceDate" class="form-control" type="date" />
+        <span asp-validation-for="InvoiceDate" class="text-danger"></span>
+    </div>
+
+    @* Warranty Field *@
+    <div class="form-group">
+        <label asp-for="Warranty" class="control-label">Warranty</label>
+        <input asp-for="Warranty" class="form-control" type="date" />
+        <span asp-validation-for="Warranty" class="text-danger"></span>
+    </div>
+    
+
+    @* End Date Field *@
+    <div class="form-group">
+        <label asp-for="EndDate" class="control-label">End Date</label>
+        <input asp-for="EndDate" class="form-control" type="date" />
+        <span asp-validation-for="EndDate" class="text-danger"></span>
+    </div>
+
+    @* Submit Button *@
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Create Printer</button>
+    </div>
+</form>
+
+<style>
+    .form-container {
+        max-width: 700px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+            .form-group input:focus,
+            .form-group select:focus {
+                border-color: #0056b3;
+                box-shadow: 0 0 5px rgba(0, 86, 179, 0.5);
+            }
+
+    .btn-primary {
+        width: 100%;
+        padding: 12px;
+        font-size: 16px;
+    }
+
+    .text-danger {
+        font-size: 14px;
+    }
+</style>

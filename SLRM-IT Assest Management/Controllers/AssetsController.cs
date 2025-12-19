@@ -130,46 +130,39 @@ namespace AssetManagement.Controllers
         // GET: Assets/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-
-
             if (id == null)
             {
                 return NotFound();
             }
 
             var asset = await _context.Assets
-       .Include(a => a.AssetType)
-       .Include(a => a.Company)
-       .Include(a => a.AssetStatus)
-       .Include(a => a.AssetLocation)
-       .Include(a => a.Department)
-       .Include(a => a.Block)
-       .Include(a => a.Division)
-       .Include(a => a.TransferLogs)
-       .FirstOrDefaultAsync(a => a.AssetId == id);
+                .Include(a => a.AssetType)
+                .Include(a => a.Company)
+                .Include(a => a.AssetStatus)
+                .Include(a => a.AssetLocation)
+                .Include(a => a.Department)
+                .Include(a => a.Block)
+                .Include(a => a.Division)
+                .Include(a => a.TransferLogs)
+                .FirstOrDefaultAsync(a => a.AssetId == id);
 
-
-
-        
             if (asset == null)
             {
                 return NotFound();
             }
 
-
-
-            // Initialize ViewBag with empty lists if null
-            ViewBag.AssetTypes = await _context.AssetTypes.ToListAsync() ?? new List<AssetType>();
-            ViewBag.Companies = await _context.Companies.ToListAsync() ?? new List<Company>();
-            ViewBag.AssetStatuses = await _context.AssetStatuses.ToListAsync() ?? new List<Status>();
-            ViewBag.AssetLocations = await _context.AssetLocations.ToListAsync() ?? new List<AssetLocation>();
-            ViewBag.Departments = await _context.Departments.ToListAsync() ?? new List<Department>();
-            ViewBag.Blocks = await _context.Blocks.ToListAsync() ?? new List<Block>();
-            ViewBag.Divisions = await _context.Divisions.ToListAsync() ?? new List<Division>();
+            // Initialize ViewBag with lists (no need for ?? as ToListAsync will never return null)
+            ViewBag.AssetTypes = await _context.AssetTypes.ToListAsync();
+            ViewBag.Companies = await _context.Companies.ToListAsync();
+            ViewBag.AssetStatuses = await _context.AssetStatuses.ToListAsync();
+            ViewBag.AssetLocations = await _context.AssetLocations.ToListAsync();
+            ViewBag.Departments = await _context.Departments.ToListAsync();
+            ViewBag.Blocks = await _context.Blocks.ToListAsync();
+            ViewBag.Divisions = await _context.Divisions.ToListAsync();
 
             return View(asset);
+        }
 
-         }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(
