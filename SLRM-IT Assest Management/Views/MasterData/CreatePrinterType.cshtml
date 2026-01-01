@@ -1,32 +1,24 @@
-﻿@model IEnumerable<SLRM_IT_Assest_Management.Models.PrinterType>
+﻿@model SLRM_IT_Assest_Management.Models.PrinterType
 
-@{
-    ViewData["Title"] = "Printer Types";
-}
+<form asp-controller="MasterData"
+      asp-action="CreatePrinterType"
+      method="post"
+      id="printerTypeForm">
 
-<h1>Printer Types</h1>
+    @Html.AntiForgeryToken()
 
-<p>
-    <a href="@Url.Action("Create")" class="btn btn-primary">Create New Printer Type</a>
-</p>
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label">Name *</label>
+        <input asp-for="Name" class="form-control" required />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.Name</td>
-                <td>
-                    <a href="@Url.Action("Edit", new { id = item.PrinterTypeId })" class="btn btn-warning">Edit</a>
-                    <a href="@Url.Action("Delete", new { id = item.PrinterTypeId })" class="btn btn-danger">Delete</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            Close
+        </button>
+        <button type="submit" class="btn btn-primary">
+            Save Printer Type
+        </button>
+    </div>
+</form>

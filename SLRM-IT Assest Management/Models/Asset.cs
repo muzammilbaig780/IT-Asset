@@ -127,8 +127,9 @@ namespace SLRM_IT_Assest_Management.Models
 
         public DateOnly? ExpiryDate { get; set; }
 
-       
+
         public string? CatridgeType { get; set; }
+        public bool IsTransferred { get; set; } = false;
 
         public ICollection<AssetTransferLog>? TransferLogs { get; set; }
     }

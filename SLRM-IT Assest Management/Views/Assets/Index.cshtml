@@ -463,6 +463,10 @@
                                 ExpiryDate
                                 <i class="fas fa-filter filter-icon"></i>
                             </th>
+                            <th class="filter-header">
+                                TransferStatus
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -545,6 +549,19 @@
                                         <span>NA</span>
                                     }
                                 </td>
+                                <td>
+                                    @if (item.IsTransferred)
+                                    {
+                                        <span class="badge bg-warning text-dark">
+                                            <i class="fas fa-exchange-alt"></i> Transferred
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">NA</span>
+                                    }
+                                </td>
+
                                 <td class="text-center">
                                     <div class="action-buttons">
                                         <a asp-action="Edit" asp-route-id="@item.AssetId" class="btn btn-warning btn-sm">
@@ -560,6 +577,9 @@
                                         </a>
                                     </div>
                                 </td>
+
+                              
+
                             </tr>
                         }
                     </tbody>

@@ -148,4 +148,25 @@ public class MasterDataController : Controller
         return View(division);
     }
 
+
+    [HttpGet]
+    public IActionResult CreatePrinterType()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CreatePrinterType(PrinterType printerType)
+    {
+        if (ModelState.IsValid)
+        {
+            _context.PrinterTypes.Add(printerType);
+            await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Divisions added!";
+            return RedirectToAction("Create", "Printers");
+        }
+        return View(printerType);
+    }
+
+
 }

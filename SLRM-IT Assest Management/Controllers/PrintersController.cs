@@ -53,10 +53,6 @@ namespace SLRM_IT_Assest_Management.Controllers
         }
 
 
-
-
-
-
         // GET: Printers/Create
         [HttpGet]
         public async Task<IActionResult> Create()

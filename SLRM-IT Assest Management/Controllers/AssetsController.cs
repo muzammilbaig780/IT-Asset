@@ -298,6 +298,8 @@ namespace AssetManagement.Controllers
                 existingAsset.GRNNumber = asset.GRNNumber;
                 existingAsset.ExpiryDate = asset.ExpiryDate;
 
+                existingAsset.IsTransferred = true;
+
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
 
