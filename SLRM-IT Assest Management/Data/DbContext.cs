@@ -26,7 +26,7 @@ namespace AssetManagement.Data
         public DbSet<Printer> Printers { get; set; }
         public DbSet<UserProfile> UserProfile { get; internal set; }
         public DbSet<PrinterType> PrinterTypes { get; set; }  // Add PrinterType DbSet
-
+        public DbSet<Cctv> Cctv { get; set; }
 
         // Override the OnModelCreating method to configure the model
         //protected override void OnModelCreating(ModelBuilder modelBuilder)

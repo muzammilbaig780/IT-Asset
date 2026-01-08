@@ -1,0 +1,195 @@
+﻿@model SLRM_IT_Assest_Management.Models.Cctv
+@{
+    ViewData["Title"] = "Create CCTV";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@ViewData["Title"] - SLRM IT-ASSET MANAGEMENT</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body style="background-color: #f4f6f9; padding: 20px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+    <div class="container-fluid">
+        <h1 class="page-title" style="font-size: 24px; font-weight: 600; margin-bottom: 20px; color: #1f3c88; padding-bottom: 10px; border-bottom: 2px solid #e3e6ef;">
+            SLRM IT-ASSET MANAGEMENT &gt; CCTV &gt; Create New
+        </h1>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card shadow-sm border-0" style="background: #ffffff; border-radius: 12px;">
+                    <div class="card-header bg-primary text-white py-3">
+                        <h3 class="card-title mb-0">
+                            <i class="fas fa-video me-2"></i>Add New CCTV Asset
+                        </h3>
+                    </div>
+                    <div class="card-body p-4">
+                        <!-- ✅ FIXED: Proper form tag -->
+                        <form asp-action="Create" method="post">
+                            @if (!ViewData.ModelState.IsValid)
+                            {
+                                <div class="alert alert-danger">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                    Please correct the following errors:
+                                    <ul class="mb-0 mt-2">
+                                        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                                        {
+                                            <li>@error.ErrorMessage</li>
+                                        }
+                                    </ul>
+                                </div>
+                            }
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label asp-for="ITAssetTag" class="form-label fw-semibold text-dark">IT Asset Tag <span class="text-danger">*</span></label>
+                                    <input asp-for="ITAssetTag" class="form-control form-control-lg" placeholder="CCTV-001" />
+                                    <span asp-validation-for="ITAssetTag" class="text-danger small"></span>
+                                </div>
+                                <div class="col-md-6">
+                                    <label asp-for="DeviceType" class="form-label fw-semibold text-dark">Device Type</label>
+                                    <select asp-for="DeviceType" class="form-select form-select-lg">
+                                        <option value="">Select Device Type</option>
+                                        <option value="DVR">DVR</option>
+                                        <option value="NVR">NVR</option>
+                                        <option value="IP Camera">IP Camera</option>
+                                        <option value="PTZ Camera">PTZ Camera</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label asp-for="Model" class="form-label fw-semibold text-dark">Model</label>
+                                    <input asp-for="Model" class="form-control" placeholder="Hikvision DS-7204HUHI-K1" />
+                                </div>
+                                <div class="col-md-6">
+                                    <label asp-for="CameraSerialNumber" class="form-label fw-semibold text-dark">Camera Serial No</label>
+                                    <input asp-for="CameraSerialNumber" class="form-control" />
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label asp-for="HardDiskCapacity" class="form-label fw-semibold text-dark">Hard Disk Capacity</label>
+                                    <input asp-for="HardDiskCapacity" class="form-control" placeholder="2TB" />
+                                </div>
+                                <div class="col-md-6">
+                                    <label asp-for="NumberOfHardDisks" class="form-label fw-semibold text-dark">No. of HDD</label>
+                                    <input asp-for="NumberOfHardDisks" type="number" min="0" max="8" class="form-control" />
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label asp-for="Channel" class="form-label fw-semibold text-dark">Channel</label>
+                                    <input asp-for="Channel" class="form-control" placeholder="4/8/16" />
+                                </div>
+                                <div class="col-md-6">
+                                    @{
+                                        var locations = ViewData["AssetLocations"] as List<SLRM_IT_Assest_Management.Models.AssetLocation>;
+                                    }
+                                    <label asp-for="AssetLocationId" class="form-label fw-semibold text-dark">Location <span class="text-danger">*</span></label>
+                                    <select asp-for="AssetLocationId" class="form-select" required>
+                                        <option value="">Select Location</option>
+                                        @if (locations != null)
+                                        {
+                                            @foreach (var loc in locations)
+                                            {
+                                                <option value="@loc.AssetLocationId">@loc.Name</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6">
+                                    @{
+                                        var departments = ViewData["Departments"] as List<SLRM_IT_Assest_Management.Models.Department>;
+                                    }
+                                    <label asp-for="DepartmentId" class="form-label fw-semibold text-dark">Department <span class="text-danger">*</span></label>
+                                    <select asp-for="DepartmentId" class="form-select" required>
+                                        <option value="">Select Department</option>
+                                        @if (departments != null)
+                                        {
+                                            @foreach (var dept in departments)
+                                            {
+                                                <option value="@dept.DepartmentId">@dept.DepartmentName</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label asp-for="Status" class="form-label fw-semibold text-dark">Status</label>
+                                    <select asp-for="Status" class="form-select">
+                                        <option value="Active">Active</option>
+                                        <option value="Inactive">Inactive</option>
+                                        <option value="Under Maintenance">Under Maintenance</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label asp-for="HandoverDate" class="form-label fw-semibold text-dark">Handover Date</label>
+                                    <input asp-for="HandoverDate" type="date" class="form-control" />
+                                </div>
+                                <div class="col-md-6">
+                                    <label asp-for="InvoiceDate" class="form-label fw-semibold text-dark">Invoice Date</label>
+                                    <input asp-for="InvoiceDate" type="date" class="form-control" />
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label asp-for="GRNDate" class="form-label fw-semibold text-dark">GRN Date</label>
+                                    <input asp-for="GRNDate" type="date" class="form-control" />
+                                </div>
+                                <div class="col-md-6">
+                                    <label asp-for="GRNNumber" class="form-label fw-semibold text-dark">GRN Number</label>
+                                    <input asp-for="GRNNumber" class="form-control" placeholder="GRN-2026-001" />
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label asp-for="Warranty" class="form-label fw-semibold text-dark">Warranty</label>
+                                    <input asp-for="Warranty" class="form-control" placeholder="36 Months" />
+                                </div>
+                                <div class="col-md-6">
+                                    <label asp-for="EndDate" class="form-label fw-semibold text-dark">End Date</label>
+                                    <input asp-for="EndDate" type="date" class="form-control" />
+                                </div>
+
+                                <div class="col-12">
+                                    <label asp-for="ScrapDate" class="form-label fw-semibold text-dark">Scrap Date</label>
+                                    <input asp-for="ScrapDate" type="date" class="form-control" />
+                                </div>
+                                <div class="col-12">
+                                    <label asp-for="Remark" class="form-label fw-semibold text-dark">Remarks</label>
+                                    <textarea asp-for="Remark" class="form-control" rows="3"></textarea>
+                                </div>
+                            </div>
+
+                            <!-- ✅ FIXED: Card footer moved INSIDE form -->
+                            <div class="card-footer bg-light border-top d-flex justify-content-end gap-2 mt-4 pt-3">
+                                <a asp-action="Index" class="btn btn-secondary btn-lg">
+                                    <i class="fas fa-times me-2"></i>Cancel
+                                </a>
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-save me-2"></i>Save CCTV
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script>
+        // Auto-calculate warranty end date
+        $('input[name="HandoverDate"], input[name="Warranty"]').on('change blur', function() {
+            var handoverDate = new Date($('input[name="HandoverDate"]').val());
+            var warrantyText = $('input[name="Warranty"]').val();
+            if (handoverDate && warrantyText) {
+                var months = parseInt(warrantyText.match(/\d+/)?.[0]) || 36;
+                handoverDate.setMonth(handoverDate.getMonth() + months);
+                $('input[name="EndDate"]').val(handoverDate.toISOString().split('T')[0]);
+            }
+        });
+    </script>
+</body>
+</html>

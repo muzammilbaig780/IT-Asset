@@ -1,0 +1,400 @@
+﻿@model IEnumerable<SLRM_IT_Assest_Management.Models.Cctv>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CCTV - SLRM IT-ASSET MANAGEMENT</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <!-- DataTables -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.bootstrap5.min.css">
+
+    <style>
+        body {
+            background-color: #f4f6f9;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #1f3c88;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e3e6ef;
+            letter-spacing: 0.5px;
+        }
+
+        .action-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            background: #ffffff;
+            padding: 15px 20px;
+            border-radius: 10px;
+            border: 1px solid #e0e4eb;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            gap: 15px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin-top: 20px;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #e0e4eb;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+        }
+
+        /* Status badges */
+        .status-active {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status-inactive {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-scrapped {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        /* Table styles */
+        .table {
+            table-layout: auto;
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            background-color: #fbfcfd;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 0;
+        }
+
+            .table th, .table td {
+                border: 0.5px solid #dee2e6 !important;
+                padding: 8px 12px;
+                text-align: center;
+                vertical-align: middle;
+                color: #333;
+                white-space: nowrap;
+            }
+
+        th {
+            background-color: #2a4d8c;
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: sticky;
+            top: 0;
+            z-index: 2;
+        }
+
+        .table tr:nth-child(even) td {
+            background-color: #f8faff;
+        }
+
+        .table tr:hover td {
+            background-color: #eaf1fb;
+            transition: background 0.3s ease;
+        }
+
+        /* Action buttons */
+        .action-buttons .btn {
+            margin: 0 2px;
+        }
+
+        /* Responsive */
+        media (max-width: 992px) {
+            th, td
+
+        {
+            font-size: 12px;
+            padding: 6px 8px;
+        }
+
+        }
+
+        media (max-width: 768px) {
+            .action-bar
+
+        {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 10px;
+        }
+
+        .action-bar > div {
+            width: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <h1 class="page-title">SLRM IT-ASSET MANAGEMENT &gt; CCTV</h1>
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        <!-- ✅ FIXED Back Button -->
+        <div class="mb-3">
+            <a href="/Home/Index" class="btn btn-outline-secondary btn-sm">
+                <i class="fas fa-arrow-left me-1"></i>Back to Dashboard
+            </a>
+        </div>
+
+        <!-- ✅ FIXED Filter Toolbar -->
+        <div class="action-bar">
+            <div>
+                <input type="text" id="tableSearch" class="form-control form-control-sm me-2"
+                       placeholder="🔍 Search CCTV assets..." style="width: 300px;">
+                <select id="rowsPerPage" class="form-select form-select-sm" style="width: 140px;">
+                    <option value="10">10 per page</option>
+                    <option value="25" selected>25 per page</option>
+                    <option value="50">50 per page</option>
+                    <option value="100">100 per page</option>
+                    <option value="-1">Show All</option>
+                </select>
+            </div>
+            <div>
+                <button class="btn btn-outline-primary btn-sm btn-refresh me-2">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+                <button class="btn btn-success btn-sm btn-download me-2">
+                    <i class="fas fa-file-excel"></i> Export Excel
+                </button>
+                <button class="btn btn-outline-secondary btn-sm btn-print">
+                    <i class="fas fa-print"></i> Print
+                </button>
+            </div>
+        </div>
+
+        <!-- Add New & Total Count -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <a asp-action="Create" class="btn btn-primary btn-lg btn-add">
+                <i class="fas fa-plus me-1"></i> Add New CCTV
+            </a>
+            <span class="text-muted h6 mb-0">
+                Total: <span id="total-count" class="badge bg-primary">@Model.Count()</span> CCTV assets
+            </span>
+        </div>
+
+        <!-- Table Container -->
+        <div class="table-container">
+            <div class="table-responsive">
+                <table class="table table-hover" id="cctv-table">
+                    <thead>
+                        <tr>
+                            <th>Sl No</th>
+                            <th>IT Asset Tag</th>
+                            <th>Device Type</th>
+                            <th>Model</th>
+                            <th>Camera Serial No</th>
+                            <th>Hard Disk Capacity</th>
+                            <th>No. of HDD</th>
+                            <th>Channel</th>
+                            <th>Location</th>
+                            <th>Department</th>
+                            <th>Status</th>
+                            <th>Handover Date</th>
+                            <th>Invoice Date</th>
+                            <th>GRN Date</th>
+                            <th>GRN Number</th>
+                            <th>Warranty</th>
+                            <th>End Date</th>
+                            <th>Scrap Date</th>
+                            <th>Remark</th>
+                            <th>Actions</th>
+                            
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td><strong>@item.CctvId</strong></td>
+                                <td>
+                                    <strong class="text-primary">@(string.IsNullOrEmpty(item.ITAssetTag) ? "NA" : item.ITAssetTag)</strong>
+                                </td>
+                                <td>@(string.IsNullOrEmpty(item.DeviceType) ? "NA" : item.DeviceType)</td>
+                                <td>@(string.IsNullOrEmpty(item.Model) ? "NA" : item.Model)</td>
+                                <td>@(string.IsNullOrEmpty(item.CameraSerialNumber) ? "NA" : item.CameraSerialNumber)</td>
+                                <td>@(string.IsNullOrEmpty(item.HardDiskCapacity) ? "NA" : item.HardDiskCapacity)</td>
+                                <td>@(item.NumberOfHardDisks.HasValue? item.NumberOfHardDisks.Value.ToString() : "NA")</td>
+                                <td>@(string.IsNullOrEmpty(item.Channel) ? "NA" : item.Channel)</td>
+                                <td>@(item.AssetLocation?.Name ?? "NA")</td>
+                                <td>@(item.Department?.DepartmentName ?? "NA")</td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(item.Status))
+                                    {
+                                        var statusLower = item.Status.ToLowerInvariant();
+                                        <span class="badge px-2 py-1 fw-semibold @(statusLower == "active" ? "status-active bg-success" :
+                                                                                                                               statusLower == "scrapped" ? "status-scrapped bg-warning" : "status-inactive bg-danger")">
+                                    @item.Status
+                                </span>
+                                                                }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary px-2 py-1">NA</span>
+                                    }
+                                </td>
+                                <td>@(item.HandoverDate.HasValue? item.HandoverDate.Value.ToString("dd/MM/yyyy") : "NA")</td>
+                                <td>@(item.InvoiceDate.HasValue? item.InvoiceDate.Value.ToString("dd/MM/yyyy") : "NA")</td>
+                                <td>@(item.GRNDate.HasValue? item.GRNDate.Value.ToString("dd/MM/yyyy") : "NA")</td>
+                                <td>@(string.IsNullOrEmpty(item.GRNNumber) ? "NA" : item.GRNNumber)</td>
+                                <td>@(string.IsNullOrEmpty(item.Warranty) ? "NA" : item.Warranty)</td>
+                                <td>
+                                    @if (item.EndDate.HasValue)
+                                    {
+                                        var daysLeft = (item.EndDate.Value.Date - DateTime.Today).Days;
+                                        <div>
+                                            <strong>@item.EndDate.Value.ToString("dd/MM/yyyy")</strong>
+                                            <br />
+                                            <small class="@(daysLeft <= 30 ? "text-warning fw-bold" : daysLeft <= 0 ? "text-danger fw-bold" : "text-success")">
+                                                @(daysLeft <= 0 ? "❌ Expired" : daysLeft <= 30 ? "⚠️ Expiring Soon" : "✅ Active")
+                                                <br />
+                                                <span class="badge @(daysLeft <= 0 ? "bg-danger" : daysLeft <= 30 ? "bg-warning" : "bg-success")">@daysLeft days</span>
+                                            </small>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span>NA</span>
+                                    }
+                                </td>
+                                <td>@(item.ScrapDate.HasValue? item.ScrapDate.Value.ToString("dd/MM/yyyy") : "NA")</td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(item.Remark))
+                                    {
+                                        <span class="badge bg-secondary" title="@item.Remark">@(item.Remark.Length > 30 ? item.Remark.Substring(0, 30) + "..." : item.Remark)</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">— No remarks</span>
+                                    }
+                                </td>
+
+                                <td class="text-center">
+                                    <div class="action-buttons btn-group btn-group-sm" role="group">
+                                        <a asp-action="Edit" asp-route-id="@item.CctvId" class="btn btn-warning" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a asp-action="Details" asp-route-id="@item.CctvId" class="btn btn-info" title="View Details">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@item.CctvId" class="btn btn-danger" title="Delete">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            let table = $('#cctv-table').DataTable({
+                scrollX: true,
+                autoWidth: false,
+                pageLength: 25,
+                lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+                dom: 'Bfrtip',
+                buttons: [
+                    {
+                        extend: 'excel',
+                        className: 'btn btn-success btn-sm me-1',
+                        title: 'CCTV_Assets_Report_' + new Date().toISOString().slice(0,10),
+                        text: '<i class="fas fa-file-excel"></i> Excel'
+                    },
+                    {
+                        extend: 'print',
+                        className: 'btn btn-outline-secondary btn-sm',
+                        title: 'CCTV Assets Report',
+                        text: '<i class="fas fa-print"></i> Print'
+                    }
+                ],
+                language: {
+                    search: "",
+                    searchPlaceholder: "Search CCTV assets...",
+                    lengthMenu: "Show _MENU_ entries"
+                },
+                order: [[0, "desc"]],
+                columnDefs: [
+                    { orderable: false, targets: -1 } // Disable ordering on Actions column
+                ]
+            });
+
+            // Search integration
+            $('#tableSearch').on('keyup', function () {
+                table.search(this.value).draw();
+            });
+
+            // Rows per page
+            $('#rowsPerPage').on('change', function () {
+                let val = $(this).val();
+                table.page.len(val === '-1' ? -1 : parseInt(val)).draw();
+            });
+
+            // Refresh button
+            $('.btn-refresh').on('click', function () {
+                table.search('').columns().search('').draw();
+                $('#tableSearch').val('');
+                $('#rowsPerPage').val('25');
+            });
+
+            // Update total count on draw
+            table.on('draw', function () {
+                let info = table.page.info();
+                $('#total-count').text(info.recordsDisplay + ' of ' + info.recordsTotal);
+            });
+
+            // Auto refresh every 5 minutes (optional)
+            setInterval(function() {
+                if (table && table.page.info().recordsDisplay > 0) {
+                    table.ajax.reload(null, false);
+                }
+            }, 300000);
+        });
+    </script>
+</body>
+</html>
