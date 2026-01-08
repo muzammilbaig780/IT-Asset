@@ -244,10 +244,10 @@
                                 Vendor Name
                                 <i class="fas fa-filter filter-icon"></i>
                             </th> *@
-                            <th class="filter-header">
-                                Asset Type
+                             <th class="filter-header">
+                                Printer Type
                                 <i class="fas fa-filter filter-icon"></i>
-                            </th>
+                            </th> 
                             <th class="filter-header">
                                 Location
                                 <i class="fas fa-filter filter-icon"></i>
@@ -299,17 +299,18 @@
                                 <td>@printer.PrinterModel</td>
                                 <td>@printer.SerialNumber</td>
                                 <td>@printer.CartridgeType</td>
-                                
+
                                 <td>
-                                    @if (printer.AssetType != null)
+                                    @if (printer.PrinterType == null)
                                     {
-                                        @printer.AssetType.Name
+                                        <span class="text-warning">No PrinterType</span>
                                     }
                                     else
                                     {
-                                        <span class="text-warning">No AssetType</span>
+                                        @printer.PrinterType.Name
                                     }
                                 </td>
+
                                 <td>
                                     @if (printer.AssetLocation != null)
                                     {

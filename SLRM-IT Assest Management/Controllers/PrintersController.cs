@@ -18,139 +18,100 @@ namespace SLRM_IT_Assest_Management.Controllers
         }
 
         // GET: Printers
-        public async Task<IActionResult> Index(int page = 1, int pageSize = 10)
+        public async Task<IActionResult> Index(int page = 1, int pageSize = 15)
         {
-            // Query to get printers and include related entities like AssetType, AssetLocation, and Department
             var printersQuery = _context.Printers
-                .Include(p => p.AssetType)
-                .Include(p => p.AssetLocation)
-                .Include(p => p.Department)
-                .OrderBy(p => p.PrinterId);
+    .Include(p => p.PrinterType)
+    .Include(p => p.AssetLocation)
+    .Include(p => p.Department)
+    .OrderByDescending(p => p.PrinterId);
 
-            // Get total count of printers
+
+
             var totalPrinters = await printersQuery.CountAsync();
             var totalPages = (int)Math.Ceiling(totalPrinters / (double)pageSize);
 
-            // Get the paginated printers data
             var printers = await printersQuery
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
+                .AsNoTracking()
                 .ToListAsync();
 
-            // Debugging: Print out loaded printers for inspection
-            foreach (var printer in printers)
-            {
-                Console.WriteLine($"Printer: {printer.PrinterId}, AssetType: {printer.AssetType?.Name}, Location: {printer.AssetLocation?.Name}, Department: {printer.Department?.DepartmentName}");
-            }
-
-            // Set pagination information in ViewData
             ViewData["CurrentPage"] = page;
             ViewData["TotalPages"] = totalPages;
             ViewData["PageSize"] = pageSize;
 
-            // Return the view with the printers data
             return View(printers);
         }
+
+
 
 
         // GET: Printers/Create
         [HttpGet]
         public async Task<IActionResult> Create()
         {
-            // Fetch data from the database
-            // Fetch data from the database
-            var assetTypes = await _context.AssetTypes.ToListAsync() ?? new List<AssetType>();
-            var assetLocations = await _context.AssetLocations.ToListAsync() ?? new List<AssetLocation>();
-            var departments = await _context.Departments.ToListAsync() ?? new List<Department>();
-
-            // Debug: Check if any of the lists are null or empty
-            if (assetTypes == null || !assetTypes.Any())
-            {
-                // Log or show error message if AssetTypes is null or empty
-                Console.WriteLine("No AssetTypes available.");
-            }
-
-            if (assetLocations == null || !assetLocations.Any())
-            {
-                Console.WriteLine("No AssetLocations available.");
-            }
-
-            if (departments == null || !departments.Any())
-            {
-                Console.WriteLine("No Departments available.");
-            }
-
-            // Populate ViewData with the fetched data
-            ViewData["AssetTypes"] = assetTypes;
-            ViewData["AssetLocations"] = assetLocations;
-            ViewData["Departments"] = departments;
-
-
+            await PopulateDropdownsAsync();
             return View();
         }
-
-
-
-
 
         // POST: Printers/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Printer printer)
         {
-            // Check if the ModelState is valid
             if (!ModelState.IsValid)
             {
+                // Log validation errors
                 foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
                 {
-                    Debug.WriteLine($"Error: {error.ErrorMessage}");  // Log errors to Debug Output
+                    Debug.WriteLine($"Validation Error: {error.ErrorMessage}");
                 }
-                return View(printer);  // Return the form with validation errors
+
+                // Re-populate dropdowns before returning the view
+                await PopulateDropdownsAsync();
+                return View(printer);
             }
 
             try
             {
-                // Check for existing printer with the same Serial Number (Optional)
+                // Optional: Check for duplicate SerialNumber
                 var existingPrinter = await _context.Printers
-                                                   .FirstOrDefaultAsync(p => p.SerialNumber == printer.SerialNumber);
+                    .FirstOrDefaultAsync(p => p.SerialNumber == printer.SerialNumber);
 
                 if (existingPrinter != null)
                 {
-                    Debug.WriteLine("Printer with this serial number already exists.");
-                    ModelState.AddModelError("SerialNumber", "This printer already exists.");
-                    return View(printer);  // Return to form with error message
+                    ModelState.AddModelError("SerialNumber", "A printer with this serial number already exists.");
+                    await PopulateDropdownsAsync();
+                    return View(printer);
                 }
 
-                // Add the printer to the database
                 _context.Add(printer);
-                await _context.SaveChangesAsync();  // Save the new printer record
+                await _context.SaveChangesAsync();
 
-                TempData["SuccessMessage"] = "Printer added successfully!";  // Set the success message
-                Debug.WriteLine("Printer added successfully.");  // Log successful addition
-                return RedirectToAction(nameof(Index));  // Redirect to Index page after successful creation
+                TempData["SuccessMessage"] = "Printer added successfully!";
+                return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
-                // Log any exception that occurs during the process
-                Debug.WriteLine($"Error while saving printer: {ex.Message}");
+                Debug.WriteLine($"Error saving printer: {ex.Message}");
                 ModelState.AddModelError("", "An error occurred while saving the printer.");
-                return View(printer);  // Return to the form with the error message
+                await PopulateDropdownsAsync();
+                return View(printer);
             }
         }
 
+        // Helper method to populate dropdowns
+        private async Task PopulateDropdownsAsync()
+        {
+            var printerTypes = await _context.PrinterTypes.ToListAsync() ?? new List<PrinterType>();
+            var assetLocations = await _context.AssetLocations.ToListAsync() ?? new List<AssetLocation>();
+            var departments = await _context.Departments.ToListAsync() ?? new List<Department>();
 
-        // If the form has validation errors, re-populate the dropdowns using ViewBag
-        //ViewBag.AssetTypes = await _context.AssetTypes.ToListAsync();
-        //    ViewBag.AssetLocations = await _context.AssetLocations.ToListAsync();
-        //    ViewBag.Departments = await _context.Departments.ToListAsync(); // Add this for Department dropdown
-
-        //    // Return the form with the validation errors
-        //    return View(printer);
-        //}
-
-
-
-
+            ViewData["PrinterTypes"] = printerTypes;
+            ViewData["AssetLocations"] = assetLocations;
+            ViewData["Departments"] = departments;
+        }
 
 
 
@@ -165,7 +126,7 @@ namespace SLRM_IT_Assest_Management.Controllers
             }
 
             var printer = await _context.Printers
-                .Include(p => p.AssetType)
+                .Include(p => p.PrinterType)
                 .Include(p => p.AssetLocation)
                 .Include(p => p.Department)
                 .FirstOrDefaultAsync(p => p.PrinterId == id);
@@ -176,7 +137,7 @@ namespace SLRM_IT_Assest_Management.Controllers
             }
 
             // Pass data to the view
-            ViewData["AssetTypes"] = await _context.AssetTypes.ToListAsync();
+            ViewData["PrinterTypes"] = await _context.PrinterTypes.ToListAsync();
             ViewData["Locations"] = await _context.AssetLocations.ToListAsync();
             ViewData["Departments"] = await _context.Departments.ToListAsync();
 
@@ -189,7 +150,7 @@ namespace SLRM_IT_Assest_Management.Controllers
         // POST: Printers/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("PrinterId,ITAssetTag,Division,AssetTypeId,AssetLocationId,DepartmentId,PrinterMake,PrinterModel,SerialNumber,CartridgeType,Status,GRNNumber,GRNDate,InvoiceDate,Warranty,EndDate")] Printer printer)
+        public async Task<IActionResult> Edit(int id, [Bind("PrinterId,ITAssetTag,Division,PrinterTypeId,AssetLocationId,DepartmentId,PrinterMake,PrinterModel,SerialNumber,CartridgeType,Status,GRNNumber,GRNDate,InvoiceDate,Warranty,EndDate")] Printer printer)
         {
             if (id != printer.PrinterId)
             {
@@ -263,6 +224,7 @@ namespace SLRM_IT_Assest_Management.Controllers
         }
 
 
+        
         public IActionResult Import()
         {
             return View();
@@ -282,11 +244,6 @@ namespace SLRM_IT_Assest_Management.Controllers
 
             var printers = new List<Printer>();
 
-            // Declare lists to hold master data that will be added to the database
-            List<AssetType> assetTypesToAdd = new List<AssetType>();
-            List<AssetLocation> assetLocationsToAdd = new List<AssetLocation>();
-            List<Department> departmentsToAdd = new List<Department>();
-
             try
             {
                 using (var stream = new MemoryStream())
@@ -304,67 +261,71 @@ namespace SLRM_IT_Assest_Management.Controllers
                         {
                             if (string.IsNullOrWhiteSpace(worksheet.Cells[row, 1]?.Text)) continue;
 
-                            // Read columns from the Excel file and map them to the Printer model properties
                             string itAssetTag = worksheet.Cells[row, 1]?.Text?.Trim();
                             string printerMake = worksheet.Cells[row, 2]?.Text?.Trim();
                             string printerModel = worksheet.Cells[row, 3]?.Text?.Trim();
                             string serialNumber = worksheet.Cells[row, 4]?.Text?.Trim();
                             string cartridgeType = worksheet.Cells[row, 5]?.Text?.Trim();
-                            string assetTypeText = worksheet.Cells[row, 6]?.Text?.Trim();
+                            string printerTypeText = worksheet.Cells[row, 6]?.Text?.Trim();
                             string assetLocationText = worksheet.Cells[row, 7]?.Text?.Trim();
                             string departmentText = worksheet.Cells[row, 8]?.Text?.Trim();
                             string division = worksheet.Cells[row, 9]?.Text?.Trim();
-                            string status = worksheet.Cells[row, 10]?.Text?.Trim();
+                            string statusText = worksheet.Cells[row, 10]?.Text?.Trim();
                             string warranty = worksheet.Cells[row, 11]?.Text?.Trim();
                             string grnDateText = worksheet.Cells[row, 12]?.Text?.Trim();
                             string grnNumber = worksheet.Cells[row, 13]?.Text?.Trim();
                             string invoiceDateText = worksheet.Cells[row, 14]?.Text?.Trim();
                             string endDateText = worksheet.Cells[row, 15]?.Text?.Trim();
 
-                            // Ensure master data exists for AssetType, AssetLocation, and Department
+                            // ===== Ensure master data exists =====
 
-                            // AssetType
-                            var assetType = await _context.AssetTypes.FirstOrDefaultAsync(a => a.Name == assetTypeText);
-                            if (assetType == null && !string.IsNullOrEmpty(assetTypeText))
+                            // PrinterType
+                            var printerType = await _context.PrinterTypes
+                                .FirstOrDefaultAsync(a => a.Name == printerTypeText);
+                            if (printerType == null)
                             {
-                                assetType = new AssetType { Name = assetTypeText };
-                                _context.AssetTypes.Add(assetType);
+                                printerType = new PrinterType
+                                {
+                                    Name = string.IsNullOrEmpty(printerTypeText) ? "Unknown" : printerTypeText
+                                };
+                                _context.PrinterTypes.Add(printerType);
                                 await _context.SaveChangesAsync();
                             }
 
                             // AssetLocation
-                            var location = await _context.AssetLocations.FirstOrDefaultAsync(l => l.Name == assetLocationText);
-                            if (location == null && !string.IsNullOrEmpty(assetLocationText))
+                            var location = await _context.AssetLocations
+                                .FirstOrDefaultAsync(l => l.Name == assetLocationText);
+                            if (location == null)
                             {
-                                location = new AssetLocation { Name = assetLocationText };
+                                location = new AssetLocation
+                                {
+                                    Name = string.IsNullOrEmpty(assetLocationText) ? "Unknown" : assetLocationText
+                                };
                                 _context.AssetLocations.Add(location);
                                 await _context.SaveChangesAsync();
                             }
 
                             // Department
-                            var department = await _context.Departments.FirstOrDefaultAsync(d => d.DepartmentName == departmentText);
-                            if (department == null && !string.IsNullOrEmpty(departmentText))
+                            var department = await _context.Departments
+                                .FirstOrDefaultAsync(d => d.DepartmentName == departmentText);
+                            if (department == null)
                             {
-                                department = new Department { DepartmentName = departmentText };
+                                department = new Department
+                                {
+                                    DepartmentName = string.IsNullOrEmpty(departmentText) ? "Unknown" : departmentText
+                                };
                                 _context.Departments.Add(department);
                                 await _context.SaveChangesAsync();
                             }
 
                             // ===== Convert dates =====
-                            DateTime? grnDate = null;
-                            DateTime? invoiceDate = null;
-                            DateTime? endDate = null;
+                            DateTime grnDate = worksheet.Cells[row, 12].GetValue<DateTime?>() ?? DateTime.Now;
+                            DateTime invoiceDate = worksheet.Cells[row, 14].GetValue<DateTime?>() ?? DateTime.Now;
+                            DateTime? endDate = worksheet.Cells[row, 15].GetValue<DateTime?>();
 
-                            if (DateTime.TryParseExact(grnDateText, "dd/MMM/yy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedGrnDate))
-                                grnDate = parsedGrnDate;
+                            // ===== Normalize Status =====
+                            string status = string.IsNullOrEmpty(statusText) ? "WORKING" : statusText.ToUpper();
 
-                            if (DateTime.TryParseExact(invoiceDateText, "dd/MMM/yy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedInvoiceDate))
-                                invoiceDate = parsedInvoiceDate;
-
-                            if (DateTime.TryParseExact(endDateText, "dd/MMM/yy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedEndDate))
-                                endDate = parsedEndDate;
-
-                            // ===== Create Printer instance =====
                             var printer = new Printer
                             {
                                 ITAssetTag = itAssetTag,
@@ -372,40 +333,31 @@ namespace SLRM_IT_Assest_Management.Controllers
                                 PrinterModel = printerModel,
                                 SerialNumber = serialNumber,
                                 CartridgeType = cartridgeType,
-                                AssetTypeId = assetType?.AssetTypeId ?? 1,
-                                AssetLocationId = location?.AssetLocationId ?? 0, // Ensure AssetLocationId is assigned properly
-                                DepartmentId = department?.DepartmentId ?? 0,   // Ensure DepartmentId is assigned properly
+                                PrinterTypeId = printerType.PrinterTypeId,
+                                AssetLocationId = location.AssetLocationId,
+                                DepartmentId = department.DepartmentId,
                                 Division = division,
                                 Status = status,
                                 Warranty = warranty,
-                                GRNDate = grnDate ?? DateTime.MinValue,
+                                GRNDate = grnDate,
                                 GRNNumber = grnNumber,
-                                InvoiceDate = invoiceDate ?? DateTime.MinValue,
-                                EndDate = endDate ?? DateTime.MinValue
+                                InvoiceDate = invoiceDate,
+                                EndDate = endDate
                             };
 
-                            printers.Add(printer);  // Add printer to the list for bulk insert
+                            printers.Add(printer);
                         }
                     }
                 }
 
-                // Save data to the database
-
-                // Remove existing printers if overwriteExisting is true
+                // ===== Remove existing printers if overwriteExisting is true =====
                 if (overwriteExisting)
+                {
                     _context.Printers.RemoveRange(_context.Printers);
+                    await _context.SaveChangesAsync();
+                }
 
-                // Bulk insert AssetType, AssetLocation, Department data
-                if (assetTypesToAdd.Any())
-                    _context.AssetTypes.AddRange(assetTypesToAdd);
-
-                if (assetLocationsToAdd.Any())
-                    _context.AssetLocations.AddRange(assetLocationsToAdd);
-
-                if (departmentsToAdd.Any())
-                    _context.Departments.AddRange(departmentsToAdd);
-
-                // Bulk insert Printer data
+                // ===== Add imported printers =====
                 if (printers.Any())
                 {
                     await _context.Printers.AddRangeAsync(printers);
@@ -421,6 +373,9 @@ namespace SLRM_IT_Assest_Management.Controllers
                 return RedirectToAction(nameof(Import));
             }
         }
+
+
+
 
 
 

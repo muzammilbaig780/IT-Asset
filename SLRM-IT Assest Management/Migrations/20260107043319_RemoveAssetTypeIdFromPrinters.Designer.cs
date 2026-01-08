@@ -4,6 +4,7 @@ using AssetManagement.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace SLRM_IT_Assest_Management.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260107043319_RemoveAssetTypeIdFromPrinters")]
+    partial class RemoveAssetTypeIdFromPrinters
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -154,7 +157,7 @@ namespace SLRM_IT_Assest_Management.Migrations
 
                     b.HasIndex("StatusId");
 
-                    b.ToTable("Assets", (string)null);
+                    b.ToTable("Assets");
                 });
 
             modelBuilder.Entity("SLRM_IT_Assest_Management.Models.AssetLocation", b =>
@@ -172,7 +175,7 @@ namespace SLRM_IT_Assest_Management.Migrations
 
                     b.HasKey("AssetLocationId");
 
-                    b.ToTable("AssetLocations", (string)null);
+                    b.ToTable("AssetLocations");
                 });
 
             modelBuilder.Entity("SLRM_IT_Assest_Management.Models.AssetTransferLog", b =>
@@ -229,7 +232,7 @@ namespace SLRM_IT_Assest_Management.Migrations
 
                     b.HasIndex("ToDepartmentId");
 
-                    b.ToTable("AssetTransferLogs", (string)null);
+                    b.ToTable("AssetTransferLogs");
                 });
 
             modelBuilder.Entity("SLRM_IT_Assest_Management.Models.AssetType", b =>
@@ -247,7 +250,7 @@ namespace SLRM_IT_Assest_Management.Migrations
 
                     b.HasKey("AssetTypeId");
 
-                    b.ToTable("AssetTypes", (string)null);
+                    b.ToTable("AssetTypes");
                 });
 
             modelBuilder.Entity("SLRM_IT_Assest_Management.Models.Block", b =>
@@ -264,7 +267,7 @@ namespace SLRM_IT_Assest_Management.Migrations
 
                     b.HasKey("BlockId");
 
-                    b.ToTable("Blocks", (string)null);
+                    b.ToTable("Blocks");
                 });
 
             modelBuilder.Entity("SLRM_IT_Assest_Management.Models.Company", b =>
@@ -282,7 +285,7 @@ namespace SLRM_IT_Assest_Management.Migrations
 
                     b.HasKey("CompanyId");
 
-                    b.ToTable("Companies", (string)null);
+                    b.ToTable("Companies");
                 });
 
             modelBuilder.Entity("SLRM_IT_Assest_Management.Models.Department", b =>
@@ -299,7 +302,7 @@ namespace SLRM_IT_Assest_Management.Migrations
 
                     b.HasKey("DepartmentId");
 
-                    b.ToTable("Departments", (string)null);
+                    b.ToTable("Departments");
                 });
 
             modelBuilder.Entity("SLRM_IT_Assest_Management.Models.Division", b =>
@@ -317,7 +320,7 @@ namespace SLRM_IT_Assest_Management.Migrations
 
                     b.HasKey("DivisionId");
 
-                    b.ToTable("Divisions", (string)null);
+                    b.ToTable("Divisions");
                 });
 
             modelBuilder.Entity("SLRM_IT_Assest_Management.Models.ITAssetDetail", b =>
@@ -384,7 +387,7 @@ namespace SLRM_IT_Assest_Management.Migrations
 
                     b.HasKey("ITAssetDetailId");
 
-                    b.ToTable("ITAssetDetails", (string)null);
+                    b.ToTable("ITAssetDetails");
                 });
 
             modelBuilder.Entity("SLRM_IT_Assest_Management.Models.License", b =>
@@ -453,7 +456,7 @@ namespace SLRM_IT_Assest_Management.Migrations
 
                     b.HasKey("LicenseId");
 
-                    b.ToTable("Licenses", (string)null);
+                    b.ToTable("Licenses");
                 });
 
             modelBuilder.Entity("SLRM_IT_Assest_Management.Models.Printer", b =>
@@ -500,9 +503,6 @@ namespace SLRM_IT_Assest_Management.Migrations
                     b.Property<string>("PrinterModel")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("PrinterTypeId")
-                        .HasColumnType("int");
-
                     b.Property<string>("SerialNumber")
                         .HasColumnType("nvarchar(max)");
 
@@ -519,9 +519,7 @@ namespace SLRM_IT_Assest_Management.Migrations
 
                     b.HasIndex("DepartmentId");
 
-                    b.HasIndex("PrinterTypeId");
-
-                    b.ToTable("Printers", (string)null);
+                    b.ToTable("Printers");
                 });
 
             modelBuilder.Entity("SLRM_IT_Assest_Management.Models.PrinterType", b =>
@@ -532,14 +530,14 @@ namespace SLRM_IT_Assest_Management.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PrinterTypeId"));
 
-                    b.Property<string>("PrinterName")
+                    b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("PrinterTypeId");
 
-                    b.ToTable("PrinterTypes", (string)null);
+                    b.ToTable("PrinterTypes");
                 });
 
             modelBuilder.Entity("SLRM_IT_Assest_Management.Models.Status", b =>
@@ -557,7 +555,7 @@ namespace SLRM_IT_Assest_Management.Migrations
 
                     b.HasKey("StatusId");
 
-                    b.ToTable("AssetStatuses", (string)null);
+                    b.ToTable("AssetStatuses");
                 });
 
             modelBuilder.Entity("SLRM_IT_Assest_Management.Models.User", b =>
@@ -582,7 +580,7 @@ namespace SLRM_IT_Assest_Management.Migrations
 
                     b.HasKey("UserId");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("SLRM_IT_Assest_Management.Models.UserProfile", b =>
@@ -616,7 +614,7 @@ namespace SLRM_IT_Assest_Management.Migrations
 
                     b.HasIndex("DepartmentId");
 
-                    b.ToTable("UserProfile", (string)null);
+                    b.ToTable("UserProfile");
                 });
 
             modelBuilder.Entity("SLRM_IT_Assest_Management.Models.Asset", b =>
@@ -707,10 +705,6 @@ namespace SLRM_IT_Assest_Management.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("SLRM_IT_Assest_Management.Models.PrinterType", null)
-                        .WithMany("Printers")
-                        .HasForeignKey("PrinterTypeId");
-
                     b.Navigation("AssetLocation");
 
                     b.Navigation("Department");
@@ -730,11 +724,6 @@ namespace SLRM_IT_Assest_Management.Migrations
             modelBuilder.Entity("SLRM_IT_Assest_Management.Models.Asset", b =>
                 {
                     b.Navigation("TransferLogs");
-                });
-
-            modelBuilder.Entity("SLRM_IT_Assest_Management.Models.PrinterType", b =>
-                {
-                    b.Navigation("Printers");
                 });
 #pragma warning restore 612, 618
         }

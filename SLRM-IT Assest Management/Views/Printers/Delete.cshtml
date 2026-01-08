@@ -35,8 +35,8 @@
         @* <dt class="col-sm-2">Vendor Name</dt>
         <dd class="col-sm-10">@Model.VendorName</dd> *@
 
-        <dt class="col-sm-2">Asset Type</dt>
-        <dd class="col-sm-10">@Model.AssetType?.Name</dd>
+        @* <dt class="col-sm-2">Asset Type</dt>
+        <dd class="col-sm-10">@Model.AssetType?.Name</dd> *@
 
         <dt class="col-sm-2">Location</dt>
         <dd class="col-sm-10">@Model.AssetLocation?.Name</dd>
@@ -44,8 +44,14 @@
         <dt class="col-sm-2">Department</dt>
         <dd class="col-sm-10">@Model.Department?.DepartmentName</dd>
 
-        <dt class="col-sm-2">GRN Date</dt>
-        <dd class="col-sm-10">@Model.GRNDate.ToString("yyyy-MM-dd")</dd>
+        <dd class="col-sm-10">
+            @(Model.GRNDate?.ToString("yyyy-MM-dd") ?? "-")
+        </dd>
+
+        <dd class="col-sm-10">
+            @(Model.EndDate?.ToString("yyyy-MM-dd") ?? "-")
+        </dd>
+
 
         @* <dt class="col-sm-2">Invoice Number</dt>
         <dd class="col-sm-10">@Model.InvoiceNumber</dd>
@@ -56,8 +62,8 @@
         <dt class="col-sm-2">Warranty</dt>
         <dd class="col-sm-10">@Model.Warranty</dd>
 
-        <dt class="col-sm-2">End Date</dt>
-        <dd class="col-sm-10">@Model.EndDate.ToString("yyyy-MM-dd")</dd>
+        @* <dt class="col-sm-2">End Date</dt>
+        <dd class="col-sm-10">@Model.EndDate.ToString("yyyy-MM-dd")</dd> *@
     </dl>
 </div>
 

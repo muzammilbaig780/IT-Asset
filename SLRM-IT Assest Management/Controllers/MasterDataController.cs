@@ -158,6 +158,13 @@ public class MasterDataController : Controller
     [HttpPost]
     public async Task<IActionResult> CreatePrinterType(PrinterType printerType)
     {
+        var errors = ModelState
+    .Where(x => x.Value.Errors.Count > 0)
+    .Select(x => new {
+        Field = x.Key,
+        Errors = x.Value.Errors.Select(e => e.ErrorMessage).ToList()
+    }).ToList();
+
         if (ModelState.IsValid)
         {
             _context.PrinterTypes.Add(printerType);
