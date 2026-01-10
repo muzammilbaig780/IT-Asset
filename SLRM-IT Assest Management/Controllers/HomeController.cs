@@ -27,12 +27,19 @@ namespace SLRM_IT_Assest_Management.Controllers
                 .Include(a => a.AssetStatus)
                 .ToListAsync();
 
-            var licenses = await _context.Licenses.ToListAsync(); // ? Add this line
+            var licenses = await _context.Licenses.ToListAsync();
 
-             
+            // ? ADD THIS
+            var consumablesCount = await _context.Consumables.CountAsync();
 
-            var model = new DashboardViewModel();
-            model.LicenseCount = licenses.Count;
+            var model = new DashboardViewModel
+            {
+                AssetCount = assets.Count,
+                LicenseCount = licenses.Count,
+
+                // ? SET HERE
+                ConsumablesCount = consumablesCount
+            };
 
             // Safe filtering for laptops and desktops
             var laptops = assets
@@ -47,7 +54,6 @@ namespace SLRM_IT_Assest_Management.Controllers
 
             model.LaptopCount = laptops.Count;
             model.DesktopCount = desktops.Count;
-            model.AssetCount = assets.Count;
 
             // Laptop breakdown
             model.LaptopWorking = laptops.Count(a => a.AssetStatus?.Name?.Trim().ToUpper() == "WORKING");
@@ -56,30 +62,13 @@ namespace SLRM_IT_Assest_Management.Controllers
             model.LaptopMissing = laptops.Count(a => a.AssetStatus?.Name?.Trim().ToUpper() == "MISSING");
 
             // Desktop breakdown
-            model.DesktopWorking = desktops.Count(a => a.AssetStatus != null &&
-                a.AssetStatus.Name.Equals("Working", StringComparison.OrdinalIgnoreCase));
-
-            model.DesktopUnderRepair = desktops.Count(a => a.AssetStatus != null &&
-                a.AssetStatus.Name.Equals("Under Repair", StringComparison.OrdinalIgnoreCase));
-
-            model.DesktopScrap = desktops.Count(a => a.AssetStatus != null &&
-                a.AssetStatus.Name.Equals("Scrap", StringComparison.OrdinalIgnoreCase));
-
-            model.DesktopMissing = desktops.Count(a => a.AssetStatus != null &&
-                a.AssetStatus.Name.Equals("Missing", StringComparison.OrdinalIgnoreCase));
+            model.DesktopWorking = desktops.Count(a => a.AssetStatus?.Name?.Equals("Working", StringComparison.OrdinalIgnoreCase) == true);
+            model.DesktopUnderRepair = desktops.Count(a => a.AssetStatus?.Name?.Equals("Under Repair", StringComparison.OrdinalIgnoreCase) == true);
+            model.DesktopScrap = desktops.Count(a => a.AssetStatus?.Name?.Equals("Scrap", StringComparison.OrdinalIgnoreCase) == true);
+            model.DesktopMissing = desktops.Count(a => a.AssetStatus?.Name?.Equals("Missing", StringComparison.OrdinalIgnoreCase) == true);
 
             return View(model);
         }
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
     }
 }

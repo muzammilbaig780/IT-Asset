@@ -1,0 +1,273 @@
+﻿@model IEnumerable<SLRM_IT_Assest_Management.Models.Consumable>
+
+@{
+    ViewData["Title"] = "Consumables Inventory";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@{
+    await Html.RenderPartialAsync("_BackButton");
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-lg border-0 consumable-card">
+
+                <!-- HEADER -->
+                <div class="card-header consumable-header text-white d-flex justify-content-between align-items-center p-4">
+                    <div>
+                        <h4 class="mb-1 fw-bold">
+                            <i class="fas fa-boxes me-2"></i>Consumables Inventory
+                        </h4>
+                        <p class="mb-0 small opacity-75">
+                            Track, issue and manage consumables efficiently
+                        </p>
+                    </div>
+                    <a asp-action="Create" class="btn btn-add-item px-4 py-2 fw-semibold">
+                        <i class="fas fa-plus me-2"></i>Add New Item
+                    </a>
+                </div>
+
+                <!-- FILTER BAR -->
+                <div class="card-body p-0">
+                    <div class="p-4 border-bottom filter-bar">
+                        <div class="row align-items-center g-3">
+                            <div class="col-md-4">
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-text search-icon">
+                                        <i class="fas fa-search"></i>
+                                    </span>
+                                    <input type="search" id="searchInput"
+                                           class="form-control search-box"
+                                           placeholder="Search consumables...">
+                                </div>
+                            </div>
+
+                            <div class="col-md-8 text-end">
+                                <div class="btn-group btn-group-sm">
+                                    <button class="btn btn-export btn-print">
+                                        <i class="fas fa-print me-1"></i>Print
+                                    </button>
+                                    <button class="btn btn-export btn-excel">
+                                        <i class="fas fa-file-excel me-1"></i>Excel
+                                    </button>
+                                    <button class="btn btn-export btn-pdf">
+                                        <i class="fas fa-file-pdf me-1"></i>PDF
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLE -->
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0" id="consumablesTable">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Code</th>
+                                    <th>Name</th>
+                                    <th>Category</th>
+                                    <th>Unit</th>
+                                    <th class="text-center">Stock</th>
+                                    <th class="text-center">Reorder</th>
+                                    <th class="text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    int serial = 1;
+                                    foreach (var item in Model)
+                                    {
+                                        bool isLowStock = item.Stock != null && item.Stock.AvailableQuantity <= item.ReorderLevel;
+                                        <tr>
+                                            <td class="text-muted fw-semibold">@serial</td>
+                                            <td class="fw-bold text-primary">@item.ConsumableCode</td>
+                                            <td class="fw-semibold">@item.ConsumableName</td>
+                                            <td>
+                                                <span class="badge badge-category">
+                                                    @item.Category
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="badge badge-unit">
+                                                    @item.Unit
+                                                </span>
+                                            </td>
+                                            <td class="text-center fw-bold fs-5 @(isLowStock ? "text-danger" : "text-success")">
+                                                @(item.Stock != null ? item.Stock.AvailableQuantity : 0)
+                                            </td>
+                                            <td class="text-center">
+                                                <span class="badge @(isLowStock ? "badge-reorder-warning" : "badge-reorder-normal")">
+                                                    @item.ReorderLevel
+                                                </span>
+                                            </td>
+                                            <td class="text-center">
+                                                <div class="btn-group btn-group-sm">
+                                                    <a asp-action="StockIn" asp-route-id="@item.ConsumableId"
+                                                       class="btn btn-action btn-stockin" title="Stock In">
+                                                        <i class="fas fa-plus"></i>
+                                                    </a>
+                                                    <a asp-action="Issue" asp-route-id="@item.ConsumableId"
+                                                       class="btn btn-action btn-issue" title="Issue">
+                                                        <i class="fas fa-arrow-down"></i>
+                                                    </a>
+                                                    <a asp-action="Return" asp-route-id="@item.ConsumableId"
+                                                       class="btn btn-action btn-return" title="Return">
+                                                        <i class="fas fa-undo"></i>
+                                                    </a>
+                                                    <a asp-action="Ledger" asp-route-id="@item.ConsumableId"
+                                                       class="btn btn-action btn-history" title="History">
+                                                        <i class="fas fa-history"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        serial++;
+                                    }
+                                }
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ================= STYLES ================= -->
+<style>
+    /* CARD */
+    .consumable-card {
+        border-radius: 18px;
+        overflow: hidden;
+    }
+
+    /* HEADER */
+    .consumable-header {
+        background: linear-gradient(135deg, #4f46e5, #06b6d4);
+        box-shadow: 0 12px 30px rgba(79,70,229,0.35);
+    }
+
+    /* ADD BUTTON */
+    .btn-add-item {
+        background: linear-gradient(135deg, #22c55e, #16a34a);
+        color: white;
+        border: none;
+    }
+
+        .btn-add-item:hover {
+            background: linear-gradient(135deg, #16a34a, #15803d);
+            transform: translateY(-1px);
+        }
+
+    /* FILTER BAR */
+    .filter-bar {
+        background: linear-gradient(135deg, #f8fafc, #eef2ff);
+    }
+
+    /* SEARCH */
+    .search-icon {
+        background: linear-gradient(135deg, #6366f1, #3b82f6);
+        color: white;
+        border: none;
+    }
+
+    .search-box {
+        border-left: none;
+    }
+
+    /* TABLE */
+    thead {
+        background: linear-gradient(135deg, #e0e7ff, #dbeafe);
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: #f0f9ff;
+    }
+
+    /* BADGES */
+    .badge-category {
+        background: linear-gradient(135deg, #67e8f9, #22d3ee);
+        color: #0369a1;
+    }
+
+    .badge-unit {
+        background: #f1f5f9;
+        color: #475569;
+    }
+
+    .badge-reorder-warning {
+        background: linear-gradient(135deg, #fde68a, #f59e0b);
+        color: #92400e;
+    }
+
+    .badge-reorder-normal {
+        background: #e5e7eb;
+        color: #374151;
+    }
+
+    /* ACTION BUTTONS */
+    .btn-action {
+        color: white;
+        border: none;
+        transition: all 0.2s ease;
+    }
+
+    .btn-stockin {
+        background: linear-gradient(135deg, #22c55e, #16a34a);
+    }
+
+    .btn-issue {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+    }
+
+    .btn-return {
+        background: linear-gradient(135deg, #06b6d4, #0284c7);
+    }
+
+    .btn-history {
+        background: linear-gradient(135deg, #64748b, #475569);
+    }
+
+    .btn-action:hover {
+        transform: scale(1.1);
+        box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+    }
+
+    /* EXPORT BUTTONS */
+    .btn-export {
+        color: white;
+        border: none;
+    }
+
+    .btn-print {
+        background: #6366f1;
+    }
+
+    .btn-excel {
+        background: #22c55e;
+    }
+
+    .btn-pdf {
+        background: #ef4444;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            var table = $('#consumablesTable').DataTable({
+                pageLength: 25,
+                order: [[1, 'asc']],
+                columnDefs: [{ orderable: false, targets: [0, 7] }]
+            });
+
+            $('#searchInput').on('keyup', function () {
+                table.search(this.value).draw();
+            });
+        });
+    </script>
+}

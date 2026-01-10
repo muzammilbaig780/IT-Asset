@@ -1,0 +1,168 @@
+﻿@{
+    ViewData["Title"] = "Issue Consumable";
+}
+
+
+<div class="container-fluid py-4">
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h2 class="h3 mb-1 fw-bold text-dark">@ViewData["Title"]</h2>
+            <p class="text-muted mb-0">Assign consumable stock to assets with reference tracking</p>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Back to Inventory
+        </a>
+    </div>
+
+    <!-- SUCCESS / ERROR MESSAGES -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible border-0 shadow-sm fade show mb-4" role="alert">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-check-circle text-success me-3 fs-5"></i>
+                <div>@TempData["SuccessMessage"]</div>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible border-0 shadow-sm fade show mb-4" role="alert">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-exclamation-triangle text-danger me-3 fs-5"></i>
+                <div>@TempData["ErrorMessage"]</div>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <!-- MAIN FORM CARD -->
+    <div class="card shadow-lg border-0">
+        <div class="card-header bg-warning text-dark py-4">
+            <h5 class="card-title mb-0 fw-semibold">
+                <i class="fas fa-box-open me-2"></i>Issue Consumables to Asset
+            </h5>
+        </div>
+        <div class="card-body p-4 p-md-5">
+            <form asp-action="Issue" method="post" class="needs-validation" novalidate>
+
+                <div class="row g-4">
+                    <!-- CONSUMABLE SELECT -->
+                    <div class="col-lg-6">
+                        <label for="consumableId" class="form-label fw-semibold text-dark mb-2">
+                            Consumable Item <span class="text-danger">*</span>
+                        </label>
+                        <select id="consumableId" name="consumableId" class="form-select form-select-lg" required>
+                            <option value="" disabled selected>-- Select Consumable --</option>
+                            @foreach (var c in ViewBag.Consumables)
+                            {
+                                <option value="@c.Value">@c.Text</option>
+                            }
+                        </select>
+                        <div class="invalid-feedback">
+                            Please select a consumable item.
+                        </div>
+                    </div>
+
+                    <!-- QUANTITY -->
+                    <div class="col-lg-6">
+                        <label for="quantity" class="form-label fw-semibold text-dark mb-2">
+                            Quantity <span class="text-danger">*</span>
+                        </label>
+                        <div class="input-group">
+                            <input id="quantity" name="quantity" type="number"
+                                   min="0.01" step="0.01" class="form-control form-control-lg"
+                                   placeholder="0.00" required />
+                            <span class="input-group-text">Units</span>
+                        </div>
+                        <div class="invalid-feedback">
+                            Quantity must be greater than 0.
+                        </div>
+                    </div>
+
+                    <!-- ASSET SELECT -->
+                    <div class="col-lg-6">
+                        <label for="assetId" class="form-label fw-semibold text-dark mb-2">
+                            Target Asset <span class="text-danger">*</span>
+                        </label>
+                        <select id="assetId" name="assetId" class="form-select form-select-lg" required>
+                            <option value="" disabled selected>-- Select Asset --</option>
+                            @foreach (var a in ViewBag.Assets)
+                            {
+                                <option value="@a.Value">@a.Text</option>
+                            }
+                        </select>
+                        <div class="invalid-feedback">
+                            Please select an asset.
+                        </div>
+                    </div>
+
+                    <!-- REFERENCE NUMBER -->
+                    <div class="col-lg-6">
+                        <label for="referenceNo" class="form-label fw-semibold text-dark mb-2">
+                            Reference No. <span class="text-danger">*</span>
+                        </label>
+                        <input id="referenceNo" name="referenceNo" type="text"
+                               class="form-control form-control-lg"
+                               placeholder="Enter reference / GRN / ticket number" required />
+                        <div class="form-text">Reference number, GRN, or service ticket ID</div>
+                        <div class="invalid-feedback">
+                            Reference number is required.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ACTION BUTTONS -->
+                <div class="d-flex flex-wrap gap-3 justify-content-end mt-5 pt-4 border-top">
+                    <a asp-action="Index" class="btn btn-outline-secondary btn-lg px-4">
+                        <i class="fas fa-times me-2"></i>Cancel
+                    </a>
+                    <button type="submit" class="btn btn-warning btn-lg px-5">
+                        <i class="fas fa-paper-plane me-2"></i>Issue Consumables
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Professional form validation
+        (function () {
+            'use strict';
+            const forms = document.querySelectorAll('.needs-validation');
+
+            Array.prototype.slice.call(forms).forEach(form => {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+
+            // Real-time quantity validation
+            const quantityInput = document.getElementById('quantity');
+            if (quantityInput) {
+                quantityInput.addEventListener('input', function() {
+                    if (this.value && parseFloat(this.value) <= 0) {
+                        this.setCustomValidity('Quantity must be greater than 0');
+                    } else {
+                        this.setCustomValidity('');
+                    }
+                });
+            }
+
+            // Clear validation states on focus
+            document.querySelectorAll('input, select').forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.classList.remove('is-invalid');
+                    this.parentElement.querySelector('.invalid-feedback')?.classList.remove('d-block');
+                });
+            });
+        })();
+    </script>
+}

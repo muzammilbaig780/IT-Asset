@@ -11,12 +11,10 @@ namespace SLRM_IT_Assest_Management.Models
 
         public int SlNo { get; set; }
         public string? UserName { get; set; }
-
         public string? Department { get; set; }
         public string? Division { get; set; }
         public string? AssetLocation { get; set; }
         public string? AssetType { get; set; }
-
         public string? Status { get; set; }
         public string? Make { get; set; }
         public string? Model { get; set; }
@@ -45,5 +43,14 @@ namespace SLRM_IT_Assest_Management.Models
         [Display(Name = "Ports")]
         [MaxLength(100)]
         public string? Ports { get; set; }
+
+        // ------------------ ADD THESE ------------------
+        [ForeignKey("Asset")]
+        public int AssetId { get; set; }        // Link to Asset table
+        public Asset Asset { get; set; }        // Navigation property
+
+        // New fields for Asset History
+        public string ComponentName { get; set; }    // e.g., RAM, CPU, HDD
+        public DateTime InstallDate { get; set; }
     }
 }

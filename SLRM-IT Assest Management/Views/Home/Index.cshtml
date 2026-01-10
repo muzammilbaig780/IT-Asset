@@ -45,10 +45,13 @@
             <i class="fas fa-keyboard"></i>
             <span>Accessories</span>
         </li>
-        <li class="menu-item">
-            <i class="fas fa-tint"></i>
-            <span>Consumables</span>
+        <li>
+            <a asp-controller="Consumables" asp-action="Index" class="menu-item">
+                <i class="fas fa-server"></i>
+                <span>Consumables</span>
+            </a>
         </li>
+        
         <li class="menu-item">
             <i class="fas fa-microchip"></i>
             <span>Components</span>
@@ -233,7 +236,38 @@
             <div class="card-text">Peripheral Devices</div>
         </div>
 
-        <div class="card">
+        <a asp-controller="Consumables" asp-action="Index" style="text-decoration: none; color: inherit;">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Consumables</div>
+                    <div class="card-icon Consumables">
+                        <i class="fas fa-tint"></i>
+
+                    </div>
+                </div>
+                <div class="card-value">@Model.ConsumablesCount</div>
+                <div class="card-text">Total IT Consumables</div>
+
+                <!-- 👇 Dummy grid to match Asset card height -->
+                <div class="table-responsive mt-3">
+                    <table class="table table-sm table-bordered text-center mb-0" style="font-size: 13px; visibility: hidden;">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Placeholder</th>
+                                <th>Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>-</td><td>-</td></tr>
+                            <tr><td>-</td><td>-</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </a>
+
+
+        @* <div class="card">
             <div class="card-header">
                 <div class="card-title">Consumables</div>
                 <div class="card-icon consumables">
@@ -242,7 +276,7 @@
             </div>
             <div class="card-value"></div>
             <div class="card-text">Items in Stock</div>
-        </div>
+        </div> *@
 
         <div class="card">
             <div class="card-header">

@@ -27,6 +27,30 @@ namespace AssetManagement.Data
         public DbSet<UserProfile> UserProfile { get; internal set; }
         public DbSet<PrinterType> PrinterTypes { get; set; }  // Add PrinterType DbSet
         public DbSet<Cctv> Cctv { get; set; }
+        public DbSet<Consumable> Consumables { get; set; }
+        public DbSet<ConsumableStock> ConsumableStocks { get; set; }
+        public DbSet<ConsumableTransaction> ConsumableTransactions { get; set; }
+        public DbSet<Accessory> Accessories { get; set; }   // <- Add this
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            /* One-to-One: Consumable → Stock */
+            modelBuilder.Entity<Consumable>()
+                .HasOne(c => c.Stock)
+                .WithOne(s => s.Consumable)
+                .HasForeignKey<ConsumableStock>(s => s.ConsumableId);
+
+            /* Decimal precision */
+            modelBuilder.Entity<ConsumableStock>()
+                .Property(p => p.AvailableQuantity)
+                .HasPrecision(10, 2);
+
+            modelBuilder.Entity<ConsumableTransaction>()
+                .Property(p => p.Quantity)
+                .HasPrecision(10, 2);
+        }
 
         // Override the OnModelCreating method to configure the model
         //protected override void OnModelCreating(ModelBuilder modelBuilder)

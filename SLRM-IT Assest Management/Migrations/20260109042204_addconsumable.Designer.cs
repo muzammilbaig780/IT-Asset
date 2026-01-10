@@ -4,6 +4,7 @@ using AssetManagement.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace SLRM_IT_Assest_Management.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260109042204_addconsumable")]
+    partial class addconsumable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,35 +24,6 @@ namespace SLRM_IT_Assest_Management.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("SLRM_IT_Assest_Management.Models.Accessory", b =>
-                {
-                    b.Property<int>("AccessoryId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AccessoryId"));
-
-                    b.Property<int>("AssetId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("AssignedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SerialNo")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("AccessoryId");
-
-                    b.HasIndex("AssetId");
-
-                    b.ToTable("Accessories");
-                });
 
             modelBuilder.Entity("SLRM_IT_Assest_Management.Models.Asset", b =>
                 {
@@ -421,9 +395,6 @@ namespace SLRM_IT_Assest_Management.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<decimal>("Quantity")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<int>("ReorderLevel")
                         .HasColumnType("int");
 
@@ -478,10 +449,6 @@ namespace SLRM_IT_Assest_Management.Migrations
                     b.Property<decimal>("Quantity")
                         .HasPrecision(10, 2)
                         .HasColumnType("decimal(10,2)");
-
-                    b.Property<string>("ReferenceNo")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Remarks")
                         .IsRequired()
@@ -545,17 +512,10 @@ namespace SLRM_IT_Assest_Management.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ITAssetDetailId"));
 
-                    b.Property<int>("AssetId")
-                        .HasColumnType("int");
-
                     b.Property<string>("AssetLocation")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("AssetType")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ComponentName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Department")
@@ -567,9 +527,6 @@ namespace SLRM_IT_Assest_Management.Migrations
                     b.Property<string>("FrequencyNo")
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
-
-                    b.Property<DateTime>("InstallDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("LicenseNo")
                         .HasMaxLength(50)
@@ -610,8 +567,6 @@ namespace SLRM_IT_Assest_Management.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ITAssetDetailId");
-
-                    b.HasIndex("AssetId");
 
                     b.ToTable("ITAssetDetails");
                 });
@@ -847,17 +802,6 @@ namespace SLRM_IT_Assest_Management.Migrations
                     b.ToTable("UserProfile");
                 });
 
-            modelBuilder.Entity("SLRM_IT_Assest_Management.Models.Accessory", b =>
-                {
-                    b.HasOne("SLRM_IT_Assest_Management.Models.Asset", "Asset")
-                        .WithMany()
-                        .HasForeignKey("AssetId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Asset");
-                });
-
             modelBuilder.Entity("SLRM_IT_Assest_Management.Models.Asset", b =>
                 {
                     b.HasOne("SLRM_IT_Assest_Management.Models.AssetLocation", "AssetLocation")
@@ -977,17 +921,6 @@ namespace SLRM_IT_Assest_Management.Migrations
                     b.Navigation("Asset");
 
                     b.Navigation("Consumable");
-                });
-
-            modelBuilder.Entity("SLRM_IT_Assest_Management.Models.ITAssetDetail", b =>
-                {
-                    b.HasOne("SLRM_IT_Assest_Management.Models.Asset", "Asset")
-                        .WithMany()
-                        .HasForeignKey("AssetId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Asset");
                 });
 
             modelBuilder.Entity("SLRM_IT_Assest_Management.Models.Printer", b =>

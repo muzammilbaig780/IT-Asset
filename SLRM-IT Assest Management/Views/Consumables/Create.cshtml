@@ -1,0 +1,98 @@
+﻿@model SLRM_IT_Assest_Management.Models.Consumable
+
+@{
+    ViewData["Title"] = "Create Consumable";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+
+            <div class="card shadow-sm border-0">
+                <!-- HEADER -->
+                <div class="card-header bg-primary text-white py-3">
+                    <h4 class="mb-0 fw-bold">
+                        <i class="fas fa-box-open me-2"></i>Create Consumable
+                    </h4>
+                </div>
+
+                <!-- BODY -->
+                <div class="card-body p-4">
+                    <form asp-action="Create" method="post">
+                        @Html.AntiForgeryToken()
+
+                        <div class="row g-3">
+
+                            <!-- Consumable Code -->
+                            <div class="col-md-6">
+                                <label asp-for="ConsumableCode" class="form-label fw-semibold"></label>
+                                <input asp-for="ConsumableCode" class="form-control" />
+                                <span asp-validation-for="ConsumableCode" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Consumable Name -->
+                            <div class="col-md-6">
+                                <label asp-for="ConsumableName" class="form-label fw-semibold"></label>
+                                <input asp-for="ConsumableName" class="form-control" />
+                                <span asp-validation-for="ConsumableName" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Category -->
+                            <div class="col-md-6">
+                                <label asp-for="Category" class="form-label fw-semibold"></label>
+                                <input asp-for="Category" class="form-control" placeholder="e.g. Toner, Cable" />
+                            </div>
+
+                            <!-- Unit -->
+                            <div class="col-md-6">
+                                <label asp-for="Unit" class="form-label fw-semibold"></label>
+                                <input asp-for="Unit" class="form-control" placeholder="e.g. Nos, Meter" />
+                            </div>
+
+                            <!-- Reorder Level -->
+                            <div class="col-md-6">
+                                <label asp-for="ReorderLevel" class="form-label fw-semibold"></label>
+                                <input asp-for="ReorderLevel" type="number" min="0" class="form-control" />
+                            </div>
+
+                            <!-- Initial Quantity -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Initial Quantity</label>
+                                <input asp-for="Quantity" type="number" step="0.01" min="0" class="form-control" />
+                                <small class="text-muted">This will be used as opening stock</small>
+                            </div>
+
+                            <!-- Active -->
+                            <div class="col-12">
+                                <div class="form-check mt-2">
+                                    <input asp-for="IsActive" class="form-check-input" />
+                                    <label asp-for="IsActive" class="form-check-label fw-semibold">
+                                        Active
+                                    </label>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- ACTION BUTTONS -->
+                        <div class="d-flex justify-content-end mt-4 gap-2">
+                            <a asp-action="Index" class="btn btn-outline-secondary px-4">
+                                Cancel
+                            </a>
+                            <button type="submit" class="btn btn-success px-4">
+                                <i class="fas fa-save me-1"></i>Save Consumable
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,104 @@
+﻿@model SLRM_IT_Assest_Management.ViewModels.AssetHistoryVM
+
+@{
+    ViewData["Title"] = "Asset History";
+}
+
+<h3>@ViewData["Title"] - @Model.AssetTag</h3>
+
+<h5>Asset Info</h5>
+<p>
+    <strong>User:</strong> @Model.UserName <br />
+    <strong>Host:</strong> @Model.HostName
+</p>
+
+<h5>Consumables Used</h5>
+@if (Model.Consumables.Any())
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Consumable</th>
+                <th>Quantity</th>
+                <th>Type</th>
+                <th>Performed By</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var c in Model.Consumables)
+            {
+                <tr>
+                    <td>@c.TransactionDate.ToString("yyyy-MM-dd HH:mm")</td>
+                    <td>@c.ConsumableName</td>
+                    <td>@c.Quantity</td>
+                    <td>@c.TransactionType</td>
+                    <td>@c.PerformedBy</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+
+    <p>No consumables recorded.</p>
+}
+
+<h5>Components Installed</h5>
+@if (Model.Components.Any())
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Component</th>
+                <th>Serial No</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var c in Model.Components)
+            {
+                <tr>
+                    <td>@c.InstalledOn.ToString("yyyy-MM-dd")</td>
+                    <td>@c.ComponentName</td>
+                    <td>@c.SerialNo</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+
+    <p>No components recorded.</p>
+}
+
+<h5>Accessories Assigned</h5>
+@if (Model.Accessories.Any())
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Accessory</th>
+                <th>Serial No</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var a in Model.Accessories)
+            {
+                <tr>
+                    <td>@a.AssignedOn.ToString("yyyy-MM-dd")</td>
+                    <td>@a.AccessoryName</td>
+                    <td>@a.SerialNo</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+
+    <p>No accessories recorded.</p>
+}

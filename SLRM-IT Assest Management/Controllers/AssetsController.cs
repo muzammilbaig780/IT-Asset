@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
 using SLRM_IT_Assest_Management.Models;
+using SLRM_IT_Assest_Management.ViewModels;
 
 
 namespace AssetManagement.Controllers
@@ -723,6 +724,65 @@ namespace AssetManagement.Controllers
             return View("Index", desktops); // reuse same Index view
         }
 
+        public async Task<IActionResult> History(int id)
+        {
+            // Get asset details
+            var asset = await _context.Assets
+                .FirstOrDefaultAsync(a => a.AssetId == id);
+
+            if (asset == null)
+                return NotFound();
+
+            // Build viewmodel
+            var vm = new AssetHistoryVM
+            {
+                AssetId = asset.AssetId,
+                AssetTag = asset.AssetTag,
+                UserName = asset.UserName,
+                HostName = asset.HostName
+            };
+
+            // Consumables
+            vm.Consumables = await _context.ConsumableTransactions
+                .Include(ct => ct.Consumable)
+                .Where(ct => ct.AssetId == id)
+                .Select(ct => new ConsumableHistory
+                {
+                    ConsumableName = ct.Consumable.ConsumableName,
+                    Quantity = ct.Quantity,
+                    TransactionDate = ct.TransactionDate,
+                    TransactionType = ct.TransactionType.ToString(),
+                    PerformedBy = ct.PerformedBy
+                })
+                .OrderByDescending(c => c.TransactionDate)
+                .ToListAsync();
+
+            // Components (example)
+            vm.Components = await _context.ITAssetDetails
+                .Where(c => c.AssetId == id)
+                .Select(c => new ComponentHistory
+                {
+                    ComponentName = c.ComponentName,
+                    SerialNo = c.SerialNo,
+                    InstalledOn = c.InstallDate
+                })
+                .OrderByDescending(c => c.InstalledOn)
+                .ToListAsync();
+
+            // Accessories (example)
+            vm.Accessories = await _context.Accessories
+                .Where(a => a.AssetId == id)
+                .Select(a => new AccessoryHistory
+                {
+                    AccessoryName = a.Name,
+                    SerialNo = a.SerialNo,
+                    AssignedOn = a.AssignedOn
+                })
+                .OrderByDescending(a => a.AssignedOn)
+                .ToListAsync();
+
+            return View(vm);
+        }
 
     }
 }

@@ -116,7 +116,6 @@ namespace SLRM_IT_Assest_Management.Controllers
         }
 
 
-
         // GET: /Account/Logout
         public async Task<IActionResult> Logout()
         {
