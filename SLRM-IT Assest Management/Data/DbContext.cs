@@ -18,6 +18,7 @@ namespace AssetManagement.Data
         public DbSet<AssetLocation> AssetLocations { get; set; }
         public DbSet<Department> Departments { get; set; }
         public DbSet<Block> Blocks { get; set; }
+        public DbSet<Barcode> Barcode { get; set; }
         public DbSet<Division> Divisions { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<UserProfile> UserProfiles { get; set; }
@@ -25,12 +26,12 @@ namespace AssetManagement.Data
         public DbSet<ITAssetDetail> ITAssetDetails { get; set; }
         public DbSet<Printer> Printers { get; set; }
         public DbSet<UserProfile> UserProfile { get; internal set; }
-        public DbSet<PrinterType> PrinterTypes { get; set; }  // Add PrinterType DbSet
+        public DbSet<PrinterType> PrinterTypes { get; set; }  
         public DbSet<Cctv> Cctv { get; set; }
         public DbSet<Consumable> Consumables { get; set; }
         public DbSet<ConsumableStock> ConsumableStocks { get; set; }
         public DbSet<ConsumableTransaction> ConsumableTransactions { get; set; }
-        public DbSet<Accessory> Accessories { get; set; }   // <- Add this
+        public DbSet<Accessory> Accessories { get; set; }   
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

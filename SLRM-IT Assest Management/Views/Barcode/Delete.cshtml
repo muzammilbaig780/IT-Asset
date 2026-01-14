@@ -1,0 +1,13 @@
+﻿@model SLRM_IT_Assest_Management.Models.Barcode
+
+<h3>Are you sure you want to delete this?</h3>
+
+<div>
+    <strong>@Model.ITAssetTag</strong> - @Model.SerialNumber
+</div>
+
+<form asp-action="Delete">
+    <input type="hidden" asp-for="BarcodeId" />
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

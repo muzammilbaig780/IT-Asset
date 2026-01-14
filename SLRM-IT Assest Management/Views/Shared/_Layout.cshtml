@@ -122,6 +122,31 @@
             transition: all 0.3s ease;
         }
 
+        /* Sidebar dropdown */
+        .menu-dropdown .submenu {
+            display: none;
+            list-style: none;
+            padding-left: 20px;
+        }
+
+        .menu-dropdown.open .submenu {
+            display: block;
+        }
+
+        .menu-dropdown > a {
+            cursor: pointer;
+        }
+
+        .dropdown-icon {
+            margin-left: auto;
+            transition: transform 0.3s ease;
+        }
+
+        /* Rotate arrow when open */
+        .menu-dropdown.open .dropdown-icon {
+            transform: rotate(180deg);
+        }
+
         /* Shift content slightly when collapsed */
         .collapsed + .content {
             margin-left: -180px;
@@ -427,6 +452,20 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelectorAll(".menu-dropdown > a").forEach(function (menu) {
+                menu.addEventListener("click", function (e) {
+                    e.preventDefault();
+
+                    const parent = this.parentElement;
+                    parent.classList.toggle("open");
+                });
+            });
+        });
+    </script>
+
     <script>
         // Simple JavaScript to handle menu interactions
         document.addEventListener('DOMContentLoaded', function() {

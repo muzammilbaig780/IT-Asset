@@ -1,439 +1,456 @@
-﻿@{
-    ViewData["Title"] = "IT Asset Management Dashboard";
-    Layout = "~/Views/Shared/_Layout.cshtml";
-}
+﻿    @{
+        ViewData["Title"] = "IT Asset Management Dashboard";
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
 
 
-<div class="sidebar">
-    @* <div class="logo" style="background: white; padding: 10px; border-radius: 8px;">
-        <img src="~/css/slrm-logo.png" alt="SLRM Logo" class="img-fluid" style="max-height: 40px;" />
-        <h1>SLRM <span>IT-ASSET MANAGEMENT</span></h1>
-    </div> *@
-
-    <button id="sidebarToggle" class="btn btn-primary btn-sm" style="background-color:#2c7fb8; border:none;">
-        <i class="fas fa-bars"></i>
-    </button>    <ul class="menu">
-        <li class="menu-item active">
-            <i class="fas fa-th-large"></i>
-            <span>Dashboard</span>
-        </li>
-        <li>
-            <a asp-controller="Assets" asp-action="Index" class="menu-item">
-                <i class="fas fa-server"></i>
-                <span>Assets</span>
-            </a>
-        </li>
-        <li>
-            <a asp-controller="Printers" asp-action="Index" class="menu-item">
-                <i class="fas fa-server"></i>
-                <span>Printers</span>
-            </a>
-        </li>
-        <li>
-            <a asp-controller="Cctv" asp-action="Index" class="menu-item">
-                <i class="fas fa-server"></i>
-                <span>Cctv</span>
-            </a>
-        </li>
-        <li>
-            <a asp-controller="Licenses" asp-action="Index" class="menu-item">
-                <i class="fas fa-server"></i>
-                <span>Licenses</span>
-            </a>
-        </li>
-        <li class="menu-item">
-            <i class="fas fa-keyboard"></i>
-            <span>Accessories</span>
-        </li>
-        <li>
-            <a asp-controller="Consumables" asp-action="Index" class="menu-item">
-                <i class="fas fa-server"></i>
-                <span>Consumables</span>
-            </a>
-        </li>
-        
-        <li class="menu-item">
-            <i class="fas fa-microchip"></i>
-            <span>Components</span>
-        </li>
-        <li class="menu-item">
-            <i class="fas fa-briefcase"></i>
-            <span>Predefined Kits</span>
-        </li>
-        
-        <li class="menu-item">
-            <a href="@Url.Action("Import", "Assets")" style="text-decoration: none; color: inherit;">
-                <i class="fas fa-file-import"></i>
-                <span>Import Assets</span>
-            </a>
-        </li>
-        <li class="menu-item">
-            <a href="@Url.Action("Import1", "Licenses")" style="text-decoration: none; color: inherit;">
-                <i class="fas fa-file-import"></i>
-                <span>Import Licenses</span>
-            </a>
-        </li>
-
-        <li class="menu-item">
-            <a href="@Url.Action("Import", "Printers")" style="text-decoration: none; color: inherit;">
-                <i class="fas fa-file-import"></i>
-                <span>Import Printers</span>
-            </a>
-        </li>
-
-        <li class="menu-item">
-            <a href="@Url.Action("Import", "Cctv")" style="text-decoration: none; color: inherit;">
-                <i class="fas fa-file-import"></i>
-                <span>Import Cctv</span>
-            </a>
-        </li>
-
-        <li class="menu-item">
-            <i class="fas fa-cog"></i>
-            <span>Settings</span>
-        </li>
-        <li class="menu-item">
-            <i class="fas fa-chart-pie"></i>
-            <span>Reports</span>
-        </li>
-        <li class="menu-item">
-            <i class="fas fa-clipboard-list"></i>
-            <span>Requestable Items</span>
-        </li>
-    </ul>
-</div>
-
-<!-- 🔹 Top Navbar -->
-<div class="snipeit-navbar">
-    <div class="navbar-left">
-        <img src="~/css/slrm-logo.png" alt="SLRM Logo">
-        <input type="text" class="form-control" placeholder="Lookup by Asset">
-    </div>
-
-    <div class="navbar-right">
-        <button class="icon-btn"><i class="fas fa-server"></i></button>
-        <button class="icon-btn"><i class="fas fa-save"></i></button>
-        <button class="icon-btn"><i class="fas fa-tint"></i></button>
-        <div class="dropdown">
-            <button class="btn btn-sm btn-outline-light dropdown-toggle" data-bs-toggle="dropdown">
-                Create New
-            </button>
-            <ul class="dropdown-menu dropdown-menu-end">
-                <li><a asp-controller="Assets" asp-action="Index" class="dropdown-item" >Asset</a></li>
-                <li><a asp-controller="Licenses" asp-action="Index" class="dropdown-item" >License</a></li>
-                <li><a class="dropdown-item" href="#">Component</a></li>
-            </ul>
-        </div>
-
-        <div class="user-menu dropdown">
-            <img src="https://via.placeholder.com/30" class="rounded-circle" alt="User" />
-            <button class="btn btn-sm btn-outline-light dropdown-toggle" data-bs-toggle="dropdown">
-                User Admin
-            </button>
-            <ul class="dropdown-menu dropdown-menu-end">
-    <!-- Profile link -->
-                <li>
-                    <a class="dropdown-item" href="@Url.Action( "Index", "Profile")">Profile</a></li>
-
-    <!-- Settings link (replace with actual settings page URL if available) -->
-    <li><a class="dropdown-item" href="#">Settings</a></li>
-
-    <!-- Logout link -->
-    <li><a class="dropdown-item text-danger" href="@Url.Action("Logout", "Account")">Logout</a></li>
-</ul>
-
-        </div>
-    </div>
-</div>
-
-<div class="content" style="width: 100%; padding: 20px;">
-    <div class="header">
-        <h2>Dashboard</h2>
-       @*  <div class="user-info">
-            <img src="https://ui-avatars.com/api/?name=Basavangj&background=3498db&color=fff" alt="User">
-            <div>
-                <div style="font-weight: 500;">Basavangj</div>
-                <div style="font-size: 12px; color: var(--text-light);">Admin</div>
-            </div>
+    <div class="sidebar">
+        @* <div class="logo" style="background: white; padding: 10px; border-radius: 8px;">
+            <img src="~/css/slrm-logo.png" alt="SLRM Logo" class="img-fluid" style="max-height: 40px;" />
+            <h1>SLRM <span>IT-ASSET MANAGEMENT</span></h1>
         </div> *@
+
+        <button id="sidebarToggle" class="btn btn-primary btn-sm" style="background-color:#2c7fb8; border:none;">
+            <i class="fas fa-bars"></i>
+        </button>    <ul class="menu">
+            <li class="menu-item active">
+                <i class="fas fa-th-large"></i>
+                <span>Dashboard</span>
+            </li>
+            <li class="menu-dropdown">
+                <a href="javascript:void(0);" class="menu-item">
+                    <i class="fas fa-server"></i>
+                    <span>Assets</span>
+                    <i class="fas fa-chevron-down dropdown-icon"></i>
+                </a>
+
+                <ul class="submenu">
+                    <li>
+                    <a asp-controller="Assets" asp-action="Index" class="menu-item">
+                        </a>
+                    </li>
+                    <li>
+                        <a asp-controller="Printers" asp-action="Index" class="menu-item">
+                            <span>Printers</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a asp-controller="Cctv" asp-action="Index" class="menu-item">
+                            <span>CCTV</span>
+                        </a>
+                </li>
+                <li>
+                    <a asp-controller="Barcode" asp-action="Index" class="menu-item">
+                        <span>Barcode</span>
+                    </a>
+                </li>
+                </ul>
+            </li>
+
+            <li>
+                <a asp-controller="Licenses" asp-action="Index" class="menu-item">
+                    <i class="fas fa-server"></i>
+                    <span>Licenses</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <i class="fas fa-keyboard"></i>
+                <span>Accessories</span>
+            </li>
+            <li>
+                <a asp-controller="Consumables" asp-action="Index" class="menu-item">
+                    <i class="fas fa-server"></i>
+                    <span>Consumables</span>
+                </a>
+            </li>
+        
+            <li class="menu-item">
+                <i class="fas fa-microchip"></i>
+                <span>Components</span>
+            </li>
+            <li class="menu-item">
+                <i class="fas fa-briefcase"></i>
+                <span>Predefined Kits</span>
+            </li>
+
+        <li class="menu-dropdown">
+            <a href="javascript:void(0);" class="menu-item">
+                <i class="fas fa-file-import"></i>
+                <span>Import</span>
+                <i class="fas fa-chevron-down dropdown-icon"></i>
+            </a>
+
+            <ul class="submenu">
+                <li>
+                    <a href="@Url.Action("Import", "Assets")" class="menu-item">
+                        <span>Import Assets</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("Import1", "Licenses")" class="menu-item">
+                        <span>Import Licenses</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("Import", "Printers")" class="menu-item">
+                        <span>Import Printers</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("Import", "Cctv")" class="menu-item">
+                        <span>Import CCTV</span>
+                    </a>
+                </li>
+            </ul>
+        </li>
+
+
+            <li class="menu-item">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </li>
+            <li class="menu-item">
+                <i class="fas fa-chart-pie"></i>
+                <span>Reports</span>
+            </li>
+            <li class="menu-item">
+                <i class="fas fa-clipboard-list"></i>
+                <span>Requestable Items</span>
+            </li>
+        </ul>
     </div>
 
-    <!-- Dashboard Cards -->
-    <div class="dashboard-cards">
-        <a asp-controller="Assets" asp-action="Index" style="text-decoration: none; color: inherit;">
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-title">Assets</div>
-                    <div class="card-icon assets">
-                        <i class="fas fa-server"></i>
-                    </div>
-                </div>
-                <div class="card-value">@Model.AssetCount</div>
-                <div class="card-text">Total IT Assets</div>
-
-                <!-- 👇 Added grid for Laptops & Desktops -->
-                <div class="table-responsive mt-3">
-                    <table class="table table-sm table-bordered text-center mb-0" style="font-size: 13px;">
-                        <thead class="table-light">
-                            <tr>
-                                <th>Device</th>
-                                <th>Count</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Laptops</td>
-                                <td>@Model.LaptopCount</td>
-                            </tr>
-                            <tr>
-                                <td>Desktops</td>
-                                <td>@Model.DesktopCount</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </a>
-
-        <a asp-controller="Licenses" asp-action="Index" style="text-decoration: none; color: inherit;">
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-title">Licenses</div>
-                    <div class="card-icon licenses">
-                        <i class="fas fa-certificate"></i>
-                    </div>
-                </div>
-                <div class="card-value">@Model.LicenseCount</div>
-                <div class="card-text">Total IT Licenses</div>
-
-                <!-- 👇 Dummy grid to match Asset card height -->
-                <div class="table-responsive mt-3">
-                    <table class="table table-sm table-bordered text-center mb-0" style="font-size: 13px; visibility: hidden;">
-                        <thead class="table-light">
-                            <tr>
-                                <th>Placeholder</th>
-                                <th>Value</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr><td>-</td><td>-</td></tr>
-                            <tr><td>-</td><td>-</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </a>
-
-
-        <div class="card">
-            <div class="card-header">
-                <div class="card-title">Accessories</div>
-                <div class="card-icon accessories">
-                    <i class="fas fa-keyboard"></i>
-                </div>
-            </div>
-            <div class="card-value"></div>
-            <div class="card-text">Peripheral Devices</div>
+    <!-- 🔹 Top Navbar -->
+    <div class="snipeit-navbar">
+        <div class="navbar-left">
+            <img src="~/css/slrm-logo.png" alt="SLRM Logo">
+            <input type="text" class="form-control" placeholder="Lookup by Asset">
         </div>
 
-        <a asp-controller="Consumables" asp-action="Index" style="text-decoration: none; color: inherit;">
+        <div class="navbar-right">
+            <button class="icon-btn"><i class="fas fa-server"></i></button>
+            <button class="icon-btn"><i class="fas fa-save"></i></button>
+            <button class="icon-btn"><i class="fas fa-tint"></i></button>
+            <div class="dropdown">
+                <button class="btn btn-sm btn-outline-light dropdown-toggle" data-bs-toggle="dropdown">
+                    Create New
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a asp-controller="Assets" asp-action="Index" class="dropdown-item" >Asset</a></li>
+                    <li><a asp-controller="Licenses" asp-action="Index" class="dropdown-item" >License</a></li>
+                    <li><a class="dropdown-item" href="#">Component</a></li>
+                </ul>
+            </div>
+
+            <div class="user-menu dropdown">
+                <img src="https://via.placeholder.com/30" class="rounded-circle" alt="User" />
+                <button class="btn btn-sm btn-outline-light dropdown-toggle" data-bs-toggle="dropdown">
+                    User Admin
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+        <!-- Profile link -->
+                    <li>
+                        <a class="dropdown-item" href="@Url.Action( "Index", "Profile")">Profile</a></li>
+
+        <!-- Settings link (replace with actual settings page URL if available) -->
+        <li><a class="dropdown-item" href="#">Settings</a></li>
+
+        <!-- Logout link -->
+        <li><a class="dropdown-item text-danger" href="@Url.Action("Logout", "Account")">Logout</a></li>
+    </ul>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="content" style="width: 100%; padding: 20px;">
+        <div class="header">
+            <h2>Dashboard</h2>
+           @*  <div class="user-info">
+                <img src="https://ui-avatars.com/api/?name=Basavangj&background=3498db&color=fff" alt="User">
+                <div>
+                    <div style="font-weight: 500;">Basavangj</div>
+                    <div style="font-size: 12px; color: var(--text-light);">Admin</div>
+                </div>
+            </div> *@
+        </div>
+
+        <!-- Dashboard Cards -->
+        <div class="dashboard-cards">
+            <a asp-controller="Assets" asp-action="Index" style="text-decoration: none; color: inherit;">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Assets</div>
+                        <div class="card-icon assets">
+                            <i class="fas fa-server"></i>
+                        </div>
+                    </div>
+                    <div class="card-value">@Model.AssetCount</div>
+                    <div class="card-text">Total IT Assets</div>
+
+                    <!-- 👇 Added grid for Laptops & Desktops -->
+                    <div class="table-responsive mt-3">
+                        <table class="table table-sm table-bordered text-center mb-0" style="font-size: 13px;">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Device</th>
+                                    <th>Count</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Laptops</td>
+                                    <td>@Model.LaptopCount</td>
+                                </tr>
+                                <tr>
+                                    <td>Desktops</td>
+                                    <td>@Model.DesktopCount</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </a>
+
+            <a asp-controller="Licenses" asp-action="Index" style="text-decoration: none; color: inherit;">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Licenses</div>
+                        <div class="card-icon licenses">
+                            <i class="fas fa-certificate"></i>
+                        </div>
+                    </div>
+                    <div class="card-value">@Model.LicenseCount</div>
+                    <div class="card-text">Total IT Licenses</div>
+
+                    <!-- 👇 Dummy grid to match Asset card height -->
+                    <div class="table-responsive mt-3">
+                        <table class="table table-sm table-bordered text-center mb-0" style="font-size: 13px; visibility: hidden;">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Placeholder</th>
+                                    <th>Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>-</td><td>-</td></tr>
+                                <tr><td>-</td><td>-</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </a>
+
+
             <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Accessories</div>
+                    <div class="card-icon accessories">
+                        <i class="fas fa-keyboard"></i>
+                    </div>
+                </div>
+                <div class="card-value"></div>
+                <div class="card-text">Peripheral Devices</div>
+            </div>
+
+            <a asp-controller="Consumables" asp-action="Index" style="text-decoration: none; color: inherit;">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Consumables</div>
+                        <div class="card-icon Consumables">
+                            <i class="fas fa-tint"></i>
+
+                        </div>
+                    </div>
+                    <div class="card-value">@Model.ConsumablesCount</div>
+                    <div class="card-text">Total IT Consumables</div>
+
+                    <!-- 👇 Dummy grid to match Asset card height -->
+                    <div class="table-responsive mt-3">
+                        <table class="table table-sm table-bordered text-center mb-0" style="font-size: 13px; visibility: hidden;">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Placeholder</th>
+                                    <th>Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>-</td><td>-</td></tr>
+                                <tr><td>-</td><td>-</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </a>
+
+
+            @* <div class="card">
                 <div class="card-header">
                     <div class="card-title">Consumables</div>
-                    <div class="card-icon Consumables">
+                    <div class="card-icon consumables">
                         <i class="fas fa-tint"></i>
-
                     </div>
                 </div>
-                <div class="card-value">@Model.ConsumablesCount</div>
-                <div class="card-text">Total IT Consumables</div>
+                <div class="card-value"></div>
+                <div class="card-text">Items in Stock</div>
+            </div> *@
 
-                <!-- 👇 Dummy grid to match Asset card height -->
-                <div class="table-responsive mt-3">
-                    <table class="table table-sm table-bordered text-center mb-0" style="font-size: 13px; visibility: hidden;">
-                        <thead class="table-light">
-                            <tr>
-                                <th>Placeholder</th>
-                                <th>Value</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr><td>-</td><td>-</td></tr>
-                            <tr><td>-</td><td>-</td></tr>
-                        </tbody>
-                    </table>
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Components</div>
+                    <div class="card-icon components">
+                        <i class="fas fa-microchip"></i>
+                    </div>
                 </div>
+                <div class="card-value"></div>
+                <div class="card-text">Items in Stock</div>
             </div>
-        </a>
-
-
-        @* <div class="card">
-            <div class="card-header">
-                <div class="card-title">Consumables</div>
-                <div class="card-icon consumables">
-                    <i class="fas fa-tint"></i>
-                </div>
-            </div>
-            <div class="card-value"></div>
-            <div class="card-text">Items in Stock</div>
-        </div> *@
-
-        <div class="card">
-            <div class="card-header">
-                <div class="card-title">Components</div>
-                <div class="card-icon components">
-                    <i class="fas fa-microchip"></i>
-                </div>
-            </div>
-            <div class="card-value"></div>
-            <div class="card-text">Items in Stock</div>
-        </div>
-    </div>
-
-    <!-- Buttons + Chart Layout -->
-    <div style="display: flex; gap: 40px; flex-wrap: wrap; margin-top: 20px; align-items: flex-start;">
-
-        <!-- Pie Chart (Asset Status) -->
-        <div style="flex: 1 1 400px; max-width: 400px;">
-            <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 10px;">
-                <button id="btnLaptop" class="btn btn-primary btn-sm">Laptop</button>
-                <button id="btnDesktop" class="btn btn-secondary btn-sm">Desktop</button>
-            </div>
-            <h4 style="text-align: center;">Assets</h4>
-            <canvas id="assetPieChart" width="380" height="280"></canvas>
         </div>
 
-        <!-- Bar Chart (Deployment Status) -->
-        <div style="flex: 1 1 600px; max-width: 600px;">
-            <h4 style="text-align: center;">Deployment Status</h4>
-            <canvas id="deploymentBarChart" width="600" height="300"></canvas>
+        <!-- Buttons + Chart Layout -->
+        <div style="display: flex; gap: 40px; flex-wrap: wrap; margin-top: 20px; align-items: flex-start;">
+
+            <!-- Pie Chart (Asset Status) -->
+            <div style="flex: 1 1 400px; max-width: 400px;">
+                <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 10px;">
+                    <button id="btnLaptop" class="btn btn-primary btn-sm">Laptop</button>
+                    <button id="btnDesktop" class="btn btn-secondary btn-sm">Desktop</button>
+                </div>
+                <h4 style="text-align: center;">Assets</h4>
+                <canvas id="assetPieChart" width="380" height="280"></canvas>
+            </div>
+
+            <!-- Bar Chart (Deployment Status) -->
+            <div style="flex: 1 1 600px; max-width: 600px;">
+                <h4 style="text-align: center;">Deployment Status</h4>
+                <canvas id="deploymentBarChart" width="600" height="300"></canvas>
+            </div>
         </div>
-    </div>
 
 
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
+        <!-- Chart.js -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
 
-            var laptopData = {
-                working: @Model.LaptopWorking,
-                underRepair: @Model.LaptopUnderRepair,
-                scrap: @Model.LaptopScrap,
-                missing: @Model.LaptopMissing
-            };
+                var laptopData = {
+                    working: @Model.LaptopWorking,
+                    underRepair: @Model.LaptopUnderRepair,
+                    scrap: @Model.LaptopScrap,
+                    missing: @Model.LaptopMissing
+                };
 
-            var desktopData = {
-                working: @Model.DesktopWorking,
-                underRepair: @Model.DesktopUnderRepair,
-                scrap: @Model.DesktopScrap,
-                missing: @Model.DesktopMissing
-            };
+                var desktopData = {
+                    working: @Model.DesktopWorking,
+                    underRepair: @Model.DesktopUnderRepair,
+                    scrap: @Model.DesktopScrap,
+                    missing: @Model.DesktopMissing
+                };
 
-            let pieChart;
-            let barChart;
+                let pieChart;
+                let barChart;
 
-            // ================= PIE CHART =================
-            function loadPieChart(data) {
-                const ctx = document.getElementById('assetPieChart').getContext('2d');
+                // ================= PIE CHART =================
+                function loadPieChart(data) {
+                    const ctx = document.getElementById('assetPieChart').getContext('2d');
 
-                if (pieChart) pieChart.destroy();
+                    if (pieChart) pieChart.destroy();
 
-                pieChart = new Chart(ctx, {
-                    type: 'pie',
+                    pieChart = new Chart(ctx, {
+                        type: 'pie',
+                        data: {
+                            labels: ['Working', 'UnderRepair', 'Scrap', 'Missing'],
+                            datasets: [{
+                                data: [
+                                    data.working,
+                                    data.underRepair,
+                                    data.scrap,
+                                    data.missing
+                                ],
+                                backgroundColor: ['#28a745', '#dc3545', '#6c757d', '#AFF8A2']
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: { position: 'bottom' }
+                            }
+                        }
+                    });
+                }
+
+                // ================= BAR CHART =================
+                      function loadBarChart(data) {
+                const ctxBar = document.getElementById('deploymentBarChart').getContext('2d');
+
+                if (barChart) barChart.destroy();
+
+                barChart = new Chart(ctxBar, {
+                    type: 'bar',
                     data: {
                         labels: ['Working', 'UnderRepair', 'Scrap', 'Missing'],
                         datasets: [{
+                            label: 'Assets',
                             data: [
                                 data.working,
                                 data.underRepair,
                                 data.scrap,
                                 data.missing
                             ],
-                            backgroundColor: ['#28a745', '#dc3545', '#6c757d', '#AFF8A2']
+                            backgroundColor: ['#28a745', '#dc3545', '#6c757d', '#AFF8A2'],
+                            barPercentage: 0.6
                         }]
                     },
                     options: {
                         responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                min: 0,
+                                max: 400,              // ✅ FORCE MAX TO 400
+                                ticks: {
+                                    stepSize: 25        // ✅ 0,25,50,75,100...400
+                                }
+                            }
+                        },
                         plugins: {
-                            legend: { position: 'bottom' }
+                            legend: { display: false }
                         }
                     }
                 });
             }
 
-            // ================= BAR CHART =================
-                  function loadBarChart(data) {
-            const ctxBar = document.getElementById('deploymentBarChart').getContext('2d');
-
-            if (barChart) barChart.destroy();
-
-            barChart = new Chart(ctxBar, {
-                type: 'bar',
-                data: {
-                    labels: ['Working', 'UnderRepair', 'Scrap', 'Missing'],
-                    datasets: [{
-                        label: 'Assets',
-                        data: [
-                            data.working,
-                            data.underRepair,
-                            data.scrap,
-                            data.missing
-                        ],
-                        backgroundColor: ['#28a745', '#dc3545', '#6c757d', '#AFF8A2'],
-                        barPercentage: 0.6
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            min: 0,
-                            max: 400,              // ✅ FORCE MAX TO 400
-                            ticks: {
-                                stepSize: 25        // ✅ 0,25,50,75,100...400
-                            }
-                        }
-                    },
-                    plugins: {
-                        legend: { display: false }
-                    }
-                }
-            });
-        }
-
-            // ✅ DEFAULT LOAD = LAPTOP FOR BOTH
-            loadPieChart(laptopData);
-            loadBarChart(laptopData);
-
-            // ✅ LAPTOP BUTTON → UPDATES BOTH CHARTS
-            document.getElementById("btnLaptop").addEventListener("click", function () {
+                // ✅ DEFAULT LOAD = LAPTOP FOR BOTH
                 loadPieChart(laptopData);
                 loadBarChart(laptopData);
 
-                this.classList.add("btn-primary");
-                this.classList.remove("btn-secondary");
+                // ✅ LAPTOP BUTTON → UPDATES BOTH CHARTS
+                document.getElementById("btnLaptop").addEventListener("click", function () {
+                    loadPieChart(laptopData);
+                    loadBarChart(laptopData);
 
-                document.getElementById("btnDesktop").classList.remove("btn-primary");
-                document.getElementById("btnDesktop").classList.add("btn-secondary");
+                    this.classList.add("btn-primary");
+                    this.classList.remove("btn-secondary");
+
+                    document.getElementById("btnDesktop").classList.remove("btn-primary");
+                    document.getElementById("btnDesktop").classList.add("btn-secondary");
+                });
+
+                // ✅ DESKTOP BUTTON → UPDATES BOTH CHARTS
+                document.getElementById("btnDesktop").addEventListener("click", function () {
+                    loadPieChart(desktopData);
+                    loadBarChart(desktopData);
+
+                    this.classList.add("btn-primary");
+                    this.classList.remove("btn-secondary");
+
+                    document.getElementById("btnLaptop").classList.remove("btn-primary");
+                    document.getElementById("btnLaptop").classList.add("btn-secondary");
+                });
+
             });
-
-            // ✅ DESKTOP BUTTON → UPDATES BOTH CHARTS
-            document.getElementById("btnDesktop").addEventListener("click", function () {
-                loadPieChart(desktopData);
-                loadBarChart(desktopData);
-
-                this.classList.add("btn-primary");
-                this.classList.remove("btn-secondary");
-
-                document.getElementById("btnLaptop").classList.remove("btn-primary");
-                document.getElementById("btnLaptop").classList.add("btn-secondary");
-            });
-
-        });
-    </script>
+        </script>
 
 
 

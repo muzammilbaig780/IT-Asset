@@ -1,0 +1,98 @@
+﻿@model SLRM_IT_Assest_Management.Models.Barcode
+
+<h2>Create Barcode</h2>
+
+@{
+    await Html.RenderPartialAsync("_BackButton");
+}
+
+<form asp-action="Create" method="post">
+    <div class="row">
+
+        <!-- Asset Info -->
+        <div class="col-md-6">
+            <label>Asset Tag</label>
+            <input asp-for="ITAssetTag" class="form-control" />
+        </div>
+
+        <div class="col-md-6">
+            <label>Make</label>
+            <input asp-for="Make" class="form-control" />
+        </div>
+
+        <div class="col-md-6 mt-2">
+            <label>Model</label>
+            <input asp-for="Model" class="form-control" />
+        </div>
+
+        <div class="col-md-6 mt-2">
+            <label>Serial Number</label>
+            <input asp-for="SerialNumber" class="form-control" />
+        </div>
+
+        <!-- Location / Dept -->
+        <div class="col-md-6 mt-2">
+            <label>Location</label>
+            <select asp-for="AssetLocationId" class="form-control"
+                    asp-items="@(new SelectList(ViewBag.AssetLocations, "AssetLocationId", "Name"))">
+                <option value="">-- Select Location --</option>
+            </select>
+        </div>
+
+        <div class="col-md-6 mt-2">
+            <label>Department</label>
+            <select asp-for="DepartmentId" class="form-control"
+                    asp-items="@(new SelectList(ViewBag.Departments, "DepartmentId", "DepartmentName"))">
+                <option value="">-- Select Department --</option>
+            </select>
+        </div>
+
+        <!-- Status -->
+        <div class="col-md-6 mt-2">
+            <label>Status</label>
+            <input asp-for="Status" class="form-control" />
+        </div>
+
+        <!-- GRN & Warranty -->
+        <div class="col-md-6 mt-2">
+            <label>GRN Number</label>
+            <input asp-for="GRNNumber" class="form-control" />
+        </div>
+
+        <div class="col-md-6 mt-2">
+            <label>Warranty</label>
+            <input asp-for="Warranty" class="form-control" />
+        </div>
+
+        <!-- Dates -->
+        <div class="col-md-6 mt-2">
+            <label>Invoice Date</label>
+            <input asp-for="InvoiceDate" type="date" class="form-control" />
+        </div>
+
+        <div class="col-md-6 mt-2">
+            <label>GRN Date</label>
+            <input asp-for="GRNDate" type="date" class="form-control" />
+        </div>
+
+        <div class="col-md-6 mt-2">
+            <label>End Date</label>
+            <input asp-for="EndDate" type="date" class="form-control" />
+        </div>
+
+        <div class="col-md-6 mt-2">
+            <label>Scrap Date</label>
+            <input asp-for="ScrapDate" type="date" class="form-control" />
+        </div>
+
+        <!-- Remark -->
+        <div class="col-md-12 mt-2">
+            <label>Remark</label>
+            <textarea asp-for="Remark" class="form-control" rows="3"></textarea>
+        </div>
+
+    </div>
+
+    <button type="submit" class="btn btn-success mt-3">Save</button>
+    <a asp-action="Index" class="btn btn-secondary mt-3">Back</a>
+</form>
