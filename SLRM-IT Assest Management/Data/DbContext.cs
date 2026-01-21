@@ -32,6 +32,8 @@ namespace AssetManagement.Data
         public DbSet<ConsumableStock> ConsumableStocks { get; set; }
         public DbSet<ConsumableTransaction> ConsumableTransactions { get; set; }
         public DbSet<Accessory> Accessories { get; set; }   
+        public DbSet<Category> Categories { get; set; }   
+        public DbSet<Component> Components { get; set; }   
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

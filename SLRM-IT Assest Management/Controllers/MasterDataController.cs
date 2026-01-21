@@ -175,5 +175,25 @@ public class MasterDataController : Controller
         return View(printerType);
     }
 
+    [HttpGet]
+    public IActionResult CreateCategory()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CreateCategory(Category category)
+    {
+        if (ModelState.IsValid)
+        {
+            _context.Categories.Add(category);
+            await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Category added!";
+            return RedirectToAction("Create", "Category");
+        }
+        return View(category);
+    }
+
+
 
 }

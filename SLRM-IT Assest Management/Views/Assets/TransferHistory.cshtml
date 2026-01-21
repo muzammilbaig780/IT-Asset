@@ -1,12 +1,15 @@
 ﻿@model IEnumerable<SLRM_IT_Assest_Management.Models.AssetTransferLog>
+
 @{
     var asset = ViewBag.Asset as SLRM_IT_Assest_Management.Models.Asset;
+    string error = ViewBag.Error as string;
 }
 
 <!DOCTYPE html>
 <html>
 <head>
     <title>Asset Lifecycle</title>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
@@ -55,96 +58,96 @@
 
     <div class="container mt-4">
 
-        <!-- ✅ Asset Info Card -->
-        <div class="card shadow mb-4">
-            <div class="card-header bg-success text-white">
-                <h5 class="mb-0">
-                    <i class="fas fa-box me-2"></i>
-                    Asset Lifecycle – @asset?.AssetTag
-                </h5>
+        <!-- 🔍 AssetTag Search -->
+        <div class="card shadow mb-3">
+            <div class="card-body">
+                <form method="get" asp-action="TransferHistory" class="row g-2">
+                    <div class="col-md-4">
+                        <input type="text"
+                               name="assetTag"
+                               value="@Context.Request.Query["assetTag"]"
+                               class="form-control"
+                               placeholder="Enter Asset Tag" />
+                    </div>
+
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-search"></i> Search
+                        </button>
+                    </div>
+                </form>
             </div>
-
-            <div class="card-body row">
-@*                 <div class="col-md-4"><b>Asset Name:</b> @asset?.AssetName</div>
- *@                <div class="col-md-4"><b>Asset Type:</b> @asset?.AssetType?.Name</div>
-                <div class="col-md-4"><b>Current User:</b> @asset?.UserName</div>
-
-                <div class="col-md-4 mt-2"><b>Department:</b> @asset?.Department?.DepartmentName</div>
-                <div class="col-md-4 mt-2"><b>Status:</b> @asset?.AssetStatus?.Name</div>
-@*                 <div class="col-md-4 mt-2"><b>Created Date:</b> @asset?.CreatedDate?.ToString("dd-MM-yyyy")</div>
- *@            </div>
         </div>
 
-        <!-- ✅ Lifecycle Timeline -->
-        <div class="card shadow">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0">
-                    <i class="fas fa-route me-2"></i>Transfer Lifecycle
-                </h5>
+        <!-- ❌ Error -->
+        @if (!string.IsNullOrEmpty(error))
+        {
+            <div class="alert alert-danger text-center">@error</div>
+        }
+
+        <!-- ✅ Asset Info -->
+        @if (asset != null)
+        {
+            <div class="card shadow mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-box me-2"></i>
+                        Asset Lifecycle – @asset.AssetTag
+                    </h5>
+                </div>
+
+                <div class="card-body row">
+                    <div class="col-md-4"><b>Asset Type:</b> @asset.AssetType?.Name</div>
+                    <div class="col-md-4"><b>Current User:</b> @asset.UserName</div>
+                    <div class="col-md-4"><b>Status:</b> @asset.AssetStatus?.Name</div>
+                    <div class="col-md-4 mt-2"><b>Department:</b> @asset.Department?.DepartmentName</div>
+                </div>
             </div>
+        }
 
-            <div class="card-body">
+        <!-- 🔁 Transfer Lifecycle -->
+        @if (Model.Any())
+        {
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-route me-2"></i> Transfer Lifecycle
+                    </h5>
+                </div>
 
-                @if (!Model.Any())
-                {
-                    <div class="alert alert-info text-center">
-                        No lifecycle history found.
-                    </div>
-                }
-                else
-                {
+                <div class="card-body">
                     <div class="timeline">
-
                         @foreach (var item in Model)
                         {
                             <div class="timeline-item">
                                 <div class="timeline-card">
-
                                     <div class="d-flex justify-content-between">
-                                        <h6 class="text-primary mb-1">
+                                        <h6 class="text-primary">
                                             <i class="fas fa-calendar-alt"></i>
                                             @item.TransferDate.ToString("dd MMM yyyy HH:mm")
                                         </h6>
                                         <span class="badge bg-info">@item.TransferredBy</span>
                                     </div>
 
-                                    <hr class="my-2" />
+                                    <hr />
 
-                                    <p class="mb-1">
-                                        <b>From:</b>
-                                        @item.FromUserName (@item.FromEmpCode) -
-                                        @item.FromDepartment?.DepartmentName
-                                    </p>
-
-                                    <p class="mb-1">
-                                        <b>To:</b>
-                                        @item.ToUserName (@item.ToEmpCode) -
-                                        @item.ToDepartment?.DepartmentName
-                                    </p>
-
-                                    <p class="mb-1">
-                                        <b>Reason:</b> @item.TransferReason
-                                    </p>
-
-                                    <p class="mb-0">
-                                        <b>Remarks:</b> @item.Remarks
-                                    </p>
-
+                                    <p><b>From:</b> @item.FromUserName (@item.FromEmpCode) - @item.FromDepartment?.DepartmentName</p>
+                                    <p><b>To:</b> @item.ToUserName (@item.ToEmpCode) - @item.ToDepartment?.DepartmentName</p>
+                                    <p><b>Reason:</b> @item.TransferReason</p>
+                                    <p><b>Remarks:</b> @item.Remarks</p>
                                 </div>
                             </div>
                         }
-
                     </div>
-                }
-
-                <div class="text-end mt-3">
-                    <a asp-action="Index" class="btn btn-secondary">
-                        <i class="fas fa-arrow-left me-1"></i>Back
-                    </a>
                 </div>
-
             </div>
-        </div>
+        }
+        else if (asset != null)
+        {
+            <div class="alert alert-info text-center">
+                No transfer history found for this asset.
+            </div>
+        }
 
     </div>
 

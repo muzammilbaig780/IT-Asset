@@ -30,7 +30,7 @@ namespace AssetManagement.Controllers
             ViewBag.Divisions = await _context.Divisions.ToListAsync();
         }
 
-        public async Task<IActionResult> Index(string filter = "All", int page = 1, string pageSize = "25")
+        public async Task<IActionResult> Index(string filter = "All", int page = 1, string pageSize = "25", string assetTag = "")
         {
             var query = _context.Assets
                 .Include(a => a.Company)
@@ -40,12 +40,22 @@ namespace AssetManagement.Controllers
                 .Include(a => a.Department)
                 .Include(a => a.Division)
                 .Include(a => a.Block)
+                .Include(a => a.TransferLogs)
+                  .AsNoTracking()
                 .AsQueryable();
 
             if (filter != "All" && !string.IsNullOrEmpty(filter))
             {
                 query = query.Where(a => a.AssetType.Name == filter);
             }
+
+            // ✅ Filter by Asset Tag (NEW)
+            if (!string.IsNullOrWhiteSpace(assetTag))
+            {
+                query = query.Where(a => a.AssetTag.Contains(assetTag));
+            }
+
+
 
             var totalRecords = await query.CountAsync();
 
@@ -70,6 +80,8 @@ namespace AssetManagement.Controllers
             ViewBag.PageSize = pageSize;
             ViewBag.TotalRecords = totalRecords;
             ViewBag.Filter = filter;
+            ViewBag.AssetTag = assetTag;
+
 
             return View(assets);
         }
@@ -315,16 +327,26 @@ namespace AssetManagement.Controllers
             }
         }
         [HttpGet]
-        public async Task<IActionResult> TransferHistory(int? id)
+        public async Task<IActionResult> TransferHistory(int? id, string? assetTag)
         {
-            if (id == null)
-                return BadRequest("Asset ID is required");
+            Asset? asset = null;
 
-            var asset = await _context.Assets
-                .Include(a => a.AssetType)
-                .Include(a => a.Department)
-                .Include(a => a.AssetStatus)
-                .FirstOrDefaultAsync(a => a.AssetId == id);
+            if (id != null)
+            {
+                asset = await _context.Assets
+                    .Include(a => a.AssetType)
+                    .Include(a => a.Department)
+                    .Include(a => a.AssetStatus)
+                    .FirstOrDefaultAsync(a => a.AssetId == id);
+            }
+            else if (!string.IsNullOrWhiteSpace(assetTag))
+            {
+                asset = await _context.Assets
+                    .Include(a => a.AssetType)
+                    .Include(a => a.Department)
+                    .Include(a => a.AssetStatus)
+                    .FirstOrDefaultAsync(a => a.AssetTag == assetTag);
+            }
 
             if (asset == null)
                 return NotFound("Asset not found");
@@ -332,8 +354,9 @@ namespace AssetManagement.Controllers
             var history = await _context.AssetTransferLogs
                 .Include(x => x.FromDepartment)
                 .Include(x => x.ToDepartment)
-                .Where(x => x.AssetId == id)
+                .Where(x => x.AssetId == asset.AssetId)
                 .OrderByDescending(x => x.TransferDate)
+                .AsNoTracking()
                 .ToListAsync();
 
             ViewBag.Asset = asset;

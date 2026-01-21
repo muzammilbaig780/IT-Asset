@@ -311,6 +311,43 @@
             </div>
         }
 
+        <div class="card shadow-sm mb-3" style="max-width: 520px;">
+            <div class="card-body p-2">
+                <form method="get"
+                      asp-action="Index"
+                      class="d-flex align-items-center gap-2">
+
+                    <label class="fw-semibold mb-0 small text-nowrap">
+                        Asset Tag
+                    </label>
+
+                    <input type="text"
+                           name="assetTag"
+                           value="@ViewBag.AssetTag"
+                           class="form-control form-control-sm"
+                           style="width: 230px;"
+                           placeholder="Enter a AssetTag" />
+
+                    <input type="hidden" name="filter" value="@ViewBag.Filter" />
+                    <input type="hidden" name="pageSize" value="@ViewBag.PageSize" />
+
+                    <button type="submit"
+                            class="btn btn-sm btn-primary px-3">
+                        <i class="fas fa-search"></i>
+                    </button>
+
+                    @if (!string.IsNullOrEmpty(ViewBag.AssetTag))
+                    {
+                        <a asp-action="TransferHistory"
+                           class="btn btn-sm btn-outline-secondary">
+                            Clear
+                        </a>
+                    }
+                </form>
+            </div>
+        </div>
+
+
         <!-- Back Button -->
         @{
             await Html.RenderPartialAsync("_BackButton");
@@ -490,10 +527,14 @@
                         {
                             <tr>
                                 <td>@item.SlNo</td>
+
+                                <!-- Transferred Column with Image -->
                                 <td>
                                     @if (item.IsTransferred)
                                     {
-                                        <span class="badge bg-warning text-dark">
+                                        <span class="badge bg-warning text-dark transfer-toggle"
+                                              style="cursor:pointer"
+                                              data-asset-id="@item.AssetId">
                                             <i class="fas fa-exchange-alt"></i> Transferred
                                         </span>
                                     }
@@ -502,17 +543,16 @@
                                         <span class="text-muted">NA</span>
                                     }
                                 </td>
-                                
+
                                 <td>@item.AssetStatus?.Name</td>
                                 <td>@item.AssetTag</td>
-                            @*     <td>@item.Company?.CompanyName</td> *@
                                 <td>@item.AssetType?.Name</td>
                                 <td>@item.Department?.DepartmentName</td>
                                 <td>@item.EmpCode</td>
                                 <td>@item.UserName</td>
                                 <td>@item.HostName</td>
                                 <td>@item.Block?.BlockName</td>
-                                <td>@item.AssetLocation?.Name</td>                             
+                                <td>@item.AssetLocation?.Name</td>
                                 <td>@item.Make</td>
                                 <td>@item.Model</td>
 
@@ -522,25 +562,26 @@
                                     <td>@item.MoniterModel</td>
                                     <td>@item.CPUSerialNo</td>
                                 }
+
                                 <td>@(string.IsNullOrEmpty(item.SerialNo) ? "NA" : item.SerialNo)</td>
                                 <td>@item.Processor</td>
                                 <td>@item.Ram</td>
                                 <td>@item.Hdd</td>
                                 <td>@item.Division?.DivisionName</td>
                                 <td>@item.AntiVirus</td>
-                             
                                 <td>@item.OSVersion</td>
                                 <td>@item.AutoCad</td>
                                 <td>@item.Office</td>
                                 <td>@item.WindowLicenseKey</td>
                                 <td>@item.IPAddress</td>
                                 <td>@item.Nitro</td>
-                            @*     <td>@item.AuditStatus</td> *@
                                 <td>@item.CatridgeType</td>
                                 <td>@(string.IsNullOrEmpty(item.GRNNumber) ? "NA" : item.GRNNumber)</td>
                                 <td>@(item.GRNDate.HasValue? item.GRNDate.Value.ToString("dd/MM/yyyy") : "NA")</td>
                                 <td>@(item.InvoiceDate.HasValue? item.InvoiceDate.Value.ToString("dd/MM/yyyy") : "NA")</td>
                                 <td>@(item.Warranty.HasValue ? $"{item.Warranty} Months" : "NA")</td>
+
+                                <!-- Expiry Status -->
                                 <td>
                                     @if (item.ExpiryDate.HasValue)
                                     {
@@ -550,17 +591,17 @@
 
                                         if (daysLeft <= 0)
                                         {
-                                            status = " Expired";
+                                            status = "Expired";
                                             color = "text-danger";
                                         }
                                         else if (daysLeft <= 30)
                                         {
-                                            status = "⚠️ Expiring Soon";
+                                            status = "Expiring Soon";
                                             color = "text-warning";
                                         }
                                         else
                                         {
-                                            status = "✅ Active";
+                                            status = "Active";
                                             color = "text-success";
                                         }
 
@@ -577,29 +618,27 @@
                                         <span>NA</span>
                                     }
                                 </td>
-                                
 
+                                <!-- Actions -->
                                 <td class="text-center">
                                     <div class="action-buttons">
                                         <a asp-action="Edit" asp-route-id="@item.AssetId" class="btn btn-warning btn-sm">
-                                            <i class="fas fa-edit"></i>
+                                            <i class="fas fa-edit"></i> Update
                                         </a>
                                         <a asp-action="Delete" asp-route-id="@item.AssetId" class="btn btn-danger btn-sm">
-                                            <i class="fas fa-trash-alt"></i>
+                                            <i class="fas fa-trash-alt"></i> Delete
                                         </a>
                                         <a asp-action="TransferHistory"
                                            asp-route-id="@item.AssetId"
                                            class="btn btn-info btn-sm ms-1">
-                                            <i class="fas fa-history"></i>
+                                            <i class="fas fa-history"></i> TransferHistory
                                         </a>
                                     </div>
                                 </td>
-
-                              
-
                             </tr>
                         }
                     </tbody>
+
                 </table>
             </div>
         </div>

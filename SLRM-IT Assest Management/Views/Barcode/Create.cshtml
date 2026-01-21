@@ -2,9 +2,8 @@
 
 <h2>Create Barcode</h2>
 
-@{
-    await Html.RenderPartialAsync("_BackButton");
-}
+   
+
 
 <form asp-action="Create" method="post">
     <div class="row">
@@ -34,7 +33,7 @@
         <div class="col-md-6 mt-2">
             <label>Location</label>
             <select asp-for="AssetLocationId" class="form-control"
-                    asp-items="@(new SelectList(ViewBag.AssetLocations, "AssetLocationId", "Name"))">
+                    asp-items="ViewBag.AssetLocations">
                 <option value="">-- Select Location --</option>
             </select>
         </div>
@@ -42,7 +41,7 @@
         <div class="col-md-6 mt-2">
             <label>Department</label>
             <select asp-for="DepartmentId" class="form-control"
-                    asp-items="@(new SelectList(ViewBag.Departments, "DepartmentId", "DepartmentName"))">
+                    asp-items="ViewBag.Departments">
                 <option value="">-- Select Department --</option>
             </select>
         </div>
