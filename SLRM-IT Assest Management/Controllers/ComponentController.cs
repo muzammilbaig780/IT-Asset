@@ -34,33 +34,31 @@ namespace SLRM_IT_Assest_Management.Controllers
         [HttpGet]
         public async Task<IActionResult> Create()
         {
-            ViewBag.Components = await _context.Components.ToListAsync();
+            // ✅ MATCH VIEWBAG KEYS WITH VIEW EXPECTATIONS
+            ViewBag.Categories = await _context.Categories.ToListAsync();
             ViewBag.AssetLocations = await _context.AssetLocations.ToListAsync();
-
             return View();
         }
 
-        // POST: ComponentController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-       
         public async Task<IActionResult> Create(Component component)
         {
             if (ModelState.IsValid)
             {
                 _context.Components.Add(component);
                 await _context.SaveChangesAsync();
-                TempData["SuccessMessage"] = "Components added!";
-                return RedirectToAction("Create", "Components");
+                TempData["SuccessMessage"] = "Component added successfully!";
+                return RedirectToAction(nameof(Index)); // ✅ Go to Index, not Create
             }
 
-            ViewBag.Category = _context.Categories.ToList();
-            ViewBag.AssetLocations = _context.AssetLocations.ToList();
-
-
+            // ✅ SAME KEYS AS GET METHOD + ASYNC
+            ViewBag.Categories = await _context.Categories.ToListAsync();
+            ViewBag.AssetLocations = await _context.AssetLocations.ToListAsync();
 
             return View(component);
         }
+
 
         // GET: ComponentController/Edit/5
         public ActionResult Edit(int id)

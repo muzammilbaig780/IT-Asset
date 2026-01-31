@@ -1,11 +1,16 @@
 using AssetManagement.Data; // ApplicationDbContext
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
+using SLRM_IT_Assest_Management.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddScoped<IConsumableService, ConsumableService>();
+
+
 
 // Register EF Core DbContext
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -38,6 +43,7 @@ app.UseRouting();
 
 app.UseAuthentication();  // Authentication must come before Authorization
 app.UseAuthorization();
+app.UseDeveloperExceptionPage();
 
 
 // Default route configuration

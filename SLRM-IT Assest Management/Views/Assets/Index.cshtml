@@ -61,6 +61,7 @@
         .table-responsive {
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
+            position: relative;
         }
 
         /* === TABLE STYLES === */
@@ -119,8 +120,8 @@
             margin-right: 5px;
         }
 
-        /* Responsive tweaks */
-        media (max-width: 992px) {
+        /* FIXED RESPONSIVE MEDIA QUERIES */
+        @@media (max-width: 992px) {
             th, td
 
         {
@@ -130,7 +131,7 @@
 
         }
 
-        media (max-width: 768px) {
+        @@media (max-width: 768px) {
             .action-bar
 
         {
@@ -141,32 +142,11 @@
 
         }
 
-        /* Pagination */
-        #pagination button {
-            margin: 3px;
-            padding: 6px 10px;
-            border: none;
-            background-color: #e9ecef;
-            border-radius: 4px;
-            transition: 0.3s;
-            cursor: pointer;
-        }
-
-            #pagination button.active {
-                background-color: #1f3c88;
-                color: white;
-            }
-
-            #pagination button:hover {
-                background-color: #3459b1;
-                color: #fff;
-            }
-
         /* === EXCEL-STYLE FILTER STYLES === */
         .filter-header {
             position: relative;
             cursor: pointer;
-            padding-right: 25px !important; /* Space for filter icon */
+            padding-right: 25px !important;
         }
 
         .filter-icon {
@@ -265,27 +245,15 @@
             }
 
         .filtered-column {
-            background-color: #1a3a7a !important; /* Darker blue for filtered columns */
+            background-color: #1a3a7a !important;
         }
 
             .filtered-column .filter-icon {
-                color: #ffeb3b; /* Yellow icon for filtered columns */
+                color: #ffeb3b;
             }
 
-        /* Ensure dropdown doesn't get cut off by table container */
-        .table-responsive {
-            position: relative;
-        }
-
-        .table-scroll {
-            width: 100%;
-            overflow-x: auto;
-            overflow-y: hidden;
-        }
-
         #assets-table {
-            min-width: 2000px; /* Increase if more columns */
-            white-space: nowrap;
+            min-width: 2000px;
         }
 
         table#assets-table th:nth-child(2),
@@ -295,7 +263,6 @@
             font-weight: 700;
             color: #1565c0;
         }
-
     </style>
 </head>
 
@@ -313,47 +280,25 @@
 
         <div class="card shadow-sm mb-3" style="max-width: 520px;">
             <div class="card-body p-2">
-                <form method="get"
-                      asp-action="Index"
-                      class="d-flex align-items-center gap-2">
-
-                    <label class="fw-semibold mb-0 small text-nowrap">
-                        Asset Tag
-                    </label>
-
-                    <input type="text"
-                           name="assetTag"
-                           value="@ViewBag.AssetTag"
-                           class="form-control form-control-sm"
-                           style="width: 230px;"
+                <form method="get" asp-action="Index" class="d-flex align-items-center gap-2">
+                    <label class="fw-semibold mb-0 small text-nowrap">Asset Tag</label>
+                    <input type="text" name="assetTag" value="@ViewBag.AssetTag"
+                           class="form-control form-control-sm" style="width: 230px;"
                            placeholder="Enter a AssetTag" />
-
                     <input type="hidden" name="filter" value="@ViewBag.Filter" />
                     <input type="hidden" name="pageSize" value="@ViewBag.PageSize" />
-
-                    <button type="submit"
-                            class="btn btn-sm btn-primary px-3">
+                    <button type="submit" class="btn btn-sm btn-primary px-3">
                         <i class="fas fa-search"></i>
                     </button>
-
                     @if (!string.IsNullOrEmpty(ViewBag.AssetTag))
                     {
-                        <a asp-action="TransferHistory"
-                           class="btn btn-sm btn-outline-secondary">
-                            Clear
-                        </a>
+                        <a asp-action="Index" class="btn btn-sm btn-outline-secondary">Clear</a>
                     }
                 </form>
             </div>
         </div>
 
-
-        <!-- Back Button -->
-        @{
-            await Html.RenderPartialAsync("_BackButton");
-        }
-
-        <!-- Filter Toolbar -->
+        @await Html.PartialAsync("_BackButton")
         @await Html.PartialAsync("_FilterToolbar")
 
         <div class="d-flex justify-content-between align-items-center mb-3">
@@ -362,163 +307,49 @@
             </a>
             <span class="text-muted small">Total: <span id="total-count">@Model.Count()</span> assets</span>
         </div>
-     
+
         <div class="table-container">
             <div class="table-responsive">
                 <table class="table table-hover" id="assets-table">
                     <thead>
                         <tr>
-                            <th class="filter-header">
-                                Sl No
-                                <i class="fas fa-filter filter-icon"></i>
-                            </th>
-                            <th class="filter-header">
-                                TransferStatus
-                                <i class="fas fa-filter filter-icon"></i>
-                            </th>
-                            
-                            <th class="filter-header">
-                                Status
-                                <i class="fas fa-filter filter-icon"></i>
-                            </th>
-                            
-                            <th class="filter-header">
-                                Asset Tag
-                                <i class="fas fa-filter filter-icon"></i>
-                            </th>
-                            <th class="filter-header">
-                                Asset Type
-                                <i class="fas fa-filter filter-icon"></i>
-                            </th>
-                            <th class="filter-header">
-                                Department
-                                <i class="fas fa-filter filter-icon"></i>
-                            </th>
-                            <th class="filter-header">
-                                Emp Code
-                                <i class="fas fa-filter filter-icon"></i>
-                            </th>
-                            <th class="filter-header">
-                                User Name
-                                <i class="fas fa-filter filter-icon"></i>
-                            </th>
-                            <th class="filter-header">
-                                Host Name
-                                <i class="fas fa-filter filter-icon"></i>
-                            </th>
-                            <th class="filter-header">
-                                Block
-                                <i class="fas fa-filter filter-icon"></i>
-                            </th>
-                            <th class="filter-header">
-                                Asset Location
-                                <i class="fas fa-filter filter-icon"></i>
-                            </th>
-                           
-                            <th class="filter-header">
-                                Make
-                                <i class="fas fa-filter filter-icon"></i>
-                            </th>
-                            <th class="filter-header">
-                                Model
-                                <i class="fas fa-filter filter-icon"></i>
-                            </th>
-
-                            
+                            <th class="filter-header">Sl No<i class="fas fa-filter filter-icon"></i></th>
+                            <th class="filter-header">TransferStatus<i class="fas fa-filter filter-icon"></i></th>
+                            <th class="filter-header">Status<i class="fas fa-filter filter-icon"></i></th>
+                            <th class="filter-header">Asset Tag<i class="fas fa-filter filter-icon"></i></th>
+                            <th class="filter-header">Asset Type<i class="fas fa-filter filter-icon"></i></th>
+                            <th class="filter-header">Department<i class="fas fa-filter filter-icon"></i></th>
+                            <th class="filter-header">Emp Code<i class="fas fa-filter filter-icon"></i></th>
+                            <th class="filter-header">User Name<i class="fas fa-filter filter-icon"></i></th>
+                            <th class="filter-header">Host Name<i class="fas fa-filter filter-icon"></i></th>
+                            <th class="filter-header">Block<i class="fas fa-filter filter-icon"></i></th>
+                            <th class="filter-header">Asset Location<i class="fas fa-filter filter-icon"></i></th>
+                            <th class="filter-header">Make<i class="fas fa-filter filter-icon"></i></th>
+                            <th class="filter-header">Model<i class="fas fa-filter filter-icon"></i></th>
                             @if (ViewBag.Filter?.ToString() == "Desktop")
                             {
-                                <th class="filter-header">
-                                    Monitor Make
-                                    <i class="fas fa-filter filter-icon"></i>
-                                </th>
-                                <th class="filter-header">
-                                    Monitor Model
-                                    <i class="fas fa-filter filter-icon"></i>
-                                </th>
-
-                                <th class="filter-header">
-                                    CPU Serial No
-                                    <i class="fas fa-filter filter-icon"></i>
-                                </th>
+                                <th class="filter-header">Monitor Make<i class="fas fa-filter filter-icon"></i></th>
+                                <th class="filter-header">Monitor Model<i class="fas fa-filter filter-icon"></i></th>
+                                <th class="filter-header">CPU Serial No<i class="fas fa-filter filter-icon"></i></th>
                             }
-                            <th class="filter-header">
-                                Serial No
-                                <i class="fas fa-filter filter-icon"></i>
-                            </th>
-                            <th class="filter-header">
-                                Processor
-                                <i class="fas fa-filter filter-icon"></i>
-                            </th>
-                            <th class="filter-header">
-                                RAM
-                                <i class="fas fa-filter filter-icon"></i>
-                            </th>
-                            <th class="filter-header">
-                                HDD
-                                <i class="fas fa-filter filter-icon"></i>
-                            </th>
-                            <th class="filter-header">
-                                Division
-                                <i class="fas fa-filter filter-icon"></i>
-                            </th>
-                            <th class="filter-header">
-                                Antivirus
-                                <i class="fas fa-filter filter-icon"></i>
-                            </th>
-                          
-                            <th class="filter-header">
-                                OS Version
-                                <i class="fas fa-filter filter-icon"></i>
-                            </th>
-                            <th class="filter-header">
-                                AutoCAD
-                                <i class="fas fa-filter filter-icon"></i>
-                            </th>
-                            <th class="filter-header">
-                                Office
-                                <i class="fas fa-filter filter-icon"></i>
-                            </th>
-                            <th class="filter-header">
-                                Windows License Key
-                                <i class="fas fa-filter filter-icon"></i>
-                            </th>
-                            <th class="filter-header">
-                                IP Address
-                                <i class="fas fa-filter filter-icon"></i>
-                            </th>
-                            <th class="filter-header">
-                                Nitro
-                                <i class="fas fa-filter filter-icon"></i>
-                            </th>
-                           @*  <th class="filter-header">
-                                Audit Status
-                                <i class="fas fa-filter filter-icon"></i>
-                            </th> *@
-                            <th class="filter-header">
-                                CatridgeType
-                                <i class="fas fa-filter filter-icon"></i>
-                            </th>
-                            <th class="filter-header">
-                                GRN Number
-                                <i class="fas fa-filter filter-icon"></i>
-                            </th>
-                            <th class="filter-header">
-                                GRN Date
-                                <i class="fas fa-filter filter-icon"></i>
-                            </th>
-                            <th class="filter-header">
-                                Invoice Date
-                                <i class="fas fa-filter filter-icon"></i>
-                            </th>
-                            <th class="filter-header">
-                                Warranty
-                                <i class="fas fa-filter filter-icon"></i>
-                            </th>
-                            <th class="filter-header">
-                                ExpiryDate
-                                <i class="fas fa-filter filter-icon"></i>
-                            </th>
-                            
+                            <th class="filter-header">Serial No<i class="fas fa-filter filter-icon"></i></th>
+                            <th class="filter-header">Processor<i class="fas fa-filter filter-icon"></i></th>
+                            <th class="filter-header">RAM<i class="fas fa-filter filter-icon"></i></th>
+                            <th class="filter-header">HDD<i class="fas fa-filter filter-icon"></i></th>
+                            <th class="filter-header">Division<i class="fas fa-filter filter-icon"></i></th>
+                            <th class="filter-header">Antivirus<i class="fas fa-filter filter-icon"></i></th>
+                            <th class="filter-header">OS Version<i class="fas fa-filter filter-icon"></i></th>
+                            <th class="filter-header">AutoCAD<i class="fas fa-filter filter-icon"></i></th>
+                            <th class="filter-header">Office<i class="fas fa-filter filter-icon"></i></th>
+                            <th class="filter-header">Windows License Key<i class="fas fa-filter filter-icon"></i></th>
+                            <th class="filter-header">IP Address<i class="fas fa-filter filter-icon"></i></th>
+                            <th class="filter-header">Nitro<i class="fas fa-filter filter-icon"></i></th>
+                            <th class="filter-header">CatridgeType<i class="fas fa-filter filter-icon"></i></th>
+                            <th class="filter-header">GRN Number<i class="fas fa-filter filter-icon"></i></th>
+                            <th class="filter-header">GRN Date<i class="fas fa-filter filter-icon"></i></th>
+                            <th class="filter-header">Invoice Date<i class="fas fa-filter filter-icon"></i></th>
+                            <th class="filter-header">Warranty<i class="fas fa-filter filter-icon"></i></th>
+                            <th class="filter-header">ExpiryDate<i class="fas fa-filter filter-icon"></i></th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -527,14 +358,10 @@
                         {
                             <tr>
                                 <td>@item.SlNo</td>
-
-                                <!-- Transferred Column with Image -->
                                 <td>
                                     @if (item.IsTransferred)
                                     {
-                                        <span class="badge bg-warning text-dark transfer-toggle"
-                                              style="cursor:pointer"
-                                              data-asset-id="@item.AssetId">
+                                        <span class="badge bg-warning text-dark transfer-toggle" style="cursor:pointer" data-asset-id="@item.AssetId">
                                             <i class="fas fa-exchange-alt"></i> Transferred
                                         </span>
                                     }
@@ -543,7 +370,6 @@
                                         <span class="text-muted">NA</span>
                                     }
                                 </td>
-
                                 <td>@item.AssetStatus?.Name</td>
                                 <td>@item.AssetTag</td>
                                 <td>@item.AssetType?.Name</td>
@@ -555,14 +381,12 @@
                                 <td>@item.AssetLocation?.Name</td>
                                 <td>@item.Make</td>
                                 <td>@item.Model</td>
-
                                 @if (ViewBag.Filter?.ToString() == "Desktop")
                                 {
                                     <td>@item.MoniterMake</td>
                                     <td>@item.MoniterModel</td>
                                     <td>@item.CPUSerialNo</td>
                                 }
-
                                 <td>@(string.IsNullOrEmpty(item.SerialNo) ? "NA" : item.SerialNo)</td>
                                 <td>@item.Processor</td>
                                 <td>@item.Ram</td>
@@ -580,30 +404,12 @@
                                 <td>@(item.GRNDate.HasValue? item.GRNDate.Value.ToString("dd/MM/yyyy") : "NA")</td>
                                 <td>@(item.InvoiceDate.HasValue? item.InvoiceDate.Value.ToString("dd/MM/yyyy") : "NA")</td>
                                 <td>@(item.Warranty.HasValue ? $"{item.Warranty} Months" : "NA")</td>
-
-                                <!-- Expiry Status -->
                                 <td>
                                     @if (item.ExpiryDate.HasValue)
                                     {
                                         var daysLeft = (item.ExpiryDate.Value.ToDateTime(TimeOnly.MinValue) - DateTime.Today).Days;
-                                        string status;
-                                        string color;
-
-                                        if (daysLeft <= 0)
-                                        {
-                                            status = "Expired";
-                                            color = "text-danger";
-                                        }
-                                        else if (daysLeft <= 30)
-                                        {
-                                            status = "Expiring Soon";
-                                            color = "text-warning";
-                                        }
-                                        else
-                                        {
-                                            status = "Active";
-                                            color = "text-success";
-                                        }
+                                        string status = daysLeft <= 0 ? "Expired" : daysLeft <= 30 ? "Expiring Soon" : "Active";
+                                        string color = daysLeft <= 0 ? "text-danger" : daysLeft <= 30 ? "text-warning" : "text-success";
 
                                         <span>@item.ExpiryDate.Value.ToString("dd/MM/yyyy")</span>
                                 
@@ -618,8 +424,6 @@
                                         <span>NA</span>
                                     }
                                 </td>
-
-                                <!-- Actions -->
                                 <td class="text-center">
                                     <div class="action-buttons">
                                         <a asp-action="Edit" asp-route-id="@item.AssetId" class="btn btn-warning btn-sm">
@@ -628,9 +432,7 @@
                                         <a asp-action="Delete" asp-route-id="@item.AssetId" class="btn btn-danger btn-sm">
                                             <i class="fas fa-trash-alt"></i> Delete
                                         </a>
-                                        <a asp-action="TransferHistory"
-                                           asp-route-id="@item.AssetId"
-                                           class="btn btn-info btn-sm ms-1">
+                                        <a asp-action="TransferHistory" asp-route-id="@item.AssetId" class="btn btn-info btn-sm ms-1">
                                             <i class="fas fa-history"></i> TransferHistory
                                         </a>
                                     </div>
@@ -638,328 +440,214 @@
                             </tr>
                         }
                     </tbody>
-
                 </table>
             </div>
         </div>
     </div>
-   
-  
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-
-    <!-- DataTables -->
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-
-    <!-- DataTables Buttons -->
     <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.bootstrap5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
 
     <script>
+        // ✅ FIXED COLUMN FILTERING SYSTEM
         document.addEventListener('DOMContentLoaded', function() {
-            // Create filter dropdowns for each column
-            const filterHeaders = document.querySelectorAll('.filter-header');
+            let filters = {};
+            let columnCount = document.querySelectorAll('#assets-table thead th.filter-header').length;
 
-            filterHeaders.forEach((header, index) => {
-                // Create filter dropdown container
+            // Create filter dropdowns
+            document.querySelectorAll('.filter-header').forEach((header, index) => {
+                if (index >= columnCount) return; // Skip Actions column
+
                 const dropdown = document.createElement('div');
                 dropdown.className = 'filter-dropdown';
                 dropdown.dataset.columnIndex = index;
 
-                // Add search input for text columns
                 const searchInput = document.createElement('input');
                 searchInput.type = 'text';
                 searchInput.className = 'filter-search';
                 searchInput.placeholder = 'Search...';
                 dropdown.appendChild(searchInput);
 
-                // Add options container
                 const optionsContainer = document.createElement('div');
                 optionsContainer.className = 'filter-options';
                 dropdown.appendChild(optionsContainer);
 
-                // Add action buttons
                 const actionsDiv = document.createElement('div');
                 actionsDiv.className = 'filter-actions';
 
                 const applyBtn = document.createElement('button');
-                applyBtn.type = 'button';
-                applyBtn.className = 'btn btn-primary btn-sm';
+                applyBtn.className = 'btn-apply';
                 applyBtn.textContent = 'Apply';
-                applyBtn.onclick = function() { applyFilter(index); };
+                applyBtn.onclick = () => applyFilter(index);
+                actionsDiv.appendChild(applyBtn);
 
                 const clearBtn = document.createElement('button');
-                clearBtn.type = 'button';
-                clearBtn.className = 'btn btn-secondary btn-sm';
+                clearBtn.className = 'btn-clear';
                 clearBtn.textContent = 'Clear';
-                clearBtn.onclick = function() { clearFilter(index); };
-
-                actionsDiv.appendChild(applyBtn);
+                clearBtn.onclick = () => clearFilter(index);
                 actionsDiv.appendChild(clearBtn);
-                dropdown.appendChild(actionsDiv);
 
-                // Append dropdown to header
+                dropdown.appendChild(actionsDiv);
                 header.appendChild(dropdown);
 
-                // Populate filter options
-                // populateFilterOptions(index);
+                populateFilterOptions(index);
 
-                // Toggle dropdown on click
-                header.addEventListener('click', function(e) {
-                    // Close all other dropdowns
+                // Toggle dropdown
+                header.addEventListener('click', (e) => {
+                    e.stopPropagation();
                     document.querySelectorAll('.filter-dropdown.active').forEach(d => {
                         if (d !== dropdown) d.classList.remove('active');
                     });
-
-                    // Toggle current dropdown
                     dropdown.classList.toggle('active');
-
-                    // Focus search input when dropdown opens
                     if (dropdown.classList.contains('active')) {
                         setTimeout(() => searchInput.focus(), 100);
                     }
-
-                    e.stopPropagation();
                 });
             });
 
-            // Close dropdowns when clicking outside
-            document.addEventListener('click', function() {
-                document.querySelectorAll('.filter-dropdown.active').forEach(d => {
-                    d.classList.remove('active');
+            // Close dropdowns on outside click
+            document.addEventListener('click', () => {
+                document.querySelectorAll('.filter-dropdown.active').forEach(d => d.classList.remove('active'));
+            });
+
+            function populateFilterOptions(columnIndex) {
+                const dropdown = document.querySelector(`.filter-dropdown[data-column-index="${columnIndex}"]`);
+                const optionsContainer = dropdown.querySelector('.filter-options');
+                const searchInput = dropdown.querySelector('.filter-search');
+
+                optionsContainer.innerHTML = '';
+                const table = document.getElementById('assets-table');
+                const rows = table.querySelectorAll('tbody tr');
+                const valueCount = {};
+
+                rows.forEach(row => {
+                    const cell = row.cells[columnIndex];
+                    if (!cell) return;
+                    let value = cell.textContent.trim();
+
+                    if (columnIndex === 33) { // ExpiryDate column
+                        const dateMatch = value.match(/\d{2}\/\d{2}\/\d{4}/);
+                        if (dateMatch) value = dateMatch[0];
+                    }
+
+                    if (value && value !== 'NA') {
+                        valueCount[value] = (valueCount[value] || 0) + 1;
+                    }
                 });
-            });
 
-                   function populateFilterOptions(columnIndex) {
-            const dropdown = document.querySelector(`.filter-dropdown[data-column-index="${columnIndex}"]`);
-            const optionsContainer = dropdown.querySelector('.filter-options');
-            const searchInput = dropdown.querySelector('.filter-search');
+                const sortedValues = Object.keys(valueCount).sort();
+                sortedValues.forEach(value => {
+                    const optionDiv = document.createElement('div');
+                    optionDiv.className = 'filter-option';
 
-            optionsContainer.innerHTML = '';
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.value = value;
+                    checkbox.className = 'filter-checkbox';
 
-            const table = document.getElementById('assets-table');
-            const rows = table.querySelectorAll('tbody tr');
+                    const label = document.createElement('label');
+                    label.textContent = `${value} (${valueCount[value]})`;
 
-            const valueCount = {}; // ✅ store value + count
-
-            rows.forEach(row => {
-                const cell = row.cells[columnIndex];
-                if (!cell) return;
-
-                let value = cell.textContent.trim();
-
-                // ✅ ExpiryDate special handling
-                if (columnIndex === 33) {
-                    const dateMatch = value.match(/\d{2}\/\d{2}\/\d{4}/);
-                    if (dateMatch) value = dateMatch[0];
-                }
-
-                if (value && value !== 'NA') {
-                    valueCount[value] = (valueCount[value] || 0) + 1;
-                }
-            });
-
-            const sortedValues = Object.keys(valueCount).sort();
-
-            sortedValues.forEach(value => {
-                const optionDiv = document.createElement('div');
-                optionDiv.className = 'filter-option';
-
-                const checkbox = document.createElement('input');
-                checkbox.type = 'checkbox';
-                checkbox.value = value;
-                checkbox.id = `filter-${columnIndex}-${value.replace(/\s+/g, '-')}`;
-
-                const label = document.createElement('label');
-                label.htmlFor = checkbox.id;
-                label.textContent = `${value} (${valueCount[value]})`; // ✅ COUNT SHOWN
-
-                optionDiv.appendChild(checkbox);
-                optionDiv.appendChild(label);
-                optionsContainer.appendChild(optionDiv);
-            });
-
-            // ✅ Search inside filter
-            searchInput.addEventListener('input', function () {
-                const searchTerm = this.value.toLowerCase();
-                const options = optionsContainer.querySelectorAll('.filter-option');
-
-                options.forEach(option => {
-                    const text = option.textContent.toLowerCase();
-                    option.style.display = text.includes(searchTerm) ? 'flex' : 'none';
+                    optionDiv.appendChild(checkbox);
+                    optionDiv.appendChild(label);
+                    optionsContainer.appendChild(optionDiv);
                 });
-            });
-        }
 
-                     // ✅ Search inside filter
-        searchInput.addEventListener('input', function () {
-            const searchTerm = this.value.toLowerCase();
-            const options = optionsContainer.querySelectorAll('.filter-option');
+                searchInput.addEventListener('input', function() {
+                    const searchTerm = this.value.toLowerCase();
+                    optionsContainer.querySelectorAll('.filter-option').forEach(option => {
+                        const text = option.textContent.toLowerCase();
+                        option.style.display = text.includes(searchTerm) ? 'flex' : 'none';
+                    });
+                });
+            }
 
-            options.forEach(option => {
-                const text = option.textContent.toLowerCase();
-                option.style.display = text.includes(searchTerm) ? 'flex' : 'none';
-            });
-        });
+            function applyFilter(columnIndex) {
+                const dropdown = document.querySelector(`.filter-dropdown[data-column-index="${columnIndex}"]`);
+                const checkedOptions = dropdown.querySelectorAll('.filter-checkbox:checked');
+                const selectedValues = Array.from(checkedOptions).map(cb => cb.value);
 
-            // Function to apply filter
-            // function applyFilter(columnIndex) {
-            //     const dropdown = document.querySelector(`.filter-dropdown[data-column-index="${columnIndex}"]`);
-            //     const checkedOptions = dropdown.querySelectorAll('input[type="checkbox"]:checked');
+                filters[columnIndex] = selectedValues;
+                filterTable();
+                dropdown.classList.remove('active');
+            }
 
-                // Get selected values
-                const selectedValues = Array.from(checkedOptions).map(option => option.value);
+            function clearFilter(columnIndex) {
+                const dropdown = document.querySelector(`.filter-dropdown[data-column-index="${columnIndex}"]`);
+                dropdown.querySelectorAll('.filter-checkbox').forEach(cb => cb.checked = false);
+                delete filters[columnIndex];
+                filterTable();
+                dropdown.classList.remove('active');
+            }
 
-                if (selectedValues.length === 0) {
-                    // No filter applied
-                    clearFilter(columnIndex);
-                    return;
-                }
-
-                // Apply filter to table rows
+            function filterTable() {
                 const table = document.getElementById('assets-table');
                 const rows = table.querySelectorAll('tbody tr');
                 let visibleCount = 0;
 
                 rows.forEach(row => {
-                    const cell = row.cells[columnIndex];
-                    let cellValue = cell.textContent.trim();
+                    let showRow = true;
 
-                    // For expiry date column, extract just the date part
-                    if (columnIndex === 33) { // ExpiryDate column
-                        const dateMatch = cellValue.match(/\d{2}\/\d{2}\/\d{4}/);
-                        if (dateMatch) cellValue = dateMatch[0];
-                    }
+                    Object.keys(filters).forEach(colIndex => {
+                        const cell = row.cells[colIndex];
+                        if (!cell) return;
+                        let cellValue = cell.textContent.trim();
 
-                    if (selectedValues.includes(cellValue)) {
-                        row.style.display = '';
-                        visibleCount++;
-                    } else {
-                        row.style.display = 'none';
-                    }
+                        if (parseInt(colIndex) === 33) {
+                            const dateMatch = cellValue.match(/\d{2}\/\d{2}\/\d{4}/);
+                            if (dateMatch) cellValue = dateMatch[0];
+                        }
+
+                        if (!filters[colIndex].includes(cellValue)) {
+                            showRow = false;
+                        }
+                    });
+
+                    row.style.display = showRow ? '' : 'none';
+                    if (showRow) visibleCount++;
                 });
 
-                // Update total count
                 document.getElementById('total-count').textContent = visibleCount;
 
-                // Highlight filtered column
-                document.querySelectorAll('.filtered-column').forEach(el => {
-                    el.classList.remove('filtered-column');
+                document.querySelectorAll('.filter-header').forEach((header, idx) => {
+                    header.classList.toggle('filtered-column', filters[idx] && filters[idx].length > 0);
                 });
-                document.querySelectorAll('.filter-header')[columnIndex].classList.add('filtered-column');
-
-                // Close dropdown
-                dropdown.classList.remove('active');
             }
 
-            // Function to clear filter
-            // function clearFilter(columnIndex) {
-            //     const dropdown = document.querySelector(`.filter-dropdown[data-column-index="${columnIndex}"]`);
+            // Transfer toggle
+            document.addEventListener('click', '.transfer-toggle', function() {
+                const assetId = this.dataset.assetId;
+                // Add AJAX call here if needed
+                alert(`Toggle transfer status for Asset ID: ${assetId}`);
+            });
+        });
 
-                // Uncheck all checkboxes
-                dropdown.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-                    checkbox.checked = false;
-                });
-
-                // Show all rows
-                const table = document.getElementById('assets-table');
-                const rows = table.querySelectorAll('tbody tr');
-                rows.forEach(row => {
-                    row.style.display = '';
-                });
-
-                // Update total count
-                document.getElementById('total-count').textContent = rows.length;
-
-                // Remove highlight from column
-                document.querySelectorAll('.filtered-column').forEach(el => {
-                    el.classList.remove('filtered-column');
-                });
-
-                // Close dropdown
-                dropdown.classList.remove('active');
-            }
-               });
-
-                      
-            
-    </script>
-    <script>
-        let table;
-
+        // DataTables initialization
         $(document).ready(function () {
-
-            table = $('#assets-table').DataTable({
+            $('#assets-table').DataTable({
                 scrollX: true,
                 autoWidth: false,
                 pageLength: 10,
+                searching: true,
+                columnDefs: [
+                    { searchable: false, orderable: false, targets: [0, -1] }
+                ],
                 dom: 'Bfrtip',
                 buttons: [
                     { extend: 'excel', className: 'd-none', title: 'Assets' },
                     { extend: 'print', className: 'd-none' }
                 ]
             });
-
-            // SEARCH
-            $('#tableSearch').on('keyup', function () {
-                table.search(this.value).draw();
-            });
-
-            $('#clearSearch').on('click', function () {
-                $('#tableSearch').val('');
-                table.search('').draw();
-            });
-
-            // ROWS PER PAGE
-            $('#rowsPerPage').on('change', function () {
-                let val = $(this).val();
-                table.page.len(val === 'All' ? -1 : val).draw();
-            });
-
-            // REFRESH
-            $('.btn-refresh').on('click', function () {
-                table.search('').columns().search('').draw();
-            });
-
-            // DOWNLOAD
-            $('.btn-download').on('click', function () {
-                table.button('.buttons-excel').trigger();
-            });
-
-            // PRINT
-            $('.btn-print').on('click', function () {
-                table.button('.buttons-print').trigger();
-            });
-
-            // VIEW ALL COLUMNS
-            $('.btn-view').on('click', function () {
-                table.columns().visible(true);
-                $('.column-toggle').prop('checked', true);
-            });
-
-            // COLUMN TOGGLE
-            $('.column-toggle').on('change', function () {
-                let index = $(this).data('column');
-                table.column(index).visible(this.checked);
-            });
-
-            $('#toggleAll').on('change', function () {
-                let checked = this.checked;
-                $('.column-toggle').each(function () {
-                    $(this).prop('checked', checked);
-                    table.column($(this).data('column')).visible(checked);
-                }); 
-            });
-
         });
     </script>
-
 </body>
 </html>
