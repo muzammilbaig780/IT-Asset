@@ -218,13 +218,25 @@ namespace SLRM_IT_Assest_Management.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool PrinterExists(string serialNumber) // Duplicate method
+        private DateTime? SafeExcelDate(ExcelRange cell)
         {
-            return _context.Printers.Any(e => e.SerialNumber == serialNumber);
+            if (cell == null || string.IsNullOrWhiteSpace(cell.Text))
+                return null;
+
+            // Excel numeric date (most common)
+            if (cell.Value is double d)
+                return DateTime.FromOADate(d);
+
+            // Try parsing text date
+            if (DateTime.TryParse(cell.Text, CultureInfo.InvariantCulture,
+                DateTimeStyles.None, out DateTime parsedDate))
+                return parsedDate;
+
+            // Text like "NEED TO CHECK"
+            return null;
         }
 
 
-        
         public IActionResult Import()
         {
             return View();
@@ -319,9 +331,9 @@ namespace SLRM_IT_Assest_Management.Controllers
                             }
 
                             // ===== Convert dates =====
-                            DateTime grnDate = worksheet.Cells[row, 12].GetValue<DateTime?>() ?? DateTime.Now;
-                            DateTime invoiceDate = worksheet.Cells[row, 14].GetValue<DateTime?>() ?? DateTime.Now;
-                            DateTime? endDate = worksheet.Cells[row, 15].GetValue<DateTime?>();
+                            DateTime? grnDate = SafeExcelDate(worksheet.Cells[row, 12]);
+                            DateTime? invoiceDate = SafeExcelDate(worksheet.Cells[row, 14]);
+                            DateTime? endDate = SafeExcelDate(worksheet.Cells[row, 15]);
 
                             // ===== Normalize Status =====
                             string status = string.IsNullOrEmpty(statusText) ? "WORKING" : statusText.ToUpper();
@@ -373,11 +385,6 @@ namespace SLRM_IT_Assest_Management.Controllers
                 return RedirectToAction(nameof(Import));
             }
         }
-
-
-
-
-
 
     }
 }

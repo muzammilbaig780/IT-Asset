@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
+using ClosedXML.Excel;
 using SLRM_IT_Assest_Management.Models;
 using SLRM_IT_Assest_Management.ViewModels;
 
@@ -408,6 +409,118 @@ namespace AssetManagement.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [HttpGet]
+        public async Task<IActionResult> ExportAllToExcel(string filter = "All")
+        {
+            try
+            {
+                // Get ALL assets without pagination
+                IQueryable<Asset> query = _context.Assets
+                    .Include(a => a.AssetStatus)
+                    .Include(a => a.AssetType)
+                    .Include(a => a.Department)
+                    .Include(a => a.Block)
+                    .Include(a => a.AssetLocation)
+                    .Include(a => a.Division);
+
+                // Apply filter if needed
+                if (!string.IsNullOrEmpty(filter) && filter != "All")
+                {
+                    query = query.Where(a => a.AssetType.Name == filter);
+                }
+
+                var assets = await query.ToListAsync();
+
+                // Create Excel file
+                using (var workbook = new XLWorkbook())
+                {
+                    var worksheet = workbook.Worksheets.Add("Assets");
+
+                    // Add headers
+                    string[] headers = {
+                "Sl No", "TransferStatus", "Status", "Asset Tag", "Asset Type",
+                "Department", "Emp Code", "User Name", "Host Name", "Block",
+                "Asset Location", "Make", "Model", "Serial No", "Processor",
+                "RAM", "HDD", "Division", "Antivirus", "OS Version",
+                "AutoCAD", "Office", "Windows License Key", "IP Address",
+                "Nitro", "CatridgeType", "GRN Number", "GRN Date",
+                "Invoice Date", "Warranty (Months)", "Expiry Date"
+            };
+
+                    for (int i = 0; i < headers.Length; i++)
+                    {
+                        worksheet.Cell(1, i + 1).Value = headers[i];
+                        worksheet.Cell(1, i + 1).Style.Font.Bold = true;
+                        worksheet.Cell(1, i + 1).Style.Fill.BackgroundColor = XLColor.LightBlue;
+                    }
+
+                    // Add data
+                    int row = 2;
+                    foreach (var asset in assets)
+                    {
+                        worksheet.Cell(row, 1).Value = asset.SlNo  ;
+                        worksheet.Cell(row, 2).Value = asset.IsTransferred ? "Transferred" : "NA";
+                        worksheet.Cell(row, 3).Value = asset.AssetStatus?.Name ?? "NA";
+                        worksheet.Cell(row, 4).Value = asset.AssetTag ?? "NA";
+                        worksheet.Cell(row, 5).Value = asset.AssetType?.Name ?? "NA";
+                        worksheet.Cell(row, 6).Value = asset.Department?.DepartmentName ?? "NA";
+                        worksheet.Cell(row, 7).Value = asset.EmpCode ?? "NA";
+                        worksheet.Cell(row, 8).Value = asset.UserName ?? "NA";
+                        worksheet.Cell(row, 9).Value = asset.HostName ?? "NA";
+                        worksheet.Cell(row, 10).Value = asset.Block?.BlockName ?? "NA";
+                        worksheet.Cell(row, 11).Value = asset.AssetLocation?.Name ?? "NA";
+                        worksheet.Cell(row, 12).Value = asset.Make ?? "NA";
+                        worksheet.Cell(row, 13).Value = asset.Model ?? "NA";
+                        worksheet.Cell(row, 14).Value = string.IsNullOrEmpty(asset.SerialNo) ? "NA" : asset.SerialNo;
+                        worksheet.Cell(row, 15).Value = asset.Processor ?? "NA";
+                        worksheet.Cell(row, 16).Value = asset.Ram ?? "NA";
+                        worksheet.Cell(row, 17).Value = asset.Hdd ?? "NA";
+                        worksheet.Cell(row, 18).Value = asset.Division?.DivisionName ?? "NA";
+                        worksheet.Cell(row, 19).Value = asset.AntiVirus ?? "NA";
+                        worksheet.Cell(row, 20).Value = asset.OSVersion ?? "NA";
+                        worksheet.Cell(row, 21).Value = asset.AutoCad ?? "NA";
+                        worksheet.Cell(row, 22).Value = asset.Office ?? "NA";
+                        worksheet.Cell(row, 23).Value = asset.WindowLicenseKey ?? "NA";
+                        worksheet.Cell(row, 24).Value = asset.IPAddress ?? "NA";
+                        worksheet.Cell(row, 25).Value = asset.Nitro ?? "NA";
+                        worksheet.Cell(row, 26).Value = asset.CatridgeType ?? "NA";
+                        worksheet.Cell(row, 27).Value = string.IsNullOrEmpty(asset.GRNNumber) ? "NA" : asset.GRNNumber;
+                        worksheet.Cell(row, 28).Value = asset.GRNDate?.ToString("dd/MM/yyyy") ?? "NA";
+                        worksheet.Cell(row, 29).Value = asset.InvoiceDate?.ToString("dd/MM/yyyy") ?? "NA";
+                        worksheet.Cell(row, 30).Value = asset.Warranty?.ToString() ?? "NA";
+                        worksheet.Cell(row, 31).Value = asset.ExpiryDate?.ToString("dd/MM/yyyy") ?? "NA";
+
+                        row++;
+                    }
+
+                    // Auto-fit columns
+                    worksheet.Columns().AdjustToContents();
+
+                    // Save to memory stream
+                    using (var stream = new MemoryStream())
+                    {
+                        workbook.SaveAs(stream);
+                        var content = stream.ToArray();
+
+                        // Generate filename with current date
+                        string fileName = $"Assets_Export_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx";
+
+                        return File(content,
+                            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                            fileName);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log error
+                Console.WriteLine($"Excel Export Error: {ex.Message}");
+                return StatusCode(500, "Error generating Excel file");
+            }
+        }
+
+
+
         private bool AssetExists(int id)
         {
             return _context.Assets.Any(e => e.AssetId == id);
@@ -728,6 +841,8 @@ namespace AssetManagement.Controllers
             ViewBag.Filter = "Laptop"; ;
             return View("Index", laptops); // reuse same Index view
         }
+
+
 
         public async Task<IActionResult> Desktops(int pageSize = 10)
         {

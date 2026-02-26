@@ -443,15 +443,80 @@
                     border-left: 4px solid var(--accent);
                     color: #1d9bf0 !important;
                 }
+
+
+        /* Excel Style Column Filter */
+
+        .filter-header {
+            position: relative;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .filter-toggle {
+            font-size: 12px;
+            margin-left: 6px;
+            color: #888;
+        }
+
+        .filter-popup {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            padding: 10px;
+            min-width: 220px;
+            max-height: 300px;
+            overflow-y: auto;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+            z-index: 9999;
+        }
+
+            .filter-popup input[type="text"] {
+                width: 100%;
+                margin-bottom: 8px;
+                padding: 5px;
+                font-size: 13px;
+            }
+
+        .filter-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+        }
+
+            .filter-actions button {
+                font-size: 12px;
+            }
     </style>
 </head>
+
 <body>
 
     @RenderBody()
+    <!-- 1️⃣ jQuery FIRST -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
 
+    <!-- 2️⃣ Bootstrap (optional but after jQuery) -->
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- 3️⃣ DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+    <!-- 4️⃣ DataTables Buttons -->
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+
+    <!-- 5️⃣ JSZip (Required for Excel) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
+
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
@@ -486,6 +551,94 @@
             document.querySelector(".sidebar").classList.toggle("collapsed");
         });
 
+    </script>
+
+    <script>
+        window.initExcelFilter = function (tableSelector) {
+
+            let table = $(tableSelector).DataTable();
+
+            $(tableSelector + ' thead').on('click', '.filter-toggle', function (e) {
+                e.stopPropagation();
+
+                $('.filter-popup').remove();
+
+                let th = $(this).closest('th');
+                let columnIndex = table.column(th).index();
+
+                let uniqueValues = [];
+
+                table.column(columnIndex).data().each(function (value) {
+                    let text = $('<div>').html(value).text().trim();
+                    if (text && !uniqueValues.includes(text)) {
+                        uniqueValues.push(text);
+                    }
+                });
+
+                uniqueValues.sort();
+
+                let popup = $('<div class="filter-popup"></div>');
+                let searchBox = $('<input type="text" placeholder="Search...">');
+                let optionsBox = $('<div></div>');
+
+                uniqueValues.forEach(function (val) {
+                    optionsBox.append(`
+                        <div>
+                            <input type="checkbox" value="${val}" checked>
+                            <label>${val}</label>
+                        </div>
+                    `);
+                });
+
+                let applyBtn = $('<button class="btn btn-sm btn-primary">Apply</button>');
+                let clearBtn = $('<button class="btn btn-sm btn-secondary">Clear</button>');
+
+                let actionDiv = $('<div class="filter-actions"></div>');
+                actionDiv.append(applyBtn).append(clearBtn);
+
+                popup.append(searchBox);
+                popup.append(optionsBox);
+                popup.append(actionDiv);
+
+                th.append(popup);
+
+                // Search inside popup
+                searchBox.on('keyup', function () {
+                    let val = $(this).val().toLowerCase();
+                    optionsBox.children().each(function () {
+                        $(this).toggle($(this).text().toLowerCase().includes(val));
+                    });
+                });
+
+                // Apply filter
+                applyBtn.on('click', function () {
+
+                    let selected = [];
+
+                    optionsBox.find('input:checked').each(function () {
+                        selected.push($.fn.dataTable.util.escapeRegex($(this).val()));
+                    });
+
+                    let regex = selected.length
+                        ? '^(' + selected.join('|') + ')$'
+                        : '';
+
+                    table.column(columnIndex).search(regex, true, false).draw();
+
+                    popup.remove();
+                });
+
+                // Clear filter
+                clearBtn.on('click', function () {
+                    table.column(columnIndex).search('').draw();
+                    popup.remove();
+                });
+            });
+
+            $(document).on('click', function () {
+                $('.filter-popup').remove();
+            });
+        };
     </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

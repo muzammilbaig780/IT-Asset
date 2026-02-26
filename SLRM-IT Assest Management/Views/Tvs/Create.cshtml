@@ -1,0 +1,137 @@
+﻿@model SLRM_IT_Assest_Management.Models.Tv
+
+@{
+    ViewData["Title"] = "Create TV";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@ViewData["Title"] - SLRM IT-ASSET MANAGEMENT</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+
+<body style="background-color: #f4f6f9; padding: 20px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+
+    <div class="container-fluid">
+
+        <h1 style="font-size: 24px; font-weight: 600; margin-bottom: 20px; color: #1f3c88; padding-bottom: 10px; border-bottom: 2px solid #e3e6ef;">
+            SLRM IT-ASSET MANAGEMENT &gt; TV &gt; Create New
+        </h1>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card shadow-sm border-0" style="background: #ffffff; border-radius: 12px;">
+
+                    <div class="card-header bg-primary text-white py-3">
+                        <h3 class="mb-0">
+                            <i class="fas fa-tv me-2"></i>Add New TV
+                        </h3>
+                    </div>
+
+                    <div class="card-body p-4">
+
+                        <form asp-action="Create">
+
+                            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                            <div class="row g-3">
+
+                                <div class="col-md-6">
+                                    <label class="form-label">Asset Location</label>
+                                    <select asp-for="AssetLocationId" class="form-select">
+                                        <option value="">-- Select Location --</option>
+                                        @if (ViewBag.AssetLocations != null)
+                                        {
+                                            foreach (var location in ViewBag.AssetLocations)
+                                            {
+                                                <option value="@location.AssetLocationId">@location.Name</option>
+                                            }
+                                        }
+                                    </select>
+                                    <span asp-validation-for="AssetLocationId" class="text-danger"></span>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label asp-for="TvSerialNo" class="form-label fw-semibold"></label>
+                                    <input asp-for="TvSerialNo" class="form-control form-control-lg" />
+                                    <span asp-validation-for="TvSerialNo" class="text-danger small"></span>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label asp-for="Model" class="form-label fw-semibold"></label>
+                                    <input asp-for="Model" class="form-control form-control-lg" />
+                                    <span asp-validation-for="Model" class="text-danger small"></span>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label asp-for="ScrrenSize" class="form-label fw-semibold"></label>
+                                    <input asp-for="ScrrenSize" class="form-control form-control-lg" />
+                                    <span asp-validation-for="ScrrenSize" class="text-danger small"></span>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Department</label>
+                                    <select asp-for="DepartmentId" class="form-select">
+                                        <option value="">-- Select Department --</option>
+                                        @if (ViewBag.Departments != null)
+                                        {
+                                            foreach (var dept in ViewBag.Departments)
+                                            {
+                                                <option value="@dept.DepartmentId">@dept.DepartmentName</option>
+                                            }
+                                        }
+                                    </select>
+                                    <span asp-validation-for="DepartmentId" class="text-danger"></span>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label asp-for="UserName" class="form-label fw-semibold"></label>
+                                    <input asp-for="UserName" class="form-control form-control-lg" />
+                                    <span asp-validation-for="UserName" class="text-danger small"></span>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label asp-for="Qty" class="form-label fw-semibold"></label>
+                                    <input asp-for="Qty" class="form-control form-control-lg" />
+                                    <span asp-validation-for="Qty" class="text-danger small"></span>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label asp-for="Status" class="form-label fw-semibold"></label>
+                                    <input asp-for="Status" class="form-control form-control-lg" />
+                                    <span asp-validation-for="Status" class="text-danger small"></span>
+                                </div>
+
+                            </div>
+
+                            <div class="card-footer bg-light border-top d-flex justify-content-end gap-2 mt-4 pt-3">
+                                <a asp-action="Index" class="btn btn-secondary btn-lg">
+                                    <i class="fas fa-times me-2"></i>Cancel
+                                </a>
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-save me-2"></i>Save TV
+                                </button>
+                            </div>
+
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    @section Scripts {
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        }
+    }
+
+</body>
+</html>

@@ -334,10 +334,10 @@
                                 <td>@printer.Division</td> <!-- Display Division -->
                                 <td>@printer.Status</td> <!-- Display Status -->
                                 <td>@printer.Warranty</td> <!-- Display Warranty -->
-                                <td>@printer.GRNDate.ToString("yyyy-MM-dd")</td>
+                                <td>(@printer.GRNDate?.ToString("yyyy-MM-dd"))</td>
                                 <td>@printer.GRNNumber</td>
-                                <td>@printer.InvoiceDate.ToString("yyyy-MM-dd")</td>
-                                <td>@printer.EndDate.ToString("yyyy-MM-dd")</td>
+                                <td>(@printer.InvoiceDate?.ToString("yyyy-MM-dd"))</td>
+                                <td>(@printer.EndDate?.ToString("yyyy-MM-dd"))</td>
                                 @* <td>@printer.EndDate</td>  *@
                                 
                                 <td class="action-buttons">

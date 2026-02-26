@@ -1,96 +1,143 @@
 ﻿@model SLRM_IT_Assest_Management.Models.Component
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create Component";
 }
 
-<h1>Create</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@ViewData["Title"] - SLRM IT-ASSET MANAGEMENT</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
 
-<h4>Component</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
+<body style="background-color: #f4f6f9; padding: 20px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+
+    <div class="container-fluid">
+        <h1 style="font-size: 24px; font-weight: 600; margin-bottom: 20px; color: #1f3c88; padding-bottom: 10px; border-bottom: 2px solid #e3e6ef;">
+            SLRM IT-ASSET MANAGEMENT &gt; Component &gt; Create New
+        </h1>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card shadow-sm border-0" style="background: #ffffff; border-radius: 12px;">
+
+                    <div class="card-header bg-primary text-white py-3">
+                        <h3 class="mb-0">
+                            <i class="fas fa-microchip me-2"></i>Add New Component
+                        </h3>
+                    </div>
+
+                    <div class="card-body p-4">
+                        <form asp-action="Create" method="post">
+
+                            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                            <div class="row g-3">
+
+                                <div class="col-md-6">
+                                    <label asp-for="Name" class="form-label fw-semibold"></label>
+                                    <input asp-for="Name" class="form-control form-control-lg" />
+                                    <span asp-validation-for="Name" class="text-danger small"></span>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label asp-for="SerialNo" class="form-label fw-semibold"></label>
+                                    <input asp-for="SerialNo" class="form-control form-control-lg" />
+                                    <span asp-validation-for="SerialNo" class="text-danger small"></span>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label asp-for="CategoryId" class="form-label fw-semibold"></label>
+                                    <select asp-for="CategoryId"
+                                            class="form-select form-select-lg"
+                                            asp-items="@(new SelectList((IEnumerable<dynamic>)ViewBag.Categories, "CategoryId", "CategoryName"))">
+                                        <option value="">-- Select Category --</option>
+                                    </select>
+                                    <span asp-validation-for="CategoryId" class="text-danger small"></span>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label asp-for="ModelNo" class="form-label fw-semibold"></label>
+                                    <input asp-for="ModelNo" class="form-control form-control-lg" />
+                                    <span asp-validation-for="ModelNo" class="text-danger small"></span>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Asset Location</label>
+                                    <select asp-for="AssetLocationId"
+                                            class="form-select form-select-lg"
+                                            asp-items="@(new SelectList((IEnumerable<dynamic>)ViewBag.AssetLocations, "AssetLocationId", "Name"))">
+                                        <option value="">-- Select Location --</option>
+                                    </select>
+                                    <span asp-validation-for="AssetLocationId" class="text-danger small"></span>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label asp-for="OrderNo" class="form-label fw-semibold"></label>
+                                    <input asp-for="OrderNo" class="form-control form-control-lg" />
+                                    <span asp-validation-for="OrderNo" class="text-danger small"></span>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label asp-for="PurchaseDate" class="form-label fw-semibold"></label>
+                                    <input asp-for="PurchaseDate" type="date" class="form-control form-control-lg" />
+                                    <span asp-validation-for="PurchaseDate" class="text-danger small"></span>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label asp-for="Total" class="form-label fw-semibold"></label>
+                                    <input asp-for="Total" class="form-control form-control-lg" />
+                                    <span asp-validation-for="Total" class="text-danger small"></span>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label asp-for="Remaining" class="form-label fw-semibold"></label>
+                                    <input asp-for="Remaining" class="form-control form-control-lg" />
+                                    <span asp-validation-for="Remaining" class="text-danger small"></span>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label asp-for="TotalCost" class="form-label fw-semibold"></label>
+                                    <input asp-for="TotalCost" class="form-control form-control-lg" />
+                                    <span asp-validation-for="TotalCost" class="text-danger small"></span>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label asp-for="CheckInCheckOut" class="form-label fw-semibold"></label>
+                                    <input asp-for="CheckInCheckOut" class="form-control form-control-lg" />
+                                    <span asp-validation-for="CheckInCheckOut" class="text-danger small"></span>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label asp-for="IssueDate" class="form-label fw-semibold"></label>
+                                    <input asp-for="IssueDate" type="date" class="form-control form-control-lg" />
+                                    <span asp-validation-for="IssueDate" class="text-danger small"></span>
+                                </div>
+
+                            </div>
+
+                            <div class="card-footer bg-light border-top d-flex justify-content-end gap-2 mt-4 pt-3">
+                                <a asp-action="Index" class="btn btn-secondary btn-lg">
+                                    <i class="fas fa-times me-2"></i>Cancel
+                                </a>
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-save me-2"></i>Save Component
+                                </button>
+                            </div>
+
+                        </form>
+                    </div>
+
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="SerialNo" class="control-label"></label>
-                <input asp-for="SerialNo" class="form-control" />
-                <span asp-validation-for="SerialNo" class="text-danger"></span>
-            </div>
-            <div class="form-group mb-3">
-                <label asp-for="CategoryId" class="form-label"></label>
-                <select asp-for="CategoryId"
-                        class="form-select"
-                        asp-items="@(new SelectList((IEnumerable<dynamic>)ViewBag.Categories, "CategoryId", "CategoryName"))">
-                    <option value="">-- Select Category --</option>
-                </select>
-                <span asp-validation-for="CategoryId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ModelNo" class="control-label"></label>
-                <input asp-for="ModelNo" class="form-control" />
-                <span asp-validation-for="ModelNo" class="text-danger"></span>
-            </div>
-            <div class="form-group mb-3">
-                <label class="form-label">Asset Location</label>
-                <select asp-for="AssetLocationId"
-                        class="form-select"
-                        asp-items="@(new SelectList((IEnumerable<dynamic>)ViewBag.AssetLocations, "AssetLocationId", "Name"))">
-                    <option value="">-- Select Location --</option>
-                </select>
-                <span asp-validation-for="AssetLocationId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="OrderNo" class="control-label"></label>
-                <input asp-for="OrderNo" class="form-control" />
-                <span asp-validation-for="OrderNo" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="PurchaseDate" class="control-label"></label>
-                <input asp-for="PurchaseDate" class="form-control" />
-                <span asp-validation-for="PurchaseDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Total" class="control-label"></label>
-                <input asp-for="Total" class="form-control" />
-                <span asp-validation-for="Total" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Remaining" class="control-label"></label>
-                <input asp-for="Remaining" class="form-control" />
-                <span asp-validation-for="Remaining" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TotalCost" class="control-label"></label>
-                <input asp-for="TotalCost" class="form-control" />
-                <span asp-validation-for="TotalCost" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CheckInCheckOut" class="control-label"></label>
-                <input asp-for="CheckInCheckOut" class="form-control" />
-                <span asp-validation-for="CheckInCheckOut" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="IssueDate" class="control-label"></label>
-                <input asp-for="IssueDate" class="form-control" />
-                <span asp-validation-for="IssueDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
-</div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+</body>
+</html>

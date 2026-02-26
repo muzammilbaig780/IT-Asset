@@ -21,7 +21,11 @@ namespace SLRM_IT_Assest_Management.Controllers
         // GET: ComponentController
         public async Task<IActionResult> Index()
         {
-            var components = await _context.Components.ToListAsync();
+            var components = await _context.Components
+                .Include(c => c.Category)          // ✅ Load Category
+                .Include(c => c.AssetLocation)     // ✅ Load Location also
+                .ToListAsync();
+
             return View(components);
         }
 
@@ -34,7 +38,10 @@ namespace SLRM_IT_Assest_Management.Controllers
         [HttpGet]
         public async Task<IActionResult> Create()
         {
+<<<<<<< Updated upstream
             // ✅ MATCH VIEWBAG KEYS WITH VIEW EXPECTATIONS
+=======
+>>>>>>> Stashed changes
             ViewBag.Categories = await _context.Categories.ToListAsync();
             ViewBag.AssetLocations = await _context.AssetLocations.ToListAsync();
             return View();
@@ -49,10 +56,17 @@ namespace SLRM_IT_Assest_Management.Controllers
                 _context.Components.Add(component);
                 await _context.SaveChangesAsync();
                 TempData["SuccessMessage"] = "Component added successfully!";
+<<<<<<< Updated upstream
                 return RedirectToAction(nameof(Index)); // ✅ Go to Index, not Create
             }
 
             // ✅ SAME KEYS AS GET METHOD + ASYNC
+=======
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Reload dropdowns if validation fails
+>>>>>>> Stashed changes
             ViewBag.Categories = await _context.Categories.ToListAsync();
             ViewBag.AssetLocations = await _context.AssetLocations.ToListAsync();
 

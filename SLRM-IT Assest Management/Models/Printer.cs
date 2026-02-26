@@ -16,8 +16,7 @@ namespace SLRM_IT_Assest_Management.Models
         [Required]
         public string Division { get; set; } = null!;
 
-        [Required]
-        [Display(Name = "Printer Types")]
+        
         public int? PrinterTypeId { get; set; }
         public PrinterType? PrinterType { get; set; }
 

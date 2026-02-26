@@ -138,9 +138,9 @@
                     <option value="10" selected="@(ViewBag.PageSize == "10")">10</option>
                     <option value="25" selected="@(ViewBag.PageSize == "25")">25</option>
                     <option value="50" selected="@(ViewBag.PageSize == "50")">50</option>
-                    <option value="100" selected="@(ViewBag.PageSize == "100")">100</option>               
-                    <option value="200" selected="@(ViewBag.PageSize == "200")">200</option>                  
-                    <option value="300" selected="@(ViewBag.PageSize == "300")">300</option>                              
+                    <option value="100" selected="@(ViewBag.PageSize == "100")">100</option>
+                    <option value="200" selected="@(ViewBag.PageSize == "200")">200</option>
+                    <option value="300" selected="@(ViewBag.PageSize == "300")">300</option>
                     <option value="All" selected="@(ViewBag.PageSize == "All")">All</option>
                 </select>
                 <span class="text-muted small">Rows per page</span>
@@ -158,7 +158,9 @@
                 <a asp-controller="Assets" asp-action="Create" class="btn btn-add" title="Add New"><i class="fas fa-plus"></i></a>
                 <button class="btn btn-delete" title="Delete"><i class="fas fa-trash"></i></button>
                 <button class="btn btn-refresh" title="Refresh"><i class="fas fa-sync"></i></button>
-                <button class="btn btn-download" title="Download"><i class="fas fa-download"></i></button>
+                <a id="downloadExcel" class="btn btn-download" title="Download Excel" style="cursor: pointer;">
+                    <i class="fas fa-download"></i>
+                </a>
                 <button class="btn btn-print" title="Print"><i class="fas fa-print"></i></button>
                 <button class="btn btn-zoom" title="Zoom"><i class="fas fa-search-plus"></i></button>
 
@@ -179,32 +181,8 @@
 
                         <!-- Column List -->
                         <li class="p-2">
-                            <ul class="list-unstyled m-0">
-                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="1" checked>Company</label></li>
-                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="2" checked>Asset Type</label></li>
-                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="3" checked>Department</label></li>
-                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="4" checked>UserName</label></li>
-                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="5" checked>EmpCode</label></li>
-                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="6" checked>Host Name</label></li>
-                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="7" checked>Block</label></li>
-                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="8" checked>AssetLocation</label></li>
-                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="9" checked>AssetTag</label></li>
-                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="10" checked>Make</label></li>
-                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="11" checked>Model</label></li>
-                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="12" checked>Serial No</label></li>
-                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="13" checked>Processor</label></li>
-                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="14" checked>RAM</label></li>
-                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="15" checked>HDD</label></li>
-                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="16" checked>Division</label></li>
-                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="17" checked>AntiVirus</label></li>
-                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="18" checked>Status</label></li>
-                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="19" checked>OS Version</label></li>
-                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="20" checked>AutoCad</label></li>
-                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="21" checked>Office</label></li>
-                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="22" checked>WindowsLicenseKey</label></li>
-                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="23" checked>Office</label></li>
-                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="24" checked>IPAddress</label></li>
-                                <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 column-toggle" data-column="25" checked>AuditStatus</label></li>
+                            <ul id="columnList" class="list-unstyled m-0">
+                                <!-- This will be populated dynamically by JavaScript -->
                             </ul>
                         </li>
                     </ul>
@@ -214,52 +192,39 @@
     </div>
 </div>
 
+<!-- Add loading indicator for Excel download -->
+<div id="excelLoadingIndicator" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 9999; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); text-align: center;">
+    <div class="spinner-border text-success mb-2" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+    <div>Generating Excel file...</div>
+</div>
 
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-       $('#applyFilter').on('click', function () {
-        const filter = $('#filterOption').val();
-        const pageSize = $('#rowsPerPage').val();
-        window.location.href = `/Assets/Index?filter=${filter}&page=1&pageSize=${pageSize}`;
-    });
+    $(document).ready(function () {
+        // Apply Filter
+        $('#applyFilter').on('click', function () {
+            const filter = $('#filterOption').val();
+            const pageSize = $('#rowsPerPage').val();
+            window.location.href = `/Assets/Index?filter=${filter}&page=1&pageSize=${pageSize}`;
+        });
 
+        // Rows per page change
         $('#rowsPerPage').on('change', function () {
-        const filter = $('#filterOption').val();
-        const pageSize = this.value;
-        window.location.href = `/Assets/Index?filter=${filter}&page=1&pageSize=${pageSize}`;
-    });
-
-    // Clear Search
-    $('#clearSearch').on('click', function () {
-        $('#tableSearch').val('');
-    });
-
-    // Column search inside dropdown
-    $('#columnSearch').on('keyup', function () {
-        const value = $(this).val().toLowerCase();
-        $('#columnList li').filter(function () {
-            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+            const filter = $('#filterOption').val();
+            const pageSize = this.value;
+            window.location.href = `/Assets/Index?filter=${filter}&page=1&pageSize=${pageSize}`;
         });
-    });
 
-    // Toggle all checkboxes
-    $('#toggleAll').on('change', function () {
-        const checked = $(this).is(':checked');
-        $('.column-toggle').prop('checked', checked).trigger('change');
-    });
-
-    // Toggle columns dynamically
-    $('.column-toggle').on('change', function () {
-        var columnIndex = $(this).data('column');
-        var isVisible = $(this).is(':checked');
-        $('table tr').each(function () {
-            $(this).find('th, td').eq(columnIndex).toggle(isVisible);
+        // Clear Search
+        $('#clearSearch').on('click', function () {
+            $('#tableSearch').val('');
+            $("table tbody tr").show();
         });
-    });
 
-     $(document).ready(function () {
         // Search Functionality
         $("#tableSearch").on("keyup", function () {
             var value = $(this).val().toLowerCase();
@@ -268,10 +233,147 @@
             });
         });
 
-        // Clear search and show all rows
-        $("#clearSearch").on("click", function () {
-            $("#tableSearch").val('');
-            $("table tbody tr").show();
+        // Column search inside dropdown
+        $('#columnSearch').on('keyup', function () {
+            const value = $(this).val().toLowerCase();
+            $('#columnList li').filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+            });
         });
+
+        // Toggle all checkboxes
+        $('#toggleAll').on('change', function () {
+            const checked = $(this).is(':checked');
+            $('.column-toggle').prop('checked', checked).trigger('change');
+        });
+
+        // Toggle columns dynamically
+        $('.column-toggle').on('change', function () {
+            var columnIndex = $(this).data('column');
+            var isVisible = $(this).is(':checked');
+
+            // Toggle header and all cells in that column
+            var $table = $('table');
+            $table.find('tr').each(function () {
+                $(this).find('th, td').eq(columnIndex).toggle(isVisible);
+            });
+        });
+
+        // ===== EXCEL DOWNLOAD FUNCTIONALITY =====
+        $('#downloadExcel').on('click', function (e) {
+            e.preventDefault();
+
+            // Get current filter
+            const filter = $('#filterOption').val();
+
+            // Show loading indicator
+            $('#excelLoadingIndicator').fadeIn(200);
+
+            // Make AJAX call to export all data
+            $.ajax({
+                url: '/Assets/ExportAllToExcel',
+                type: 'GET',
+                data: { filter: filter },
+                xhr: function() {
+                    var xhr = new XMLHttpRequest();
+                    xhr.onreadystatechange = function() {
+                        if (xhr.readyState == 2) {
+                            if (xhr.status == 200) {
+                                xhr.responseType = "blob";
+                            }
+                        }
+                    };
+                    return xhr;
+                },
+                success: function(data, status, xhr) {
+                    // Hide loading indicator
+                    $('#excelLoadingIndicator').fadeOut(200);
+
+                    // Get filename from Content-Disposition header
+                    var filename = "Assets_Export.xlsx";
+                    var disposition = xhr.getResponseHeader('Content-Disposition');
+                    if (disposition && disposition.indexOf('attachment') !== -1) {
+                        var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+                        var matches = filenameRegex.exec(disposition);
+                        if (matches != null && matches[1]) {
+                            filename = matches[1].replace(/['"]/g, '');
+                        }
+                    }
+
+                    // Create blob link to download
+                    var blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                    var link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = filename;
+
+                    // Trigger download
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+
+                    // Clean up
+                    window.URL.revokeObjectURL(link.href);
+                },
+                error: function(xhr, status, error) {
+                    // Hide loading indicator
+                    $('#excelLoadingIndicator').fadeOut(200);
+
+                    // Show error message
+                    alert('Error downloading Excel file: ' + error);
+                    console.error('Excel download error:', error);
+                }
+            });
+        });
+
+        // Populate column list dynamically from table
+        function populateColumnList() {
+            var $columnList = $('#columnList');
+            $columnList.empty();
+
+            // Get all headers except Actions
+            $('table thead th').each(function(index) {
+                var headerText = $(this).text().trim();
+                if (headerText !== 'Actions') {
+                    $columnList.append(`
+                        <li>
+                            <label class="dropdown-item">
+                                <input type="checkbox"
+                                       class="form-check-input me-2 column-toggle"
+                                       data-column="${index}"
+                                       checked>
+                                ${headerText}
+                            </label>
+                        </li>
+                    `);
+                }
+            });
+
+            // Reattach event handlers for new checkboxes
+            $('.column-toggle').on('change', function() {
+                var columnIndex = $(this).data('column');
+                var isVisible = $(this).is(':checked');
+
+                $('table tr').each(function() {
+                    $(this).find('th, td').eq(columnIndex).toggle(isVisible);
+                });
+            });
+
+            // Update toggle all based on individual checkboxes
+            $('.column-toggle').on('change', function() {
+                var total = $('.column-toggle').length;
+                var checked = $('.column-toggle:checked').length;
+
+                if (checked === total) {
+                    $('#toggleAll').prop('checked', true).prop('indeterminate', false);
+                } else if (checked === 0) {
+                    $('#toggleAll').prop('checked', false).prop('indeterminate', false);
+                } else {
+                    $('#toggleAll').prop('checked', false).prop('indeterminate', true);
+                }
+            });
+        }
+
+        // Call populateColumnList after table is loaded
+        setTimeout(populateColumnList, 500);
     });
 </script>

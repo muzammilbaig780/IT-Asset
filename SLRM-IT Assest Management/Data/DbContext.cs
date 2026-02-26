@@ -33,7 +33,8 @@ namespace AssetManagement.Data
         public DbSet<ConsumableTransaction> ConsumableTransactions { get; set; }
         public DbSet<Accessory> Accessories { get; set; }   
         public DbSet<Category> Categories { get; set; }   
-        public DbSet<Component> Components { get; set; }   
+        public DbSet<Component> Components { get; set; }
+        public DbSet<Tv> Tv { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
