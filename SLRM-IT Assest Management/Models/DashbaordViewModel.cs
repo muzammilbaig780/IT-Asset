@@ -29,9 +29,11 @@
         public int DesktopUnderRepair { get; set; }
         public int DesktopScrap { get; set; }
         public int DesktopMissing { get; set; }
+        public int PrinterCount { get; set; }
 
 
 
+      
 
     }
 }

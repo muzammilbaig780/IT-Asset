@@ -4,6 +4,7 @@ using AssetManagement.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace SLRM_IT_Assest_Management.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260304053945_AddedTelephones")]
+    partial class AddedTelephones
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -936,9 +939,6 @@ namespace SLRM_IT_Assest_Management.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("DepartmentId")
-                        .HasColumnType("int");
-
                     b.Property<string>("TelephoneNo")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -948,8 +948,6 @@ namespace SLRM_IT_Assest_Management.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("TelephoneId");
-
-                    b.HasIndex("DepartmentId");
 
                     b.ToTable("Telephone");
                 });
@@ -1258,15 +1256,6 @@ namespace SLRM_IT_Assest_Management.Migrations
                     b.Navigation("Department");
 
                     b.Navigation("PrinterType");
-                });
-
-            modelBuilder.Entity("SLRM_IT_Assest_Management.Models.Telephone", b =>
-                {
-                    b.HasOne("SLRM_IT_Assest_Management.Models.Department", "Department")
-                        .WithMany()
-                        .HasForeignKey("DepartmentId");
-
-                    b.Navigation("Department");
                 });
 
             modelBuilder.Entity("SLRM_IT_Assest_Management.Models.Tv", b =>

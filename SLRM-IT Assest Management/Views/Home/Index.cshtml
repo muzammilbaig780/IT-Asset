@@ -1,91 +1,391 @@
-﻿    @{
-        ViewData["Title"] = "IT Asset Management Dashboard";
-        Layout = "~/Views/Shared/_Layout.cshtml";
-    }
-    <style>
+﻿@{
+    ViewData["Title"] = "Dashboard - IT Asset Management";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
     .logo-img {
-        height: 70px; /* increase as needed */
-        width: auto; /* keeps aspect ratio */
+        height: 36px;
+        width: auto;
     }
-    </style>
 
-    <div class="sidebar">
-        @* <div class="logo" style="background: white; padding: 10px; border-radius: 8px;">
-            <img src="~/css/slrm-logo.png" alt="SLRM Logo" class="img-fluid" style="max-height: 40px;" />
-            <h1>SLRM <span>IT-ASSET MANAGEMENT</span></h1>
-        </div> *@
+    /* Dashboard Cards */
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
 
-        <button id="sidebarToggle" class="btn btn-primary btn-sm" style="background-color:#2c7fb8; border:none;">
+    .stat-card {
+        background: var(--bg-white);
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
+        box-shadow: var(--shadow-sm);
+        transition: all 0.3s ease;
+        border: 1px solid var(--border);
+        position: relative;
+        overflow: hidden;
+    }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var-shadow-xl;
+            border-color: var(--accent);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-light));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .stat-card:hover::before {
+            opacity: 1;
+        }
+
+    .stat-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+    }
+
+    .stat-title {
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--text-muted);
+    }
+
+    .stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: var(--radius-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: white;
+    }
+
+        .stat-icon.assets {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+        }
+
+        .stat-icon.licenses {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .stat-icon.accessories {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+
+        .stat-icon.consumables {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+
+        .stat-icon.printers {
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+        }
+
+        .stat-icon.components {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+        }
+
+    .stat-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text);
+        line-height: 1.2;
+        margin-bottom: 0.25rem;
+    }
+
+    .stat-label {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        margin-bottom: 1rem;
+    }
+
+    .mini-table {
+        background: var(--bg-light);
+        border-radius: var(--radius-md);
+        overflow: hidden;
+        margin-top: 1rem;
+        border: 1px solid var(--border);
+    }
+
+        .mini-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .mini-table th {
+            background: rgba(0, 0, 0, 0.02);
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            padding: 0.6rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .mini-table td {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .mini-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .mini-table td:last-child {
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+    /* Charts Section */
+    .charts-section {
+        display: grid;
+        grid-template-columns: 1fr 1.5fr;
+        gap: 1.5rem;
+        margin-top: 2rem;
+    }
+
+    .chart-card {
+        background: var(--bg-white);
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border);
+    }
+
+    .chart-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .chart-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--text);
+        margin: 0;
+    }
+
+    .chart-actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .chart-action-btn {
+        padding: 0.4rem 1rem;
+        font-size: 0.85rem;
+        border-radius: 40px;
+        border: 1px solid var(--border);
+        background: var(--bg-white);
+        color: var(--text);
+        cursor: pointer;
+        transition: all 0.2s;
+        font-weight: 500;
+    }
+
+        .chart-action-btn:hover {
+            background: var(--bg-light);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .chart-action-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+
+    .chart-container {
+        position: relative;
+        height: 300px;
+        width: 100%;
+    }
+
+    /* Activity Section (if needed) */
+    .activity-section {
+        margin-top: 2rem;
+        background: var(--bg-white);
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border);
+    }
+
+    .activity-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .activity-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--text);
+    }
+
+    .view-all-link {
+        color: var(--accent);
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+        .view-all-link:hover {
+            text-decoration: underline;
+        }
+
+    /* Responsive */
+    @@media (max-width: 1024px) {
+        .charts-section {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* Responsive dashboard cards */
+    .dashboard-cards {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 12px;
+        margin-bottom: 24px;
+    }
+
+    @@media (max-width: 1200px) {
+        .dashboard-cards
+
+    {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    }
+
+    @@media (max-width: 768px) {
+        .dashboard-cards
+
+    {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    }
+
+    @@media (max-width: 480px) {
+        .dashboard-cards
+
+    {
+        grid-template-columns: 1fr;
+    }
+
+
+        .logo-wrapper {
+            display: flex;
+            align-items: center;
+        }
+    
+</style>
+
+<div class="sidebar">
+    <div class="logo-section">
+        <div class="logo-wrapper">
+            <div class="logo-icon" style="background: transparent; width: auto; height: auto;">
+                <img src="~/css/ChatGPT slrlogo.png" alt="SLRM" style="height: 55px; width: 80px; margin-right: 15px;" />
+            </div>
+            <span class="logo-text" style="font-size: 1rem; font-weight: 600;">IT ASSETS</span>
+        </div>
+        <button id="sidebarToggle" class="toggle-btn">
             <i class="fas fa-bars"></i>
-        </button>    <ul class="menu">
-            <li class="menu-item active">
-                <i class="fas fa-th-large"></i>
-                <span>Dashboard</span>
-            </li>
-            <li class="menu-dropdown">
-                <a href="javascript:void(0);" class="menu-item">
-                    <i class="fas fa-server"></i>
-                    <span>Assets</span>
-                    <i class="fas fa-chevron-down dropdown-icon"></i>
-                </a>
+        </button>
+    </div>
 
-                <ul class="submenu">
-                    <li>
+    <ul class="menu">
+        <li class="menu-item active">
+            <i class="fas fa-th-large"></i>
+            <span>Dashboard</span>
+        </li>
+
+        <li class="menu-dropdown">
+            <a href="javascript:void(0);" class="menu-item">
+                <i class="fas fa-server"></i>
+                <span>Assets</span>
+                <i class="fas fa-chevron-down dropdown-icon"></i>
+            </a>
+            <ul class="submenu">
+                <li>
                     <a asp-controller="Assets" asp-action="Index" class="menu-item">
-                        <span>Laptop&Desktop</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a asp-controller="Printers" asp-action="Index" class="menu-item">
-                            <span>Printers</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a asp-controller="Cctv" asp-action="Index" class="menu-item">
-                            <span>CCTV</span>
-                        </a>
+                        <span>Laptops & Desktops</span>
+                    </a>
+                </li>
+                <li>
+                    <a asp-controller="Printers" asp-action="Index" class="menu-item">
+                        <span>Printers</span>
+                    </a>
+                </li>
+                <li>
+                    <a asp-controller="Cctv" asp-action="Index" class="menu-item">
+                        <span>CCTV</span>
+                    </a>
                 </li>
                 <li>
                     <a asp-controller="Tvs" asp-action="Index" class="menu-item">
                         <span>TV</span>
                     </a>
                 </li>
-
+                <li>
+                    <a asp-controller="Telephones" asp-action="Index" class="menu-item">
+                        <span>Telephone</span>
+                    </a>
+                </li>
                 <li>
                     <a asp-controller="Barcode" asp-action="Index" class="menu-item">
                         <span>Barcode</span>
                     </a>
                 </li>
-                </ul>
-            </li>
+            </ul>
+        </li>
 
-            <li>
-                <a asp-controller="Licenses" asp-action="Index" class="menu-item">
-                    <i class="fas fa-server"></i>
-                    <span>Licenses</span>
-                </a>
-            </li>
-            <li class="menu-item">
-                <i class="fas fa-keyboard"></i>
-                <span>Accessories</span>
-            </li>
-            @* <li>
-                <a asp-controller="Consumables" asp-action="Index" class="menu-item">
-                    <i class="fas fa-server"></i>
-                    <span>Consumables</span>
-                </a>
-            </li> *@
-        
-            <li >
-                <a asp-controller="Component" asp-action="Index" class="menu-item">
+        <li>
+            <a asp-controller="Licenses" asp-action="Index" class="menu-item">
+                <i class="fas fa-certificate"></i>
+                <span>Licenses</span>
+            </a>
+        </li>
+
+        <li class="menu-item">
+            <i class="fas fa-keyboard"></i>
+            <span>Accessories</span>
+        </li>
+
+        <li>
+            <a asp-controller="Component" asp-action="Index" class="menu-item">
                 <i class="fas fa-microchip"></i>
                 <span>Components</span>
-                </a>
-            </li>
-            <li class="menu-item">
-                <i class="fas fa-briefcase"></i>
-                <span>Predefined Kits</span>
-            </li>
+            </a>
+        </li>
+
+        <li class="menu-item">
+            <i class="fas fa-briefcase"></i>
+            <span>Predefined Kits</span>
+        </li>
 
         <li class="menu-dropdown">
             <a href="javascript:void(0);" class="menu-item">
@@ -93,7 +393,6 @@
                 <span>Import</span>
                 <i class="fas fa-chevron-down dropdown-icon"></i>
             </a>
-
             <ul class="submenu">
                 <li>
                     <a href="@Url.Action("Import", "Assets")" class="menu-item">
@@ -115,109 +414,114 @@
                         <span>Import CCTV</span>
                     </a>
                 </li>
+                <li>
+                    <a href="@Url.Action("Import", "Telephones")" class="menu-item">
+                        <span>Import Telephone</span>
+                    </a>
+                </li>
             </ul>
         </li>
 
+        <li class="menu-item">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+        </li>
 
-            <li class="menu-item">
-                <i class="fas fa-cog"></i>
-                <span>Settings</span>
-            </li>
-            <li class="menu-item">
-                <i class="fas fa-chart-pie"></i>
-                <span>Reports</span>
-            </li>
-            <li class="menu-item">
-                <i class="fas fa-clipboard-list"></i>
-                <span>Requestable Items</span>
-            </li>
-        </ul>
-    </div>
+        <li class="menu-item">
+            <i class="fas fa-chart-pie"></i>
+            <span>Reports</span>
+        </li>
 
-    <!-- 🔹 Top Navbar -->
-    <div class="snipeit-navbar">
-        <div class="navbar-left">
-            <img src="~/css/slrm-logo.png" alt="SLRM Logo">
-        </div>
+        <li class="menu-item">
+            <i class="fas fa-clipboard-list"></i>
+            <span>Requestable Items</span>
+        </li>
+    </ul>
+</div>
 
-        <div class="navbar-right">
-            <button class="icon-btn"><i class="fas fa-server"></i></button>
-            <button class="icon-btn"><i class="fas fa-save"></i></button>
-            <button class="icon-btn"><i class="fas fa-tint"></i></button>
+<!-- Main Content -->
+<div class="main-content">
+    <!-- Top Navbar -->
+    <div class="top-navbar">
+        <h1 class="page-title">Dashboard</h1>
+
+        <div class="navbar-actions">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search assets, licenses...">
+            </div>
+
+            <button class="icon-btn">
+                <i class="far fa-bell"></i>
+                <span class="notification-badge">3</span>
+            </button>
+
             <div class="dropdown">
-                <button class="btn btn-sm btn-outline-light dropdown-toggle" data-bs-toggle="dropdown">
-                    Create New
+                <button class="btn-create dropdown-toggle" data-bs-toggle="dropdown">
+                    <i class="fas fa-plus"></i>
+                    <span>Create New</span>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end">
-                    <li><a asp-controller="Assets" asp-action="Index" class="dropdown-item" >Asset</a></li>
-                    <li><a asp-controller="Licenses" asp-action="Index" class="dropdown-item" >License</a></li>
-                    <li><a class="dropdown-item" href="#">Component</a></li>
+                    <li><a asp-controller="Assets" asp-action="Create" class="dropdown-item"><i class="fas fa-server"></i>Asset</a></li>
+                    <li><a asp-controller="Licenses" asp-action="Create" class="dropdown-item"><i class="fas fa-certificate"></i>License</a></li>
+                    <li><a class="dropdown-item" href="#"><i class="fas fa-microchip"></i>Component</a></li>
                 </ul>
             </div>
 
-            <div class="user-menu dropdown">
-                <img src="https://via.placeholder.com/30" class="rounded-circle" alt="User" />
-                <button class="btn btn-sm btn-outline-light dropdown-toggle" data-bs-toggle="dropdown">
-                    User Admin
-                </button>
+            <div class="dropdown">
+                <div class="user-menu" data-bs-toggle="dropdown">
+                    <img src="https://ui-avatars.com/api/?name=Admin+User&background=3b82f6&color=fff&size=36" class="user-avatar" alt="User">
+                    <div class="user-info d-none d-md-block">
+                        <span class="user-name">Admin User</span>
+                        <span class="user-role">Administrator</span>
+                    </div>
+                    <i class="fas fa-chevron-down" style="font-size: 0.8rem; color: var(--text-muted);"></i>
+                </div>
                 <ul class="dropdown-menu dropdown-menu-end">
-        <!-- Profile link -->
-                    <li>
-                        <a class="dropdown-item" href="@Url.Action( "Index", "Profile")">Profile</a></li>
-
-        <!-- Settings link (replace with actual settings page URL if available) -->
-        <li><a class="dropdown-item" href="#">Settings</a></li>
-
-        <!-- Logout link -->
-        <li><a class="dropdown-item text-danger" href="@Url.Action("Logout", "Account")">Logout</a></li>
-    </ul>
-
+                    <li><a class="dropdown-item" href="@Url.Action("Index", "Profile")"><i class="fas fa-user"></i>Profile</a></li>
+                    <li><a class="dropdown-item" href="#"><i class="fas fa-cog"></i>Settings</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item text-danger" href="@Url.Action("Logout", "Account")"><i class="fas fa-sign-out-alt"></i>Logout</a></li>
+                </ul>
             </div>
         </div>
     </div>
 
-    <div class="content" style="width: 100%; padding: 20px;">
-        <div class="header">
-            <h2>Dashboard</h2>
-           @*  <div class="user-info">
-                <img src="https://ui-avatars.com/api/?name=Basavangj&background=3498db&color=fff" alt="User">
-                <div>
-                    <div style="font-weight: 500;">Basavangj</div>
-                    <div style="font-size: 12px; color: var(--text-light);">Admin</div>
-                </div>
-            </div> *@
-        </div>
-
+    <!-- Content Area -->
+    <div class="content-area">
         <!-- Dashboard Cards -->
-        <div class="dashboard-cards">
-            <a asp-controller="Assets" asp-action="Index" style="text-decoration: none; color: inherit;">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">Assets</div>
-                        <div class="card-icon assets">
-                            <i class="fas fa-server"></i>
+        <!-- Dashboard Cards - All in One Row -->
+        <div class="dashboard-cards" style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; margin-bottom: 24px;">
+
+            <!-- Assets Card -->
+            <a asp-controller="Assets" asp-action="Index" style="text-decoration: none;">
+                <div class="stat-card" style="background: linear-gradient(135deg, #eef2ff 0%, #ffffff 100%); border-left: 4px solid #4f46e5; border-radius: 8px; padding: 12px; height: 100%;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                        <span style="font-size: 11px; font-weight: 600; color: #4f46e5; text-transform: uppercase;">Total Assets</span>
+                        <div style="width: 28px; height: 28px; background: #4f46e5; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white;">
+                            <i class="fas fa-server" style="font-size: 14px;"></i>
                         </div>
                     </div>
-                    <div class="card-value">@Model.AssetCount</div>
-                    <div class="card-text">Total IT Assets</div>
+                    <div style="font-size: 20px; font-weight: 700; color: #1e293b; margin-bottom: 2px;">@Model.AssetCount</div>
+                    <div style="font-size: 11px; color: #64748b; margin-bottom: 8px;">All IT Assets</div>
 
-                    <!-- 👇 Added grid for Laptops & Desktops -->
-                    <div class="table-responsive mt-3">
-                        <table class="table table-sm table-bordered text-center mb-0" style="font-size: 13px;">
-                            <thead class="table-light">
+                    <!-- Mini Table -->
+                    <div style="background: rgba(79, 70, 229, 0.04); border-radius: 6px; padding: 6px; margin-top: 4px;">
+                        <table style="width: 100%; font-size: 10px;">
+                            <thead>
                                 <tr>
-                                    <th>Device</th>
-                                    <th>Count</th>
+                                    <th style="color: #4f46e5; font-weight: 600; padding: 2px; text-align: left;">Device</th>
+                                    <th style="color: #4f46e5; font-weight: 600; padding: 2px; text-align: right;">Count</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>Laptops</td>
-                                    <td>@Model.LaptopCount</td>
+                                    <td style="padding: 2px; color: #475569;">Laptops</td>
+                                    <td style="padding: 2px; color: #4f46e5; font-weight: 600; text-align: right;">@Model.LaptopCount</td>
                                 </tr>
                                 <tr>
-                                    <td>Desktops</td>
-                                    <td>@Model.DesktopCount</td>
+                                    <td style="padding: 2px; color: #475569;">Desktops</td>
+                                    <td style="padding: 2px; color: #4f46e5; font-weight: 600; text-align: right;">@Model.DesktopCount</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -225,245 +529,312 @@
                 </div>
             </a>
 
-            <a asp-controller="Licenses" asp-action="Index" style="text-decoration: none; color: inherit;">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">Licenses</div>
-                        <div class="card-icon licenses">
-                            <i class="fas fa-certificate"></i>
+            <!-- Licenses Card -->
+            <a asp-controller="Licenses" asp-action="Index" style="text-decoration: none;">
+                <div class="stat-card" style="background: linear-gradient(135deg, #ecfdf5 0%, #ffffff 100%); border-left: 4px solid #10b981; border-radius: 8px; padding: 12px; height: 100%;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                        <span style="font-size: 11px; font-weight: 600; color: #10b981; text-transform: uppercase;">Total Licenses</span>
+                        <div style="width: 28px; height: 28px; background: #10b981; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white;">
+                            <i class="fas fa-certificate" style="font-size: 14px;"></i>
                         </div>
                     </div>
-                    <div class="card-value">@Model.LicenseCount</div>
-                    <div class="card-text">Total IT Licenses</div>
+                    <div style="font-size: 20px; font-weight: 700; color: #1e293b; margin-bottom: 2px;">@Model.LicenseCount</div>
+                    <div style="font-size: 11px; color: #64748b;">Active Licenses</div>
 
-                    <!-- 👇 Dummy grid to match Asset card height -->
-                    <div class="table-responsive mt-3">
-                        <table class="table table-sm table-bordered text-center mb-0" style="font-size: 13px; visibility: hidden;">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>Placeholder</th>
-                                    <th>Value</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr><td>-</td><td>-</td></tr>
-                                <tr><td>-</td><td>-</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
+                    <!-- Empty space for alignment -->
+                    <div style="height: 48px;"></div>
                 </div>
             </a>
 
+            <!-- Consumables Card -->
+            <a asp-controller="Consumables" asp-action="Index" style="text-decoration: none;">
+                <div class="stat-card" style="background: linear-gradient(135deg, #fff7ed 0%, #ffffff 100%); border-left: 4px solid #f97316; border-radius: 8px; padding: 12px; height: 100%;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                        <span style="font-size: 11px; font-weight: 600; color: #f97316; text-transform: uppercase;">Consumables</span>
+                        <div style="width: 28px; height: 28px; background: #f97316; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white;">
+                            <i class="fas fa-tint" style="font-size: 14px;"></i>
+                        </div>
+                    </div>
+                    <div style="font-size: 20px; font-weight: 700; color: #1e293b; margin-bottom: 2px;">@Model.ConsumablesCount</div>
+                    <div style="font-size: 11px; color: #64748b;">Items in Stock</div>
 
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-title">Accessories</div>
-                    <div class="card-icon accessories">
-                        <i class="fas fa-keyboard"></i>
+                    <!-- Empty space for alignment -->
+                    <div style="height: 48px;"></div>
+                </div>
+            </a>
+
+            <!-- Printers Card -->
+            <a asp-controller="Printers" asp-action="Index" style="text-decoration: none;">
+                <div class="stat-card" style="background: linear-gradient(135deg, #fef2f2 0%, #ffffff 100%); border-left: 4px solid #ef4444; border-radius: 8px; padding: 12px; height: 100%;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                        <span style="font-size: 11px; font-weight: 600; color: #ef4444; text-transform: uppercase;">Printers</span>
+                        <div style="width: 28px; height: 28px; background: #ef4444; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white;">
+                            <i class="fas fa-print" style="font-size: 14px;"></i>
+                        </div>
+                    </div>
+                    <div style="font-size: 20px; font-weight: 700; color: #1e293b; margin-bottom: 2px;">@Model.PrinterCount</div>
+                    <div style="font-size: 11px; color: #64748b;">Network Printers</div>
+
+                    <!-- Empty space for alignment -->
+                    <div style="height: 48px;"></div>
+                </div>
+            </a>
+
+            <!-- Accessories Card -->
+            <div class="stat-card" style="background: linear-gradient(135deg, #f5f3ff 0%, #ffffff 100%); border-left: 4px solid #8b5cf6; border-radius: 8px; padding: 12px; height: 100%;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                    <span style="font-size: 11px; font-weight: 600; color: #8b5cf6; text-transform: uppercase;">Accessories</span>
+                    <div style="width: 28px; height: 28px; background: #8b5cf6; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white;">
+                        <i class="fas fa-keyboard" style="font-size: 14px;"></i>
                     </div>
                 </div>
-                <div class="card-value"></div>
-                <div class="card-text">Peripheral Devices</div>
+                <div style="font-size: 20px; font-weight: 700; color: #1e293b; margin-bottom: 2px;">24</div>
+                <div style="font-size: 11px; color: #64748b;">Peripheral Devices</div>
+
+                <!-- Empty space for alignment -->
+                <div style="height: 48px;"></div>
             </div>
 
-            <a asp-controller="Consumables" asp-action="Index" style="text-decoration: none; color: inherit;">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">Consumables</div>
-                        <div class="card-icon Consumables">
-                            <i class="fas fa-tint"></i>
-
-                        </div>
-                    </div>
-                    <div class="card-value">@Model.ConsumablesCount</div>
-                    <div class="card-text">Total IT Consumables</div>
-
-                    <!-- 👇 Dummy grid to match Asset card height -->
-                    <div class="table-responsive mt-3">
-                        <table class="table table-sm table-bordered text-center mb-0" style="font-size: 13px; visibility: hidden;">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>Placeholder</th>
-                                    <th>Value</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr><td>-</td><td>-</td></tr>
-                                <tr><td>-</td><td>-</td></tr>
-                            </tbody>
-                        </table>
+            <!-- Components Card -->
+            <div class="stat-card" style="background: linear-gradient(135deg, #fff1f2 0%, #ffffff 100%); border-left: 4px solid #ec4899; border-radius: 8px; padding: 12px; height: 100%;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                    <span style="font-size: 11px; font-weight: 600; color: #ec4899; text-transform: uppercase;">Components</span>
+                    <div style="width: 28px; height: 28px; background: #ec4899; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white;">
+                        <i class="fas fa-microchip" style="font-size: 14px;"></i>
                     </div>
                 </div>
-            </a>
+                <div style="font-size: 20px; font-weight: 700; color: #1e293b; margin-bottom: 2px;">156</div>
+                <div style="font-size: 11px; color: #64748b;">Items in Stock</div>
 
-
-            @* <div class="card">
-                <div class="card-header">
-                    <div class="card-title">Consumables</div>
-                    <div class="card-icon consumables">
-                        <i class="fas fa-tint"></i>
-                    </div>
-                </div>
-                <div class="card-value"></div>
-                <div class="card-text">Items in Stock</div>
-            </div> *@
-
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-title">Components</div>
-                    <div class="card-icon components">
-                        <i class="fas fa-microchip"></i>
-                    </div>
-                </div>
-                <div class="card-value"></div>
-                <div class="card-text">Items in Stock</div>
+                <!-- Empty space for alignment -->
+                <div style="height: 48px;"></div>
             </div>
         </div>
 
-        <!-- Buttons + Chart Layout -->
-        <div style="display: flex; gap: 40px; flex-wrap: wrap; margin-top: 20px; align-items: flex-start;">
-
-            <!-- Pie Chart (Asset Status) -->
-            <div style="flex: 1 1 400px; max-width: 400px;">
-                <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 10px;">
-                    <button id="btnLaptop" class="btn btn-primary btn-sm">Laptop</button>
-                    <button id="btnDesktop" class="btn btn-secondary btn-sm">Desktop</button>
+        <!-- Charts Section -->
+        <div class="charts-section">
+            <!-- Pie Chart -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">Asset Status Distribution</h3>
+                    <div class="chart-actions">
+                        <button id="btnLaptop" class="chart-action-btn active">Laptop</button>
+                        <button id="btnDesktop" class="chart-action-btn">Desktop</button>
+                    </div>
                 </div>
-                <h4 style="text-align: center;">Assets</h4>
-                <canvas id="assetPieChart" width="380" height="280"></canvas>
+                <div class="chart-container">
+                    <canvas id="assetPieChart"></canvas>
+                </div>
             </div>
 
-            <!-- Bar Chart (Deployment Status) -->
-            <div style="flex: 1 1 600px; max-width: 600px;">
-                <h4 style="text-align: center;">Deployment Status</h4>
-                <canvas id="deploymentBarChart" width="600" height="300"></canvas>
+            <!-- Bar Chart -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">Deployment Status</h3>
+                </div>
+                <div class="chart-container">
+                    <canvas id="deploymentBarChart"></canvas>
+                </div>
             </div>
         </div>
 
+        <!-- Activity Section (Optional - you can remove if not needed) -->
+        <div class="activity-section">
+            <div class="activity-header">
+                <h3 class="activity-title">Recent Activity</h3>
+                <a href="#" class="view-all-link">
+                    View All <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
 
-        <!-- Chart.js -->
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
-        <script>
-            document.addEventListener("DOMContentLoaded", function () {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th>Asset</th>
+                            <th>Action</th>
+                            <th>User</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Dell XPS 15</td>
+                            <td>Checked Out</td>
+                            <td>John Smith</td>
+                            <td>2 hours ago</td>
+                            <td><span class="badge bg-success">Active</span></td>
+                        </tr>
+                        <tr>
+                            <td>HP LaserJet Pro</td>
+                            <td>Maintenance</td>
+                            <td>Tech Support</td>
+                            <td>5 hours ago</td>
+                            <td><span class="badge bg-warning text-dark">Pending</span></td>
+                        </tr>
+                        <tr>
+                            <td>Lenovo ThinkPad</td>
+                            <td>Returned</td>
+                            <td>Sarah Johnson</td>
+                            <td>1 day ago</td>
+                            <td><span class="badge bg-info">Completed</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 
-                var laptopData = {
-                    working: @Model.LaptopWorking,
-                    underRepair: @Model.LaptopUnderRepair,
-                    scrap: @Model.LaptopScrap,
-                    missing: @Model.LaptopMissing
-                };
+<!-- Chart.js Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
 
-                var desktopData = {
-                    working: @Model.DesktopWorking,
-                    underRepair: @Model.DesktopUnderRepair,
-                    scrap: @Model.DesktopScrap,
-                    missing: @Model.DesktopMissing
-                };
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Asset data from server
+        var laptopData = {
+            working: @Model.LaptopWorking,
+            underRepair: @Model.LaptopUnderRepair,
+            scrap: @Model.LaptopScrap,
+            missing: @Model.LaptopMissing
+        };
 
-                let pieChart;
-                let barChart;
+        var desktopData = {
+            working: @Model.DesktopWorking,
+            underRepair: @Model.DesktopUnderRepair,
+            scrap: @Model.DesktopScrap,
+            missing: @Model.DesktopMissing
+        };
 
-                // ================= PIE CHART =================
-                function loadPieChart(data) {
-                    const ctx = document.getElementById('assetPieChart').getContext('2d');
+        let pieChart, barChart;
 
-                    if (pieChart) pieChart.destroy();
+        // Common chart options
+        Chart.defaults.font.family = "'Inter', sans-serif";
+        Chart.defaults.font.size = 12;
 
-                    pieChart = new Chart(ctx, {
-                        type: 'pie',
-                        data: {
-                            labels: ['Working', 'UnderRepair', 'Scrap', 'Missing'],
-                            datasets: [{
-                                data: [
-                                    data.working,
-                                    data.underRepair,
-                                    data.scrap,
-                                    data.missing
-                                ],
-                                backgroundColor: ['#28a745', '#dc3545', '#6c757d', '#AFF8A2']
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            plugins: {
-                                legend: { position: 'bottom' }
+        // Load Pie Chart
+        function loadPieChart(data) {
+            const ctx = document.getElementById('assetPieChart').getContext('2d');
+            if (pieChart) pieChart.destroy();
+
+            pieChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Working', 'Under Repair', 'Scrap', 'Missing'],
+                    datasets: [{
+                        data: [data.working, data.underRepair, data.scrap, data.missing],
+                        backgroundColor: [
+                            '#10b981',  // Working - Green
+                            '#f59e0b',  // Under Repair - Orange
+                            '#ef4444',  // Scrap - Red
+                            '#94a3b8'   // Missing - Gray
+                        ],
+                        borderWidth: 0,
+                        borderRadius: 8,
+                        spacing: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                usePointStyle: true,
+                                pointStyle: 'circle',
+                                padding: 20,
+                                font: { size: 12 }
                             }
-                        }
-                    });
-                }
-
-                // ================= BAR CHART =================
-                      function loadBarChart(data) {
-                const ctxBar = document.getElementById('deploymentBarChart').getContext('2d');
-
-                if (barChart) barChart.destroy();
-
-                barChart = new Chart(ctxBar, {
-                    type: 'bar',
-                    data: {
-                        labels: ['Working', 'UnderRepair', 'Scrap', 'Missing'],
-                        datasets: [{
-                            label: 'Assets',
-                            data: [
-                                data.working,
-                                data.underRepair,
-                                data.scrap,
-                                data.missing
-                            ],
-                            backgroundColor: ['#28a745', '#dc3545', '#6c757d', '#AFF8A2'],
-                            barPercentage: 0.6
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                min: 0,
-                                max: 400,              // ✅ FORCE MAX TO 400
-                                ticks: {
-                                    stepSize: 25        // ✅ 0,25,50,75,100...400
-                                }
-                            }
                         },
-                        plugins: {
-                            legend: { display: false }
+                        tooltip: {
+                            backgroundColor: 'rgba(0,0,0,0.8)',
+                            padding: 12,
+                            titleFont: { size: 13, weight: '600' },
+                            bodyFont: { size: 12 }
                         }
                     }
-                });
-            }
-
-                // ✅ DEFAULT LOAD = LAPTOP FOR BOTH
-                loadPieChart(laptopData);
-                loadBarChart(laptopData);
-
-                // ✅ LAPTOP BUTTON → UPDATES BOTH CHARTS
-                document.getElementById("btnLaptop").addEventListener("click", function () {
-                    loadPieChart(laptopData);
-                    loadBarChart(laptopData);
-
-                    this.classList.add("btn-primary");
-                    this.classList.remove("btn-secondary");
-
-                    document.getElementById("btnDesktop").classList.remove("btn-primary");
-                    document.getElementById("btnDesktop").classList.add("btn-secondary");
-                });
-
-                // ✅ DESKTOP BUTTON → UPDATES BOTH CHARTS
-                document.getElementById("btnDesktop").addEventListener("click", function () {
-                    loadPieChart(desktopData);
-                    loadBarChart(desktopData);
-
-                    this.classList.add("btn-primary");
-                    this.classList.remove("btn-secondary");
-
-                    document.getElementById("btnLaptop").classList.remove("btn-primary");
-                    document.getElementById("btnLaptop").classList.add("btn-secondary");
-                });
-
+                }
             });
-        </script>
+        }
 
+        // Load Bar Chart
+        function loadBarChart(data) {
+            const ctx = document.getElementById('deploymentBarChart').getContext('2d');
+            if (barChart) barChart.destroy();
 
+            barChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Working', 'Under Repair', 'Scrap', 'Missing'],
+                    datasets: [{
+                        label: 'Number of Assets',
+                        data: [data.working, data.underRepair, data.scrap, data.missing],
+                        backgroundColor: [
+                            '#10b981',
+                            '#f59e0b',
+                            '#ef4444',
+                            '#94a3b8'
+                        ],
+                        borderRadius: 8,
+                        barPercentage: 0.6,
+                        categoryPercentage: 0.8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(0,0,0,0.8)',
+                            padding: 12
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 400,
+                            grid: {
+                                color: 'rgba(0,0,0,0.05)',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                stepSize: 50,
+                                font: { size: 11 }
+                            }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { font: { size: 11 } }
+                        }
+                    }
+                }
+            });
+        }
 
+        // Load initial data (Laptop)
+        loadPieChart(laptopData);
+        loadBarChart(laptopData);
+
+        // Button click handlers
+        document.getElementById("btnLaptop").addEventListener("click", function () {
+            loadPieChart(laptopData);
+            loadBarChart(laptopData);
+
+            this.classList.add("active");
+            document.getElementById("btnDesktop").classList.remove("active");
+        });
+
+        document.getElementById("btnDesktop").addEventListener("click", function () {
+            loadPieChart(desktopData);
+            loadBarChart(desktopData);
+
+            this.classList.add("active");
+            document.getElementById("btnLaptop").classList.remove("active");
+        });
+    });
+</script>

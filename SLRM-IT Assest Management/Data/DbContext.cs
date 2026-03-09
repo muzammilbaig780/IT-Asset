@@ -35,6 +35,7 @@ namespace AssetManagement.Data
         public DbSet<Category> Categories { get; set; }   
         public DbSet<Component> Components { get; set; }
         public DbSet<Tv> Tv { get; set; }
+        public DbSet<Telephone> Telephone { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

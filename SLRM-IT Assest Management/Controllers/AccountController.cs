@@ -67,7 +67,7 @@ namespace SLRM_IT_Assest_Management.Controllers
 
             // Invalid login
             ViewBag.Message = "Invalid username or password.";
-            return View(); // Return to login page with error message
+            return View("LoginRegister");// Return to login page with error message
         }
 
         // POST: /Account/Register

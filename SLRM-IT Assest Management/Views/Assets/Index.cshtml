@@ -9,8 +9,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.bootstrap5.min.css">
-
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.bootstrap5.min.css" />
     <style>
         body {
             background-color: #f4f6f9;
@@ -26,7 +25,7 @@
             padding-bottom: 10px;
             border-bottom: 2px solid #e3e6ef;
         }
-
+         
         .table-container {
             overflow-x: auto;
             margin-top: 20px;
@@ -37,7 +36,6 @@
             box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
         }
 
-<<<<<<< Updated upstream
         .table-title {
             font-size: 18px;
             font-weight: 600;
@@ -52,8 +50,7 @@
         }
 
         /* === TABLE STYLES === */
-=======
->>>>>>> Stashed changes
+
         .table {
             table-layout: auto;
             width: 100%;
@@ -88,7 +85,7 @@
 
         .table tr:hover td {
             background-color: #eaf1fb;
-<<<<<<< Updated upstream
+
             transition: background 0.3s ease;
         }
 
@@ -230,11 +227,11 @@
             }
 
         .filtered-column {
-            background-color: #1a3a7a !important;
+            background-color: white;
         }
 
             .filtered-column .filter-icon {
-                color: #ffeb3b;
+                color: black;
             }
 
         #assets-table {
@@ -248,13 +245,13 @@
             font-weight: 700;
             color: #1565c0;
         }
-=======
-        }
+
+        
 
         #assets-table {
             min-width: 2000px;
         }
->>>>>>> Stashed changes
+
     </style>
 </head>
 
@@ -271,7 +268,7 @@
             </div>
         }
 
-<<<<<<< Updated upstream
+
         <div class="card shadow-sm mb-3" style="max-width: 520px;">
             <div class="card-body p-2">
                 <form method="get" asp-action="Index" class="d-flex align-items-center gap-2">
@@ -292,17 +289,7 @@
             </div>
         </div>
 
-        @await Html.PartialAsync("_BackButton")
-        @await Html.PartialAsync("_FilterToolbar")
 
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <a asp-action="Create" class="btn btn-primary btn-add">
-                <i class="fas fa-plus"></i> Add New Asset
-            </a>
-            <span class="text-muted small">Total: <span id="total-count">@Model.Count()</span> assets</span>
-        </div>
-
-=======
         <div class="d-flex justify-content-between align-items-center mb-3">
             <a asp-action="Create" class="btn btn-primary">
                 <i class="fas fa-plus"></i> Add New Asset
@@ -317,13 +304,13 @@
 
         <!-- Filter Toolbar -->
         @await Html.PartialAsync("_FilterToolbar")
->>>>>>> Stashed changes
+
         <div class="table-container">
             <div class="table-responsive">
                 <table class="table table-hover" id="assets-table">
                     <thead>
                         <tr>
-<<<<<<< Updated upstream
+
                             <th class="filter-header">Sl No<i class="fas fa-filter filter-icon"></i></th>
                             <th class="filter-header">TransferStatus<i class="fas fa-filter filter-icon"></i></th>
                             <th class="filter-header">Status<i class="fas fa-filter filter-icon"></i></th>
@@ -354,47 +341,13 @@
                             <th class="filter-header">Office<i class="fas fa-filter filter-icon"></i></th>
                             <th class="filter-header">Windows License Key<i class="fas fa-filter filter-icon"></i></th>
                             <th class="filter-header">IP Address<i class="fas fa-filter filter-icon"></i></th>
-                            <th class="filter-header">Nitro<i class="fas fa-filter filter-icon"></i></th>
-                            <th class="filter-header">CatridgeType<i class="fas fa-filter filter-icon"></i></th>
+                            <th class="filter-header">Nitro<i class="fas fa-filter filter-icon"></i></th>                         
                             <th class="filter-header">GRN Number<i class="fas fa-filter filter-icon"></i></th>
                             <th class="filter-header">GRN Date<i class="fas fa-filter filter-icon"></i></th>
                             <th class="filter-header">Invoice Date<i class="fas fa-filter filter-icon"></i></th>
                             <th class="filter-header">Warranty<i class="fas fa-filter filter-icon"></i></th>
                             <th class="filter-header">ExpiryDate<i class="fas fa-filter filter-icon"></i></th>
                             <th>Actions</th>
-=======
-                            @await Html.PartialAsync("_ExcelFilterHeader", "Sl No")
-                            @await Html.PartialAsync("_ExcelFilterHeader", "Transfer Status")
-                            @await Html.PartialAsync("_ExcelFilterHeader", "Status")
-                            @await Html.PartialAsync("_ExcelFilterHeader", "Asset Tag")
-                            @await Html.PartialAsync("_ExcelFilterHeader", "Asset Type")
-                            @await Html.PartialAsync("_ExcelFilterHeader", "Department")
-                            @await Html.PartialAsync("_ExcelFilterHeader", "Emp Code")
-                            @await Html.PartialAsync("_ExcelFilterHeader", "User Name")
-                            @await Html.PartialAsync("_ExcelFilterHeader", "Host Name")
-                            @await Html.PartialAsync("_ExcelFilterHeader", "Block")
-                            @await Html.PartialAsync("_ExcelFilterHeader", "Asset Location")
-                            @await Html.PartialAsync("_ExcelFilterHeader", "Make")
-                            @await Html.PartialAsync("_ExcelFilterHeader", "Model")
-                            @await Html.PartialAsync("_ExcelFilterHeader", "Serial No")
-                            @await Html.PartialAsync("_ExcelFilterHeader", "Processor")
-                            @await Html.PartialAsync("_ExcelFilterHeader", "RAM")
-                            @await Html.PartialAsync("_ExcelFilterHeader", "HDD")
-                            @await Html.PartialAsync("_ExcelFilterHeader", "Division")
-                            @await Html.PartialAsync("_ExcelFilterHeader", "Antivirus")
-                            @await Html.PartialAsync("_ExcelFilterHeader", "OS Version")
-                            @await Html.PartialAsync("_ExcelFilterHeader", "AutoCAD")
-                            @await Html.PartialAsync("_ExcelFilterHeader", "Office")
-                            @await Html.PartialAsync("_ExcelFilterHeader", "Windows License Key")
-                            @await Html.PartialAsync("_ExcelFilterHeader", "IP Address")
-                            @await Html.PartialAsync("_ExcelFilterHeader", "Nitro")
-                            @await Html.PartialAsync("_ExcelFilterHeader", "CatridgeType")
-                            @await Html.PartialAsync("_ExcelFilterHeader", "GRN Number")
-                            @await Html.PartialAsync("_ExcelFilterHeader", "GRN Date")
-                            @await Html.PartialAsync("_ExcelFilterHeader", "Invoice Date")
-                            @await Html.PartialAsync("_ExcelFilterHeader", "Warranty")
-                            @await Html.PartialAsync("_ExcelFilterHeader", "Expiry Date")
->>>>>>> Stashed changes
                         </tr>
                     </thead>
 
@@ -403,22 +356,7 @@
                         {
                             <tr>
                                 <td>@item.SlNo</td>
-<<<<<<< Updated upstream
-                                <td>
-                                    @if (item.IsTransferred)
-                                    {
-                                        <span class="badge bg-warning text-dark transfer-toggle" style="cursor:pointer" data-asset-id="@item.AssetId">
-                                            <i class="fas fa-exchange-alt"></i> Transferred
-                                        </span>
-                                    }
-                                    else
-                                    {
-                                        <span class="text-muted">NA</span>
-                                    }
-                                </td>
-=======
-                                <td>@(item.IsTransferred ? "Transferred" : "NA")</td>
->>>>>>> Stashed changes
+                               <td>@(item.IsTransferred ? "Transferred" : "NA")</td>
                                 <td>@item.AssetStatus?.Name</td>
                                 <td>@item.AssetTag</td>
                                 <td>@item.AssetType?.Name</td>
@@ -430,15 +368,14 @@
                                 <td>@item.AssetLocation?.Name</td>
                                 <td>@item.Make</td>
                                 <td>@item.Model</td>
-<<<<<<< Updated upstream
+
                                 @if (ViewBag.Filter?.ToString() == "Desktop")
                                 {
                                     <td>@item.MoniterMake</td>
                                     <td>@item.MoniterModel</td>
                                     <td>@item.CPUSerialNo</td>
                                 }
-=======
->>>>>>> Stashed changes
+
                                 <td>@(string.IsNullOrEmpty(item.SerialNo) ? "NA" : item.SerialNo)</td>
                                 <td>@item.Processor</td>
                                 <td>@item.Ram</td>
@@ -451,8 +388,6 @@
                                 <td>@item.WindowLicenseKey</td>
                                 <td>@item.IPAddress</td>
                                 <td>@item.Nitro</td>
-                                <td>@item.CatridgeType</td>
-<<<<<<< Updated upstream
                                 <td>@(string.IsNullOrEmpty(item.GRNNumber) ? "NA" : item.GRNNumber)</td>
                                 <td>@(item.GRNDate.HasValue? item.GRNDate.Value.ToString("dd/MM/yyyy") : "NA")</td>
                                 <td>@(item.InvoiceDate.HasValue? item.InvoiceDate.Value.ToString("dd/MM/yyyy") : "NA")</td>
@@ -489,36 +424,23 @@
                                             <i class="fas fa-history"></i> TransferHistory
                                         </a>
                                     </div>
-=======
-                                <td>@item.GRNNumber</td>
-                                <td>@(item.GRNDate?.ToString("dd/MM/yyyy"))</td>
-                                <td>@(item.InvoiceDate?.ToString("dd/MM/yyyy"))</td>
-                                <td>@(item.Warranty.HasValue? item.Warranty + " Months" : "NA")</td>
-                                <td>@(item.ExpiryDate?.ToString("dd/MM/yyyy"))</td>
-                                <td>
-                                    <a asp-action="Edit" asp-route-id="@item.AssetId" class="btn btn-warning btn-sm">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <a asp-action="Delete" asp-route-id="@item.AssetId" class="btn btn-danger btn-sm">
-                                        <i class="fas fa-trash"></i>
-                                    </a>
->>>>>>> Stashed changes
-                                </td>
+
+                                
                             </tr>
                         }
                     </tbody>
                 </table>
             </div>
         </div>
-<<<<<<< Updated upstream
+
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-=======
 
-    </div>
 
->>>>>>> Stashed changes
+   
+
+
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
@@ -527,7 +449,7 @@
     <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
-<<<<<<< Updated upstream
+
     <script>
         // ✅ FIXED COLUMN FILTERING SYSTEM
         document.addEventListener('DOMContentLoaded', function() {
@@ -720,26 +642,5 @@
             });
         });
     </script>
-=======
-
-    @section Scripts {
-        <script>
-            $(document).ready(function () {
-
-                let table = $('#assets-table').DataTable({
-                    scrollX: true,
-                    pageLength: 10,
-                    dom: 'Bfrtip',
-                    buttons: [
-                        { extend: 'excel', title: 'Assets' },
-                        { extend: 'print' }
-                    ]
-                });
-
-                initExcelFilter('#assets-table');
-            });
-        </script>
-    }
->>>>>>> Stashed changes
 </body>
 </html>

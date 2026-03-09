@@ -22,11 +22,9 @@
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,
-<<<<<<< Updated upstream
-      "applicationUrl": "https://192.168.11.29;http://localhost:5192",
-=======
+
       "applicationUrl": "https://192.168.1.16;http://localhost:5192",
->>>>>>> Stashed changes
+
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
