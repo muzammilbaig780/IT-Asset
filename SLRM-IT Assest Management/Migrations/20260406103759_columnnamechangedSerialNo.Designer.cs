@@ -4,6 +4,7 @@ using AssetManagement.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace SLRM_IT_Assest_Management.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260406103759_columnnamechangedSerialNo")]
+    partial class columnnamechangedSerialNo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -89,18 +92,8 @@ namespace SLRM_IT_Assest_Management.Migrations
                     b.Property<string>("CatridgeType")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("CheckinDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("CheckoutDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<int?>("CompanyId")
                         .HasColumnType("int");
-
-                    b.Property<string>("Cost")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("DepartmentId")
                         .HasColumnType("int");
@@ -132,15 +125,8 @@ namespace SLRM_IT_Assest_Management.Migrations
                     b.Property<DateOnly?>("InvoiceDate")
                         .HasColumnType("date");
 
-                    b.Property<bool>("IsCheckedOut")
-                        .HasColumnType("bit");
-
                     b.Property<bool>("IsTransferred")
                         .HasColumnType("bit");
-
-                    b.Property<string>("MacId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Make")
                         .HasColumnType("nvarchar(max)");
@@ -178,15 +164,7 @@ namespace SLRM_IT_Assest_Management.Migrations
                     b.Property<int?>("StatusId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Stock")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("UserName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("VendorName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("Warranty")
@@ -240,10 +218,6 @@ namespace SLRM_IT_Assest_Management.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TransferLogId"));
 
-                    b.Property<string>("ActionType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("AssetId")
                         .HasColumnType("int");
 
@@ -256,9 +230,6 @@ namespace SLRM_IT_Assest_Management.Migrations
                     b.Property<string>("FromEmpCode")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("FromLocationId")
-                        .HasColumnType("int");
-
                     b.Property<string>("FromUserName")
                         .HasColumnType("nvarchar(max)");
 
@@ -270,9 +241,6 @@ namespace SLRM_IT_Assest_Management.Migrations
 
                     b.Property<string>("ToEmpCode")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("ToLocationId")
-                        .HasColumnType("int");
 
                     b.Property<string>("ToUserName")
                         .HasColumnType("nvarchar(max)");
@@ -294,11 +262,7 @@ namespace SLRM_IT_Assest_Management.Migrations
 
                     b.HasIndex("FromDepartmentId");
 
-                    b.HasIndex("FromLocationId");
-
                     b.HasIndex("ToDepartmentId");
-
-                    b.HasIndex("ToLocationId");
 
                     b.ToTable("AssetTransferLogs");
                 });
@@ -554,9 +518,6 @@ namespace SLRM_IT_Assest_Management.Migrations
 
                     b.Property<string>("Remaining")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateOnly?>("Returndate")
-                        .HasColumnType("date");
 
                     b.Property<string>("SerialNo")
                         .HasColumnType("nvarchar(max)");
@@ -1010,25 +971,16 @@ namespace SLRM_IT_Assest_Management.Migrations
                     b.Property<int>("AssetLocationId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Cost")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("DepartmentId")
                         .HasColumnType("int");
 
-                    b.Property<string>("ExpiryDate")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Model")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PurchaseDate")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Qty")
                         .HasColumnType("int");
 
-                    b.Property<string>("ScreenSize")
+                    b.Property<string>("ScrrenSize")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Status")
@@ -1038,9 +990,6 @@ namespace SLRM_IT_Assest_Management.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("VendorName")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("TvId");
@@ -1185,27 +1134,15 @@ namespace SLRM_IT_Assest_Management.Migrations
                         .WithMany()
                         .HasForeignKey("FromDepartmentId");
 
-                    b.HasOne("SLRM_IT_Assest_Management.Models.AssetLocation", "FromLocation")
-                        .WithMany()
-                        .HasForeignKey("FromLocationId");
-
                     b.HasOne("SLRM_IT_Assest_Management.Models.Department", "ToDepartment")
                         .WithMany()
                         .HasForeignKey("ToDepartmentId");
-
-                    b.HasOne("SLRM_IT_Assest_Management.Models.AssetLocation", "ToLocation")
-                        .WithMany()
-                        .HasForeignKey("ToLocationId");
 
                     b.Navigation("Asset");
 
                     b.Navigation("FromDepartment");
 
-                    b.Navigation("FromLocation");
-
                     b.Navigation("ToDepartment");
-
-                    b.Navigation("ToLocation");
                 });
 
             modelBuilder.Entity("SLRM_IT_Assest_Management.Models.Barcode", b =>

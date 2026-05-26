@@ -1,0 +1,67 @@
+﻿@model SLRM_IT_Assest_Management.Models.Asset
+
+@{
+    ViewData["Title"] = "Checkout Asset";
+}
+
+<div class="container mt-4">
+    <h3 class="mb-3">Checkout Asset</h3>
+
+    <form asp-action="Checkout" method="post">
+
+        <input type="hidden" asp-for="AssetId" />
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label class="form-label">Asset Tag</label>
+                <input class="form-control" value="@Model.AssetTag" readonly />
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label">Model</label>
+                <input class="form-control" value="@Model.Model" readonly />
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label>User Name</label>
+                <input asp-for="UserName" class="form-control" required />
+            </div>
+
+            <div class="col-md-4">
+                <label>Emp Code</label>
+                <input asp-for="EmpCode" class="form-control" required />
+            </div>
+
+            <div class="col-md-4">
+                <label>Department</label>
+                <select asp-for="DepartmentId" class="form-control">
+                    <option value="">Select Department</option>
+                    @foreach (var dept in ViewBag.Departments)
+                    {
+                        <option value="@dept.DepartmentId">@dept.DepartmentName</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label>Checkout Date</label>
+            <input type="date" name="CheckoutDate" class="form-control"
+                   value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+        </div>
+
+        <div class="mb-3">
+            <label>Remarks</label>
+            <textarea name="remarks" class="form-control"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-success">
+            ✅ Confirm Checkout
+        </button>
+
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+
+    </form>
+</div>

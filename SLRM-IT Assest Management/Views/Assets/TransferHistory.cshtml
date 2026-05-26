@@ -120,21 +120,77 @@
                         @foreach (var item in Model)
                         {
                             <div class="timeline-item">
-                                <div class="timeline-card">
-                                    <div class="d-flex justify-content-between">
-                                        <h6 class="text-primary">
-                                            <i class="fas fa-calendar-alt"></i>
-                                            @item.TransferDate.ToString("dd MMM yyyy HH:mm")
-                                        </h6>
-                                        <span class="badge bg-info">@item.TransferredBy</span>
+                                <div class="row">
+
+                                    <div class="col-md-6">
+                                        <div class="border rounded p-3 bg-light">
+
+                                            <h6 class="text-danger">
+                                                <i class="fas fa-arrow-circle-left"></i> From
+                                            </h6>
+
+                                            <p><b>User:</b> @(item.FromUserName ?? "NA")</p>
+
+                                            <p><b>Emp Code:</b> @(item.FromEmpCode ?? "NA")</p>
+
+                                            <p>
+                                                <b>Department:</b>
+                                                @(item.FromDepartment?.DepartmentName ?? "NA")
+                                            </p>
+
+                                            <p>
+                                                <b>Location:</b>
+                                                @(item.FromLocation?.Name ?? "NA")
+                                            </p>
+
+                                        </div>
                                     </div>
 
-                                    <hr />
+                                    <div class="col-md-6">
+                                        <div class="border rounded p-3 bg-light">
 
-                                    <p><b>From:</b> @item.FromUserName (@item.FromEmpCode) - @item.FromDepartment?.DepartmentName</p>
-                                    <p><b>To:</b> @item.ToUserName (@item.ToEmpCode) - @item.ToDepartment?.DepartmentName</p>
-                                    <p><b>Reason:</b> @item.TransferReason</p>
-                                    <p><b>Remarks:</b> @item.Remarks</p>
+                                            <h6 class="text-success">
+                                                <i class="fas fa-arrow-circle-right"></i> To
+                                            </h6>
+
+                                            <p><b>User:</b> @(item.ToUserName ?? "NA")</p>
+
+                                            <p><b>Emp Code:</b> @(item.ToEmpCode ?? "NA")</p>
+
+                                            <p>
+                                                <b>Department:</b>
+                                                @(item.ToDepartment?.DepartmentName ?? "NA")
+                                            </p>
+
+                                            <p>
+                                                <b>Location:</b>
+                                                @(item.ToLocation?.Name ?? "NA")
+                                            </p>
+
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <hr />
+
+                                <div class="row mt-2">
+
+                                    <div class="col-md-4">
+                                        <b>Transferred By:</b>
+                                        @item.TransferredBy
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <b>Reason:</b>
+                                        @(item.TransferReason ?? "NA")
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <b>Remarks:</b>
+                                        @(item.Remarks ?? "NA")
+                                    </div>
+
                                 </div>
                             </div>
                         }

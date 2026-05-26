@@ -83,6 +83,25 @@ namespace AssetManagement.Controllers
             ViewBag.Filter = filter;
             ViewBag.AssetTag = assetTag;
 
+            // Available Laptop stock
+            ViewBag.LaptopStock = await _context.Assets
+                .Include(a => a.AssetType)
+                .CountAsync(a =>
+                    a.AssetType.Name == "Laptop"
+                    && !a.IsTransferred
+                    && !a.IsCheckedOut);
+
+            // Available Desktop stock
+            ViewBag.DesktopStock = await _context.Assets
+                .Include(a => a.AssetType)
+                .CountAsync(a =>
+                    a.AssetType.Name == "Desktop"
+                    && !a.IsTransferred
+                    && !a.IsCheckedOut);
+
+
+
+
 
             return View(assets);
         }
@@ -106,6 +125,14 @@ namespace AssetManagement.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Asset asset)
         {
+            var grnDateRaw = Request.Form["GRNDate"].ToString();
+            if (!string.IsNullOrEmpty(grnDateRaw) && DateOnly.TryParse(grnDateRaw, out var grnDate))
+            {
+                asset.GRNDate = grnDate;
+            }
+
+
+
             if (ModelState.IsValid)
             {
 
@@ -135,11 +162,7 @@ namespace AssetManagement.Controllers
 
             return View(asset);
         }
-        //private async Task<int> GetNextSlNo()
-        //{
-        //    var maxSlNo = await _context.Assets.MaxAsync(a => (int?)a.SlNo);
-        //    return (maxSlNo ?? 0) + 1;
-        //}
+       
 
         // GET: Assets/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -176,6 +199,9 @@ namespace AssetManagement.Controllers
 
             return View(asset);
         }
+
+
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -274,16 +300,25 @@ namespace AssetManagement.Controllers
                     var log = new AssetTransferLog
                     {
                         AssetId = existingAsset.AssetId,
+
+                        // FROM DETAILS
                         FromUserName = oldUserName,
                         FromEmpCode = oldEmpCode,
                         FromDepartmentId = oldDepartmentId,
+                        FromLocationId = oldLocationId,
+
+                        // TO DETAILS
                         ToUserName = existingAsset.UserName,
                         ToEmpCode = existingAsset.EmpCode,
                         ToDepartmentId = existingAsset.DepartmentId,
+                        ToLocationId = existingAsset.AssetLocationId,
+
+                        // EXTRA
                         TransferReason = transferReason ?? "Not specified",
-                        TransferredBy = transferredBy ?? User.Identity?.Name ?? "System",
                         Remarks = remarks,
-                        TransferDate = DateTime.Now
+                        TransferredBy = transferredBy ?? User.Identity?.Name ?? "System",
+                        TransferDate = DateTime.Now,
+                        ActionType = "Transfer"
                     };
 
                     _context.AssetTransferLogs.Add(log);
@@ -295,10 +330,26 @@ namespace AssetManagement.Controllers
                     TempData["SuccessMessage"] = "Asset updated successfully!";
                 }
 
+                existingAsset.AssetTypeId = asset.AssetTypeId;
+                existingAsset.CompanyId = asset.CompanyId;
+                //existingAsset.AssetStatusId = asset.AssetStatusId;
+                existingAsset.AssetLocationId = asset.AssetLocationId;
+                existingAsset.DepartmentId = asset.DepartmentId;
+                existingAsset.BlockId = asset.BlockId;
+                existingAsset.DivisionId = asset.DivisionId;
+
+
                 // ✅ Update remaining asset fields (SAFE)
+                existingAsset.AssetCode = asset.AssetCode;
+                existingAsset.UserName = asset.UserName;
+                existingAsset.EmpCode = asset.EmpCode;
+                existingAsset.HostName = asset.HostName;
+                existingAsset.AssetTag = asset.AssetTag;
+                existingAsset.AssetCode = asset.AssetCode;            
                 existingAsset.Make = asset.Make;
                 existingAsset.Model = asset.Model;
-                existingAsset.SerialNo = asset.SerialNo;
+                existingAsset.CPUSerialNo = asset.CPUSerialNo;
+                existingAsset.MoniterSerialNo = asset.MoniterSerialNo;
                 existingAsset.Processor = asset.Processor;
                 existingAsset.Ram = asset.Ram;
                 existingAsset.Hdd = asset.Hdd;
@@ -310,7 +361,13 @@ namespace AssetManagement.Controllers
                 existingAsset.Nitro = asset.Nitro;
                 existingAsset.AuditStatus = asset.AuditStatus;
                 existingAsset.GRNNumber = asset.GRNNumber;
+                existingAsset.GRNDate = asset.GRNDate;
+                existingAsset.InvoiceDate = asset.InvoiceDate;
                 existingAsset.ExpiryDate = asset.ExpiryDate;
+                existingAsset.Stock = asset.Stock;
+                existingAsset.VendorName = asset.VendorName;
+                existingAsset.MacId = asset.MacId;
+                existingAsset.Cost = asset.Cost;
 
                 existingAsset.IsTransferred = true;
 
@@ -353,12 +410,14 @@ namespace AssetManagement.Controllers
                 return NotFound("Asset not found");
 
             var history = await _context.AssetTransferLogs
-                .Include(x => x.FromDepartment)
-                .Include(x => x.ToDepartment)
-                .Where(x => x.AssetId == asset.AssetId)
-                .OrderByDescending(x => x.TransferDate)
-                .AsNoTracking()
-                .ToListAsync();
+     .Include(x => x.FromDepartment)
+     .Include(x => x.ToDepartment)
+     .Include(x => x.FromLocation)
+     .Include(x => x.ToLocation)
+                     .Where(x => x.AssetId == asset.AssetId)
+                    .OrderByDescending(x => x.TransferDate)
+                    .AsNoTracking()
+                    .ToListAsync();
 
             ViewBag.Asset = asset;
             return View(history);
@@ -444,7 +503,7 @@ namespace AssetManagement.Controllers
                 "RAM", "HDD", "Division", "Antivirus", "OS Version",
                 "AutoCAD", "Office", "Windows License Key", "IP Address",
                 "Nitro", "CatridgeType", "GRN Number", "GRN Date",
-                "Invoice Date", "Warranty (Months)", "Expiry Date"
+                "Invoice Date", "Warranty (Months)", "Expiry Date","Stock","Vendor Name", "Mac ID", "Cost"
             };
 
                     for (int i = 0; i < headers.Length; i++)
@@ -462,33 +521,38 @@ namespace AssetManagement.Controllers
                         worksheet.Cell(row, 2).Value = asset.IsTransferred ? "Transferred" : "NA";
                         worksheet.Cell(row, 3).Value = asset.AssetStatus?.Name ?? "NA";
                         worksheet.Cell(row, 4).Value = asset.AssetTag ?? "NA";
-                        worksheet.Cell(row, 5).Value = asset.AssetType?.Name ?? "NA";
-                        worksheet.Cell(row, 6).Value = asset.Department?.DepartmentName ?? "NA";
-                        worksheet.Cell(row, 7).Value = asset.EmpCode ?? "NA";
-                        worksheet.Cell(row, 8).Value = asset.UserName ?? "NA";
-                        worksheet.Cell(row, 9).Value = asset.HostName ?? "NA";
-                        worksheet.Cell(row, 10).Value = asset.Block?.BlockName ?? "NA";
-                        worksheet.Cell(row, 11).Value = asset.AssetLocation?.Name ?? "NA";
-                        worksheet.Cell(row, 12).Value = asset.Make ?? "NA";
-                        worksheet.Cell(row, 13).Value = asset.Model ?? "NA";
-                        worksheet.Cell(row, 14).Value = string.IsNullOrEmpty(asset.SerialNo) ? "NA" : asset.SerialNo;
-                        worksheet.Cell(row, 15).Value = asset.Processor ?? "NA";
-                        worksheet.Cell(row, 16).Value = asset.Ram ?? "NA";
-                        worksheet.Cell(row, 17).Value = asset.Hdd ?? "NA";
-                        worksheet.Cell(row, 18).Value = asset.Division?.DivisionName ?? "NA";
-                        worksheet.Cell(row, 19).Value = asset.AntiVirus ?? "NA";
-                        worksheet.Cell(row, 20).Value = asset.OSVersion ?? "NA";
-                        worksheet.Cell(row, 21).Value = asset.AutoCad ?? "NA";
-                        worksheet.Cell(row, 22).Value = asset.Office ?? "NA";
-                        worksheet.Cell(row, 23).Value = asset.WindowLicenseKey ?? "NA";
-                        worksheet.Cell(row, 24).Value = asset.IPAddress ?? "NA";
-                        worksheet.Cell(row, 25).Value = asset.Nitro ?? "NA";
-                        worksheet.Cell(row, 26).Value = asset.CatridgeType ?? "NA";
-                        worksheet.Cell(row, 27).Value = string.IsNullOrEmpty(asset.GRNNumber) ? "NA" : asset.GRNNumber;
-                        worksheet.Cell(row, 28).Value = asset.GRNDate?.ToString("dd/MM/yyyy") ?? "NA";
-                        worksheet.Cell(row, 29).Value = asset.InvoiceDate?.ToString("dd/MM/yyyy") ?? "NA";
-                        worksheet.Cell(row, 30).Value = asset.Warranty?.ToString() ?? "NA";
-                        worksheet.Cell(row, 31).Value = asset.ExpiryDate?.ToString("dd/MM/yyyy") ?? "NA";
+                        worksheet.Cell(row, 5).Value = asset.AssetCode ?? "NA";
+                        worksheet.Cell(row, 6).Value = asset.AssetType?.Name ?? "NA";
+                        worksheet.Cell(row, 7).Value = asset.Department?.DepartmentName ?? "NA";
+                        worksheet.Cell(row, 8).Value = asset.EmpCode ?? "NA";
+                        worksheet.Cell(row, 9).Value = asset.UserName ?? "NA";
+                        worksheet.Cell(row, 10).Value = asset.HostName ?? "NA";
+                        worksheet.Cell(row, 11).Value = asset.Block?.BlockName ?? "NA";
+                        worksheet.Cell(row, 12).Value = asset.AssetLocation?.Name ?? "NA";
+                        worksheet.Cell(row, 13).Value = asset.Make ?? "NA";
+                        worksheet.Cell(row, 14).Value = asset.Model ?? "NA";
+                        worksheet.Cell(row, 15).Value = string.IsNullOrEmpty(asset.MoniterSerialNo) ? "NA" : asset.MoniterSerialNo;
+                        worksheet.Cell(row, 16).Value = asset.Processor ?? "NA";
+                        worksheet.Cell(row, 17).Value = asset.Ram ?? "NA";
+                        worksheet.Cell(row, 18).Value = asset.Hdd ?? "NA";
+                        worksheet.Cell(row, 19).Value = asset.Division?.DivisionName ?? "NA";
+                        worksheet.Cell(row, 20).Value = asset.AntiVirus ?? "NA";
+                        worksheet.Cell(row, 21).Value = asset.OSVersion ?? "NA";
+                        worksheet.Cell(row, 22).Value = asset.AutoCad ?? "NA";
+                        worksheet.Cell(row, 23).Value = asset.Office ?? "NA";
+                        worksheet.Cell(row, 24).Value = asset.WindowLicenseKey ?? "NA";
+                        worksheet.Cell(row, 25).Value = asset.IPAddress ?? "NA";
+                        worksheet.Cell(row, 26).Value = asset.Nitro ?? "NA";
+                        worksheet.Cell(row, 27).Value = asset.CatridgeType ?? "NA";
+                        worksheet.Cell(row, 28).Value = asset.Stock ?? "NA";
+                        worksheet.Cell(row, 29).Value = asset.VendorName ?? "NA";
+                        worksheet.Cell(row, 30).Value = asset.MacId ?? "NA";
+                        worksheet.Cell(row, 31).Value = asset.Cost;
+                        worksheet.Cell(row, 32).Value = string.IsNullOrEmpty(asset.GRNNumber) ? "NA" : asset.GRNNumber;
+                        worksheet.Cell(row, 33).Value = asset.GRNDate?.ToString("dd/MM/yyyy") ?? "NA";
+                        worksheet.Cell(row, 34).Value = asset.InvoiceDate?.ToString("dd/MM/yyyy") ?? "NA";
+                        worksheet.Cell(row, 35).Value = asset.Warranty?.ToString() ?? "NA";
+                        worksheet.Cell(row, 36).Value = asset.ExpiryDate?.ToString("dd/MM/yyyy") ?? "NA";
 
                         row++;
                     }
@@ -545,6 +609,10 @@ namespace AssetManagement.Controllers
                 TempData["ErrorMessage"] = "Please select a valid Excel file.";
                 return RedirectToAction(nameof(Import));
             }
+
+
+
+
 
             var assets = new List<Asset>();
 
@@ -773,7 +841,7 @@ namespace AssetManagement.Controllers
                                 Model = modelText,
                                 MoniterMake = monitorMakeText,
                                 MoniterModel = monitorModelText,
-                                SerialNo = string.IsNullOrWhiteSpace(serialText) ? "NA" : serialText,
+                                MoniterSerialNo = string.IsNullOrWhiteSpace(serialText) ? "NA" : serialText,
                                 CPUSerialNo = string.IsNullOrWhiteSpace(cpuSerialNo) ? "NA" : cpuSerialNo,
                                 Processor = string.IsNullOrWhiteSpace(processorText) ? "NA" : processorText,
                                 Ram = string.IsNullOrWhiteSpace(ramText) ? "NA" : ramText,
@@ -861,6 +929,111 @@ namespace AssetManagement.Controllers
             ViewBag.Filter = "Desktop";
             return View("Index", desktops); // reuse same Index view
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Checkout(int assetId)
+        {
+            var asset = await _context.Assets
+                .FirstOrDefaultAsync(a => a.AssetId == assetId);
+
+            if (asset == null)
+                return NotFound();
+
+            ViewBag.Departments = await _context.Departments.ToListAsync();
+
+            return View(asset); // This will load your Checkout.cshtml
+        }
+
+
+
+
+        [HttpPost]
+        public async Task<IActionResult> Checkout(int assetId, string userName, string empCode, int? departmentId)
+        {
+            var asset = await _context.Assets.FirstOrDefaultAsync(a => a.AssetId == assetId);
+
+            if (asset == null)
+                return NotFound();
+
+            if (asset.IsCheckedOut)
+            {
+                TempData["Error"] = "Asset already checked out!";
+                return RedirectToAction("Index");
+            }
+
+            // Assign user
+            asset.UserName = userName;
+            asset.EmpCode = empCode;
+            asset.DepartmentId = departmentId;
+
+            asset.IsCheckedOut = true;
+            asset.CheckoutDate = DateTime.Now;
+            asset.CheckinDate = null;
+
+            // Log
+            _context.AssetTransferLogs.Add(new AssetTransferLog
+            {
+                AssetId = asset.AssetId,
+                ToUserName = userName,
+                ToEmpCode = empCode,
+                ToDepartmentId = departmentId,
+                TransferDate = DateTime.Now,
+                ActionType = "Checkout",
+                TransferredBy = User.Identity?.Name ?? "System"
+            });
+
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Asset checked out successfully!";
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Checkin(int assetId)
+        {
+            var asset = await _context.Assets.FirstOrDefaultAsync(a => a.AssetId == assetId);
+
+            if (asset == null)
+                return NotFound();
+
+            if (!asset.IsCheckedOut)
+            {
+                TempData["Error"] = "Asset is not checked out!";
+                return RedirectToAction("Index");
+            }
+
+            // Store old values for log
+            var oldUser = asset.UserName;
+            var oldEmp = asset.EmpCode;
+            var oldDept = asset.DepartmentId;
+
+            // Clear assignment
+            asset.UserName = null;
+            asset.EmpCode = null;
+            asset.DepartmentId = null;
+
+            asset.IsCheckedOut = false;
+            asset.CheckinDate = DateTime.Now;
+
+            // Log
+            _context.AssetTransferLogs.Add(new AssetTransferLog
+            {
+                AssetId = asset.AssetId,
+                FromUserName = oldUser,
+                FromEmpCode = oldEmp,
+                FromDepartmentId = oldDept,
+                TransferDate = DateTime.Now,
+                ActionType = "Checkin",
+                TransferredBy = User.Identity?.Name ?? "System"
+            });
+
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Asset checked in successfully!";
+            return RedirectToAction("Index");
+        }
+
+
 
         public async Task<IActionResult> History(int id)
         {

@@ -55,6 +55,148 @@
             color: #ffffff;
             text-transform: uppercase;
         }
+
+        .table th, .table td {
+            border: 0.5px solid #dee2e6 !important;
+            padding: 8px 8px;
+            text-align: center;
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+
+            /* Ensure consistent column widths */
+            .table th:nth-child(1) {
+                min-width: 60px;
+            }
+            /* SL NO */
+            .table th:nth-child(2) {
+                min-width: 120px;
+            }
+            /* NAME */
+            .table th:nth-child(3) {
+                min-width: 130px;
+            }
+            /* SERIAL NO */
+            .table th:nth-child(4) {
+                min-width: 100px;
+            }
+            /* CATEGORY */
+            .table th:nth-child(5) {
+                min-width: 100px;
+            }
+            /* MODEL NO */
+            .table th:nth-child(6) {
+                min-width: 200px;
+            }
+            /* LOCATION */
+            .table th:nth-child(7) {
+                min-width: 100px;
+            }
+            /* ORDER NO */
+            .table th:nth-child(8) {
+                min-width: 120px;
+            }
+            /* PURCHASE DATE */
+            .table th:nth-child(9) {
+                min-width: 70px;
+            }
+            /* TOTAL */
+            .table th:nth-child(10) {
+                min-width: 100px;
+            }
+            /* REMAINING */
+            .table th:nth-child(11) {
+                min-width: 100px;
+            }
+            /* TOTAL COST */
+            .table th:nth-child(12) {
+                min-width: 120px;
+            }
+            /* CHECK IN/OUT */
+            .table th:nth-child(13) {
+                min-width: 120px;
+            }
+        /* ACTIONS */
+
+        /* Style for action buttons */
+        .btn-group-sm {
+            display: flex;
+            justify-content: center;
+            gap: 3px;
+        }
+
+            .btn-group-sm .btn {
+                padding: 4px 8px;
+                border-radius: 4px;
+            }
+
+        /* Check In/Out Column Styling */
+        .checkinout-column {
+            min-width: 200px;
+            padding: 8px !important;
+        }
+
+            .checkinout-column .timestamp {
+                font-size: 12px;
+                color: #666;
+                margin-bottom: 6px;
+                white-space: nowrap;
+            }
+
+            .checkinout-column .action-buttons {
+                display: flex;
+                gap: 6px;
+                justify-content: center;
+                align-items: center;
+                flex-wrap: wrap;
+            }
+
+            .checkinout-column .btn-checkout {
+                background-color: #ffc107;
+                color: #000;
+                border: 1px solid #e0a800;
+                padding: 4px 12px;
+                border-radius: 4px;
+                font-size: 13px;
+                font-weight: 500;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+
+                .checkinout-column .btn-checkout:hover {
+                    background-color: #e0a800;
+                }
+
+            .checkinout-column .btn-icon {
+                background-color: #f8f9fa;
+                border: 1px solid #ced4da;
+                padding: 4px 8px;
+                border-radius: 4px;
+                font-size: 16px;
+                cursor: pointer;
+                transition: all 0.2s;
+                min-width: 32px;
+            }
+
+                .checkinout-column .btn-icon:hover {
+                    background-color: #e9ecef;
+                    border-color: #adb5bd;
+                }
+
+        /* Style for when there are multiple rows */
+        .table tbody tr:hover .checkinout-column {
+            background-color: #f8f9ff;
+        }
+
+        /* Link styling for the icons (if you need them as links) */
+        .checkinout-column a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+            .checkinout-column a:hover {
+                opacity: 0.8;
+            }
     </style>
 </head>
 
@@ -77,24 +219,25 @@
                 <table class="table table-hover" id="component-table">
                     <thead>
                         <tr>
-                            <th>Sl No</th>
-                            <th>Name</th>
-                            <th>Serial No</th>
-                            <th>Category</th>
-                            <th>Model No</th>
-                            <th>Location</th>
-                            <th>Order No</th>
-                            <th>Purchase Date</th>
-                            <th>Total</th>
-                            <th>Remaining</th>
-                            <th>Total Cost</th>
-                            <th>Check In/Out</th>
-                            <th>Actions</th>
+                            <th>SL NO ▲</th>
+                            <th>NAME</th>
+                            <th>SERIAL NO</th>
+                            <th>CATEGORY</th>
+                            <th>MODEL NO</th>
+                            <th>LOCATION</th>
+                            <th>ORDER NO</th>
+                            <th>PURCHASE DATE</th>
+                            <th>TOTAL</th>
+                            <th>REMAINING</th>
+                            <th>TOTAL COST</th>
+                            <th>CHECK IN/OUT</th>
+                            <th>ACTIONS</th>
                         </tr>
                     </thead>
                     <tbody>
                         @{
                             int slNo = 1;
+                            var currentDate = DateTime.Now.ToString("ddd MMM dd, yyyy h:mmtt");
                         }
                         @foreach (var item in Model)
                         {
@@ -124,16 +267,32 @@
                                     </span>
                                 </td>
                                 <td>@item.TotalCost</td>
-                                <td>@item.CheckInCheckOut</td>
+
+                                <!-- Check In/Out Column with Timestamp and Buttons -->
+                                <td class="checkinout-column">
+                                    <div class="timestamp">@currentDate</div>
+                                    <div class="action-buttons">
+                                        <button class="btn-checkout" title="Checkout">
+                                            Checkout
+                                        </button>
+                                        <button class="btn-icon" title="Computer">
+                                            🖥️
+                                        </button>
+                                        <button class="btn-icon" title="Document">
+                                            📄
+                                        </button>
+                                    </div>
+                                </td>
+
                                 <td>
-                                    <div class="btn-group btn-group-sm">
-                                        <a asp-action="Edit" asp-route-id="@item.ComponentId" class="btn btn-warning">
+                                    <div class="btn-group btn-group-sm" style="gap: 2px;">
+                                        <a asp-action="Edit" asp-route-id="@item.ComponentId" class="btn btn-warning btn-sm" title="Edit">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        <a asp-action="Details" asp-route-id="@item.ComponentId" class="btn btn-info">
+                                        <a asp-action="Details" asp-route-id="@item.ComponentId" class="btn btn-info btn-sm" title="Details">
                                             <i class="fas fa-eye"></i>
                                         </a>
-                                        <a asp-action="Delete" asp-route-id="@item.ComponentId" class="btn btn-danger">
+                                        <a asp-action="Delete" asp-route-id="@item.ComponentId" class="btn btn-danger btn-sm" title="Delete">
                                             <i class="fas fa-trash-alt"></i>
                                         </a>
                                     </div>

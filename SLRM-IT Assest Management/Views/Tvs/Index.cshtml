@@ -97,32 +97,7 @@
 
         <h1 class="page-title">SLRM IT-ASSET MANAGEMENT &gt; TV</h1>
 
-        <!-- Toolbar -->
-        <div class="action-bar">
-            <div>
-                <input type="text" id="tableSearch" class="form-control form-control-sm me-2"
-                       placeholder="🔍 Search TV assets..." style="width: 300px;">
-                <select id="rowsPerPage" class="form-select form-select-sm" style="width: 140px;">
-                    <option value="10">10 per page</option>
-                    <option value="25" selected>25 per page</option>
-                    <option value="50">50 per page</option>
-                    <option value="100">100 per page</option>
-                    <option value="-1">Show All</option>
-                </select>
-            </div>
 
-            <div>
-                <button class="btn btn-outline-primary btn-sm btn-refresh me-2">
-                    <i class="fas fa-sync-alt"></i> Refresh
-                </button>
-                <button class="btn btn-success btn-sm btn-download me-2">
-                    <i class="fas fa-file-excel"></i> Export Excel
-                </button>
-                <button class="btn btn-outline-secondary btn-sm btn-print">
-                    <i class="fas fa-print"></i> Print
-                </button>
-            </div>
-        </div>
 
         <div class="d-flex justify-content-between align-items-center mb-3">
             <a asp-action="Create" class="btn btn-primary">
@@ -135,6 +110,15 @@
 
         <!-- Table -->
         <div class="table-container">
+            <div class="d-flex justify-content-end mb-3">
+                <div style="width:300px;">
+                    <input type="text"
+                           id="searchInput"
+                           class="form-control"
+                           placeholder="🔍 Search printers..."
+                           onkeyup="searchTable()">
+                </div>
+            </div>
             <div class="table-responsive">
                 <table class="table table-hover" id="tv-table">
                     <thead>
@@ -142,11 +126,15 @@
                             <th>@Html.DisplayNameFor(model => model.AssetLocation)</th>
                             <th>@Html.DisplayNameFor(model => model.TvSerialNo)</th>
                             <th>@Html.DisplayNameFor(model => model.Model)</th>
-                            <th>@Html.DisplayNameFor(model => model.ScrrenSize)</th>
+                            <th>@Html.DisplayNameFor(model => model.ScreenSize)</th>
                             <th>@Html.DisplayNameFor(model => model.Department)</th>
                             <th>@Html.DisplayNameFor(model => model.UserName)</th>
                             <th>@Html.DisplayNameFor(model => model.Qty)</th>
                             <th>@Html.DisplayNameFor(model => model.Status)</th>
+                            <th>@Html.DisplayNameFor(model => model.VendorName)</th>
+                            <th>@Html.DisplayNameFor(model => model.Cost)</th>
+                            <th>@Html.DisplayNameFor(model => model.PurchaseDate)</th>
+                            <th>@Html.DisplayNameFor(model => model.ExpiryDate)</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -157,10 +145,15 @@
                                 <td>@Html.DisplayFor(modelItem => item.AssetLocation.Name)</td>
                                 <td>@Html.DisplayFor(modelItem => item.TvSerialNo)</td>
                                 <td>@Html.DisplayFor(modelItem => item.Model)</td>
-                                <td>@Html.DisplayFor(modelItem => item.ScrrenSize)</td>
-                                <td>@Html.DisplayFor(modelItem => item.Department.DepartmentId)</td>
+                                <td>@Html.DisplayFor(modelItem => item.ScreenSize)</td>
+                                <td>@Html.DisplayFor(modelItem => item.Department.DepartmentName)</td>
                                 <td>@Html.DisplayFor(modelItem => item.UserName)</td>
                                 <td>@Html.DisplayFor(modelItem => item.Qty)</td>
+                                <td>@Html.DisplayFor(modelItem => item.Status)</td>
+                                <td>@Html.DisplayFor(modelItem => item.VendorName)</td>
+                                <td>@Html.DisplayFor(modelItem => item.Cost)</td>
+                                <td>@Html.DisplayFor(modelItem => item.PurchaseDate)</td>
+                                <td>@Html.DisplayFor(modelItem => item.ExpiryDate)</td>
                                 <td>
                                     <span class="badge bg-secondary">
                                         @Html.DisplayFor(modelItem => item.Status)
@@ -194,32 +187,35 @@
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 
+    
+
     <script>
-        $(document).ready(function () {
+        function searchTable() {
+            let input = document.getElementById("searchInput");
+            let filter = input.value.toUpperCase();
 
-            let table = $('#tv-table').DataTable({
-                scrollX: true,
-                pageLength: 25,
-                order: [],
-                columnDefs: [{ orderable: false, targets: -1 }]
-            });
+            let table = document.getElementById("printers-table");
+            let tr = table.getElementsByTagName("tr");
 
-            $('#tableSearch').on('keyup', function () {
-                table.search(this.value).draw();
-            });
+            for (let i = 1; i < tr.length; i++) {
+                let rowVisible = false;
 
-            $('#rowsPerPage').on('change', function () {
-                let val = $(this).val();
-                table.page.len(val === '-1' ? -1 : parseInt(val)).draw();
-            });
+                let td = tr[i].getElementsByTagName("td");
 
-            $('.btn-refresh').on('click', function () {
-                table.search('').columns().search('').draw();
-                $('#tableSearch').val('');
-                $('#rowsPerPage').val('25');
-            });
+                for (let j = 0; j < td.length; j++) {
+                    if (td[j]) {
+                        let txtValue = td[j].textContent || td[j].innerText;
 
-        });
+                        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                            rowVisible = true;
+                            break;
+                        }
+                    }
+                }
+
+                tr[i].style.display = rowVisible ? "" : "none";
+            }
+        }
     </script>
 
 </body>

@@ -60,7 +60,7 @@
                 <!-- Row 1 -->
                 <div class="row mb-3">
                     <div class="col-md-4">
-                        <label asp-for="AssetLocationId" class="form-label"></label>
+                        <label asp-for="AssetLocationId" class="form-label">Asse tLocation</label>
                         <select asp-for="AssetLocationId" class="form-select" asp-items="ViewBag.AssetLocationId"></select>
                         <span asp-validation-for="AssetLocationId" class="text-danger"></span>
                     </div>
@@ -81,19 +81,19 @@
                 <!-- Row 2 -->
                 <div class="row mb-3">
                     <div class="col-md-4">
-                        <label asp-for="ScrrenSize" class="form-label"></label>
-                        <input asp-for="ScrrenSize" class="form-control" />
-                        <span asp-validation-for="ScrrenSize" class="text-danger"></span>
+                        <label asp-for="ScreenSize" class="form-label"></label>
+                        <input asp-for="ScreenSize" class="form-control" />
+                        <span asp-validation-for="ScreenSize" class="text-danger"></span>
                     </div>
 
                     <div class="col-md-4">
-                        <label asp-for="DepartmentId" class="form-label"></label>
+                        <label asp-for="DepartmentId" class="form-label">Departments</label>
                         <select asp-for="DepartmentId" class="form-select" asp-items="ViewBag.DepartmentId"></select>
                         <span asp-validation-for="DepartmentId" class="text-danger"></span>
                     </div>
 
                     <div class="col-md-4">
-                        <label asp-for="UserName" class="form-label"></label>
+                        <label asp-for="UserName" class="form-label">User Name</label>
                         <input asp-for="UserName" class="form-control" />
                         <span asp-validation-for="UserName" class="text-danger"></span>
                     </div>
@@ -111,6 +111,31 @@
                         <label asp-for="Status" class="form-label"></label>
                         <input asp-for="Status" class="form-control" />
                         <span asp-validation-for="Status" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label asp-for="VendorName" class="form-label">Vendor Name</label>
+                        <input asp-for="VendorName" class="form-control" />
+                        <span asp-validation-for="VendorName" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label asp-for="Cost" class="form-label">Cost</label>
+                        <input asp-for="Status" class="form-control" />
+                        <span asp-validation-for="Status" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label asp-for="PurchaseDate" class="form-label">Purchase Date</label>
+                        <input asp-for="PurchaseDate" type="Date" class="form-control" />
+                        <span asp-validation-for="PurchaseDate" class="text-danger"></span>
+                    </div>
+
+
+                    <div class="col-md-4">
+                        <label asp-for="ExpiryDate" class="form-label">Expiry Date</label>
+                        <input asp-for="ExpiryDate" type="Date" class="form-control" />
+                        <span asp-validation-for="ExpiryDate" class="text-danger"></span>
                     </div>
                 </div>
 

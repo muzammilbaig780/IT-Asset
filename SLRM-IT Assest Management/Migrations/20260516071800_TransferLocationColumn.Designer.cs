@@ -4,6 +4,7 @@ using AssetManagement.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace SLRM_IT_Assest_Management.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260516071800_TransferLocationColumn")]
+    partial class TransferLocationColumn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -98,10 +101,6 @@ namespace SLRM_IT_Assest_Management.Migrations
                     b.Property<int?>("CompanyId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Cost")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("DepartmentId")
                         .HasColumnType("int");
 
@@ -137,10 +136,6 @@ namespace SLRM_IT_Assest_Management.Migrations
 
                     b.Property<bool>("IsTransferred")
                         .HasColumnType("bit");
-
-                    b.Property<string>("MacId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Make")
                         .HasColumnType("nvarchar(max)");
@@ -178,15 +173,7 @@ namespace SLRM_IT_Assest_Management.Migrations
                     b.Property<int?>("StatusId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Stock")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("UserName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("VendorName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("Warranty")
@@ -1010,25 +997,16 @@ namespace SLRM_IT_Assest_Management.Migrations
                     b.Property<int>("AssetLocationId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Cost")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("DepartmentId")
                         .HasColumnType("int");
 
-                    b.Property<string>("ExpiryDate")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Model")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PurchaseDate")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Qty")
                         .HasColumnType("int");
 
-                    b.Property<string>("ScreenSize")
+                    b.Property<string>("ScrrenSize")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Status")
@@ -1038,9 +1016,6 @@ namespace SLRM_IT_Assest_Management.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("VendorName")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("TvId");

@@ -17,7 +17,6 @@ namespace SLRM_IT_Assest_Management.Controllers
             _environment = environment;
         }
 
-
         // GET: ComponentController
         public async Task<IActionResult> Index()
         {
@@ -25,6 +24,21 @@ namespace SLRM_IT_Assest_Management.Controllers
                 .Include(c => c.Category)          // ✅ Load Category
                 .Include(c => c.AssetLocation)     // ✅ Load Location also
                 .ToListAsync();
+
+            // Count laptops
+            var totalLaptops = await _context.Components
+                .Include(c => c.Category)
+                .Where(c => c.Category.CategoryName == "Laptop")
+                .CountAsync();
+
+            // Count desktops
+            var totalDesktops = await _context.Components
+                .Include(c => c.Category)
+                .Where(c => c.Category.CategoryName == "Desktop")
+                .CountAsync();
+
+            ViewBag.TotalLaptops = totalLaptops;
+            ViewBag.TotalDesktops = totalDesktops;
 
             return View(components);
         }

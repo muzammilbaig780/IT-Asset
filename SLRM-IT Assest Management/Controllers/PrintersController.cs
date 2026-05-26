@@ -18,28 +18,15 @@ namespace SLRM_IT_Assest_Management.Controllers
         }
 
         // GET: Printers
-        public async Task<IActionResult> Index(int page = 1, int pageSize = 15)
+        public async Task<IActionResult> Index()
         {
-            var printersQuery = _context.Printers
-    .Include(p => p.PrinterType)
-    .Include(p => p.AssetLocation)
-    .Include(p => p.Department)
-    .OrderByDescending(p => p.PrinterId);
-
-
-
-            var totalPrinters = await printersQuery.CountAsync();
-            var totalPages = (int)Math.Ceiling(totalPrinters / (double)pageSize);
-
-            var printers = await printersQuery
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
+            var printers = await _context.Printers
+                .Include(p => p.PrinterType)
+                .Include(p => p.AssetLocation)
+                .Include(p => p.Department)
+                .OrderByDescending(p => p.PrinterId)
                 .AsNoTracking()
                 .ToListAsync();
-
-            ViewData["CurrentPage"] = page;
-            ViewData["TotalPages"] = totalPages;
-            ViewData["PageSize"] = pageSize;
 
             return View(printers);
         }

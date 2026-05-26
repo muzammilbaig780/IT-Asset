@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace SLRM_IT_Assest_Management.Models
 {
@@ -28,6 +29,7 @@ namespace SLRM_IT_Assest_Management.Models
         public string? Remaining { get; set; }
         public string? TotalCost { get; set; }
         public string? IssueDate { get; set; }
+        public DateOnly? Returndate { get; set; }
         public string CheckInCheckOut { get; set; }
     }
 }

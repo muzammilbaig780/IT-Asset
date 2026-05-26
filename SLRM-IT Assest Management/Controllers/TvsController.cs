@@ -67,7 +67,7 @@ namespace SLRM_IT_Assest_Management.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("TvId,AssetLocationId,TvSerialNo,Model,ScrrenSize,DepartmentId,UserName,Qty,Status")] Tv tv)
+        public async Task<IActionResult> Create([Bind("TvId,AssetLocationId,TvSerialNo,Model,ScreenSize,DepartmentId,UserName,Qty,Status,VendorName,Cost,PurchaseDate,ExpiryDate")] Tv tv)
         {
             if (ModelState.IsValid)
             {
@@ -76,7 +76,7 @@ namespace SLRM_IT_Assest_Management.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["AssetLocationId"] = new SelectList(_context.AssetLocations, "AssetLocationId", "Name", tv.AssetLocationId);
-            ViewData["DepartmentId"] = new SelectList(_context.Departments, "DepartmentId", "DepartmentId", tv.DepartmentId);
+            ViewData["DepartmentId"] = new SelectList(_context.Departments, "DepartmentId", "DepartmentName", tv.DepartmentId);
             return View(tv);
         }
 
@@ -94,7 +94,7 @@ namespace SLRM_IT_Assest_Management.Controllers
                 return NotFound();
             }
             ViewData["AssetLocationId"] = new SelectList(_context.AssetLocations, "AssetLocationId", "Name", tv.AssetLocationId);
-            ViewData["DepartmentId"] = new SelectList(_context.Departments, "DepartmentId", "DepartmentId", tv.DepartmentId);
+            ViewData["DepartmentId"] = new SelectList(_context.Departments, "DepartmentId", "DepartmentName", tv.DepartmentId);
             return View(tv);
         }
 
@@ -103,7 +103,7 @@ namespace SLRM_IT_Assest_Management.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("TvId,AssetLocationId,TvSerialNo,Model,ScrrenSize,DepartmentId,UserName,Qty,Status")] Tv tv)
+        public async Task<IActionResult> Edit(int id, [Bind("TvId,AssetLocationId,TvSerialNo,Model,ScreenSize,DepartmentId,UserName,Qty,Status,VendorName,Cost,PurchaseDate,ExpiryDate")] Tv tv)
         {
             if (id != tv.TvId)
             {
@@ -131,7 +131,7 @@ namespace SLRM_IT_Assest_Management.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["AssetLocationId"] = new SelectList(_context.AssetLocations, "AssetLocationId", "Name", tv.AssetLocationId);
-            ViewData["DepartmentId"] = new SelectList(_context.Departments, "DepartmentId", "DepartmentId", tv.DepartmentId);
+            ViewData["DepartmentId"] = new SelectList(_context.Departments, "DepartmentId", "DepartmentName", tv.DepartmentId);
             return View(tv);
         }
 

@@ -17,7 +17,7 @@ namespace SLRM_IT_Assest_Management.Models
         public string?  TvSerialNo { get; set; }
         public  string? Model { get; set; }
 
-        public string? ScrrenSize { get; set; }
+        public string? ScreenSize { get; set; }
 
         [Required(ErrorMessage = "Please select a Department.")]
         public int? DepartmentId { get; set; }
@@ -26,6 +26,10 @@ namespace SLRM_IT_Assest_Management.Models
         public string?  UserName { get; set; }
         public int Qty { get; set; }
         public string? Status { get; set; }
+        public string? VendorName { get; set; }
+        public string? PurchaseDate { get; set; }
+        public string? Cost { get; set; }
+        public string? ExpiryDate { get; set; }
 
     }
 }

@@ -68,17 +68,16 @@
                 white-space: nowrap;
             }
 
-        th {
-            background-color: #2a4d8c;
+        #assets-table thead th {
+            background-color: #2a4d8c !important;
             color: #ffffff;
             font-weight: 600;
             font-size: 14px;
             text-transform: uppercase;
             position: sticky;
             top: 0;
-            z-index: 2;
+            z-index: 100;
         }
-
         .table tr:nth-child(even) td {
             background-color: #f8faff;
         }
@@ -246,11 +245,54 @@
             color: #1565c0;
         }
 
-        
+        .stock-badge {
+            background-color: #fff3cd; /* light yellow */
+            color: #856404;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: 600;
+            border: 1px solid #ffe69c;
+            display: inline-block;
+        }
 
         #assets-table {
             min-width: 2000px;
         }
+
+
+        .table-wrapper {
+            width: 100%;
+            overflow: auto;
+            max-height: 75vh;
+            border: 1px solid #ddd;
+            position: relative;
+        }
+
+            /* Optional smooth scrolling */
+            .table-wrapper::-webkit-scrollbar {
+                height: 12px;
+                width: 10px;
+            }
+
+            .table-wrapper::-webkit-scrollbar-thumb {
+                background: #888;
+                border-radius: 10px;
+            }
+
+                .table-wrapper::-webkit-scrollbar-thumb:hover {
+                    background: #555;
+                }
+
+
+        .top-scroll {
+            overflow-x: auto;
+            overflow-y: hidden;
+            height: 18px;
+        }
+
+            .top-scroll div {
+                height: 1px;
+            }
 
     </style>
 </head>
@@ -305,16 +347,22 @@
         <!-- Filter Toolbar -->
         @await Html.PartialAsync("_FilterToolbar")
 
+       
         <div class="table-container">
-            <div class="table-responsive">
+
+            <div class="top-scroll">
+                <div></div>
+            </div>
+
+            <div class="table-wrapper">
                 <table class="table table-hover" id="assets-table">
                     <thead>
                         <tr>
-
                             <th class="filter-header">Sl No<i class="fas fa-filter filter-icon"></i></th>
                             <th class="filter-header">TransferStatus<i class="fas fa-filter filter-icon"></i></th>
                             <th class="filter-header">Status<i class="fas fa-filter filter-icon"></i></th>
                             <th class="filter-header">Asset Tag<i class="fas fa-filter filter-icon"></i></th>
+                            <th class="filter-header">Asset Code<i class="fas fa-filter filter-icon"></i></th>
                             <th class="filter-header">Asset Type<i class="fas fa-filter filter-icon"></i></th>
                             <th class="filter-header">Department<i class="fas fa-filter filter-icon"></i></th>
                             <th class="filter-header">Emp Code<i class="fas fa-filter filter-icon"></i></th>
@@ -330,7 +378,7 @@
                                 <th class="filter-header">Monitor Model<i class="fas fa-filter filter-icon"></i></th>
                                 <th class="filter-header">CPU Serial No<i class="fas fa-filter filter-icon"></i></th>
                             }
-                            <th class="filter-header">Serial No<i class="fas fa-filter filter-icon"></i></th>
+                            <th class="filter-header">Moniter Serial No<i class="fas fa-filter filter-icon"></i></th>
                             <th class="filter-header">Processor<i class="fas fa-filter filter-icon"></i></th>
                             <th class="filter-header">RAM<i class="fas fa-filter filter-icon"></i></th>
                             <th class="filter-header">HDD<i class="fas fa-filter filter-icon"></i></th>
@@ -347,6 +395,11 @@
                             <th class="filter-header">Invoice Date<i class="fas fa-filter filter-icon"></i></th>
                             <th class="filter-header">Warranty<i class="fas fa-filter filter-icon"></i></th>
                             <th class="filter-header">ExpiryDate<i class="fas fa-filter filter-icon"></i></th>
+                            <th class="filter-header">Stock<i class="fas fa-filter filter-icon"></i></th>
+                            <th class="filter-header">Vendor Name<i class="fas fa-filter filter-icon"></i></th>
+                            <th class="filter-header">MAC ID<i class="fas fa-filter filter-icon"></i></th>
+                            <th class="filter-header">Cost<i class="fas fa-filter filter-icon"></i></th>
+                            <th>Checkin Date</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -359,6 +412,7 @@
                                <td>@(item.IsTransferred ? "Transferred" : "NA")</td>
                                 <td>@item.AssetStatus?.Name</td>
                                 <td>@item.AssetTag</td>
+                                <td>@item.AssetCode</td>
                                 <td>@item.AssetType?.Name</td>
                                 <td>@item.Department?.DepartmentName</td>
                                 <td>@item.EmpCode</td>
@@ -376,7 +430,7 @@
                                     <td>@item.CPUSerialNo</td>
                                 }
 
-                                <td>@(string.IsNullOrEmpty(item.SerialNo) ? "NA" : item.SerialNo)</td>
+                                <td>@(string.IsNullOrEmpty(item.MoniterSerialNo) ? "NA" : item. MoniterSerialNo)</td>
                                 <td>@item.Processor</td>
                                 <td>@item.Ram</td>
                                 <td>@item.Hdd</td>
@@ -392,6 +446,19 @@
                                 <td>@(item.GRNDate.HasValue? item.GRNDate.Value.ToString("dd/MM/yyyy") : "NA")</td>
                                 <td>@(item.InvoiceDate.HasValue? item.InvoiceDate.Value.ToString("dd/MM/yyyy") : "NA")</td>
                                 <td>@(item.Warranty.HasValue ? $"{item.Warranty} Months" : "NA")</td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(item.Stock))
+                                    {
+                                        <span class="stock-badge">@item.Stock</span>
+                                    }
+                                    else
+                                    {
+                                        <span>NA</span>
+                                    }
+                                </td>
+                                <td>@item.VendorName</td>
+                                <td>@item.MacId</td>
+                                <td>@item.Cost</td>
                                 <td>
                                     @if (item.ExpiryDate.HasValue)
                                     {
@@ -411,9 +478,37 @@
                                     {
                                         <span>NA</span>
                                     }
+
+
+
                                 </td>
+                            <td>
+                                @(item.CheckinDate.HasValue
+                                                                ? item.CheckinDate.Value.ToString("dd/MM/yyyy")
+                                                                : "NA")
+                            </td>
                                 <td class="text-center">
                                     <div class="action-buttons">
+
+                                        <!-- ✅ Checkout / Checkin Button -->
+                                        @if (item.IsCheckedOut)
+                                        {
+                                            <form asp-action="Checkin" method="post" style="display:inline;">
+                                                <input type="hidden" name="assetId" value="@item.AssetId" />
+                                                <button class="btn btn-success btn-sm">
+                                                    <i class="fas fa-undo"></i> Checkin
+                                                </button>
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <a asp-action="Checkout" asp-route-assetId="@item.AssetId" class="btn btn-danger btn-sm">
+                                                <i class="fas fa-sign-out-alt"></i> Checkout
+                                            </a>
+                                        }
+
+
+
                                         <a asp-action="Edit" asp-route-id="@item.AssetId" class="btn btn-warning btn-sm">
                                             <i class="fas fa-edit"></i> Update
                                         </a>
@@ -423,16 +518,13 @@
                                         <a asp-action="TransferHistory" asp-route-id="@item.AssetId" class="btn btn-info btn-sm ms-1">
                                             <i class="fas fa-history"></i> TransferHistory
                                         </a>
-                                    </div>
-
-                                
+                                    </div>                                
                             </tr>
                         }
                     </tbody>
                 </table>
             </div>
         </div>
-
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -624,23 +716,29 @@
             });
         });
 
-        // DataTables initialization
-        $(document).ready(function () {
-            $('#assets-table').DataTable({
-                scrollX: true,
-                autoWidth: false,
-                pageLength: 10,
-                searching: true,
-                columnDefs: [
-                    { searchable: false, orderable: false, targets: [0, -1] }
-                ],
-                dom: 'Bfrtip',
-                buttons: [
-                    { extend: 'excel', className: 'd-none', title: 'Assets' },
-                    { extend: 'print', className: 'd-none' }
-                ]
+            <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const topScroll = document.querySelector(".top-scroll");
+            const topScrollInner = document.querySelector(".top-scroll div");
+            const tableWrapper = document.querySelector(".table-wrapper");
+            const table = document.querySelector("#assets-table");
+
+            // Set width of fake scrollbar
+            topScrollInner.style.width = table.scrollWidth + "px";
+
+            // Sync scrolling
+            topScroll.addEventListener("scroll", () => {
+                tableWrapper.scrollLeft = topScroll.scrollLeft;
             });
+
+            tableWrapper.addEventListener("scroll", () => {
+                topScroll.scrollLeft = tableWrapper.scrollLeft;
+            });
+
         });
+    </script>
+
     </script>
 </body>
 </html>

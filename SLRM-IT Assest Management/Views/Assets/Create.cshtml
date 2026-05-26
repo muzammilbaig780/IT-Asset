@@ -279,6 +279,12 @@
                                         </div>
 
                                         <div class="form-group mb-3">
+                                            <label asp-for="AssetCode" class="form-label">Asset Code</label>
+                                            <input asp-for="AssetCode" class="form-control" />
+                                            <span asp-validation-for="AssetCode" class="text-danger"></span>
+                                        </div>
+
+                                        <div class="form-group mb-3">
                                             <label asp-for="Make" class="form-label">MAKE</label>
                                             <input asp-for="Make" class="form-control" />
                                             <span asp-validation-for="Make" class="text-danger"></span>
@@ -297,9 +303,9 @@
                                         </div>
 
                                         <div class="form-group mb-3">
-                                            <label asp-for="SerialNo" class="form-label">Serial No</label>
-                                            <input asp-for="SerialNo" class="form-control" />
-                                            <span asp-validation-for="SerialNo" class="text-danger"></span>
+                                            <label asp-for="MoniterSerialNo" class="form-label">Moniter Serial No</label>
+                                            <input asp-for="MoniterSerialNo" class="form-control" />
+                                            <span asp-validation-for="MoniterSerialNo" class="text-danger"></span>
                                         </div>
 
                                         <div class="form-group mb-3">
@@ -447,7 +453,7 @@
                                     <div class="col-md-4">
                                         <div class="form-group mb-3">
                                             <label asp-for="GRNDate" class="form-label">GRN Date</label>
-                                            <input asp-for="GRNDate" type="date" class="form-control" />
+                                            <input asp-for="GRNDate" type="Date" class="form-control"  />
                                             <span asp-validation-for="GRNDate" class="text-danger"></span>
                                         </div>
                                     </div>
@@ -458,6 +464,39 @@
                                             <label asp-for="InvoiceDate" class="form-label">Invoice Date</label>
                                             <input asp-for="InvoiceDate" type="date" class="form-control" />
                                             <span asp-validation-for="InvoiceDate" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Invoice Date -->
+                                    <div class="col-md-4">
+                                        <div class="form-group mb-3">
+                                            <label asp-for="Stock" class="form-label">Stock</label>
+                                            <input asp-for="Stock" type="text" class="form-control" />
+                                            <span asp-validation-for="Stock" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="form-group mb-3">
+                                            <label asp-for="VendorName" class="form-label">Vendor Name</label>
+                                            <input asp-for="VendorName" type="text" class="form-control" />
+                                            <span asp-validation-for="VendorName" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="form-group mb-3">
+                                            <label asp-for="MacId" class="form-label">MAC ID</label>
+                                            <input asp-for="MacId" type="text" class="form-control" />
+                                            <span asp-validation-for="MacId" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="form-group mb-3">
+                                            <label asp-for="Cost" class="form-label">Cost</label>
+                                            <input asp-for="Cost" type="text" class="form-control" />
+                                            <span asp-validation-for="Cost" class="text-danger"></span>
                                         </div>
                                     </div>
 

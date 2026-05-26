@@ -30,8 +30,9 @@ namespace SLRM_IT_Assest_Management.Models
          [ForeignKey("ToDepartmentId")]
          public Department? ToDepartment { get; set; }
 
-      
 
+        public string ActionType { get; set; } = string.Empty;
+        // "Checkout", "Checkin", "Transfer"
 
         public DateTime TransferDate { get; set; } = DateTime.Now;
  
@@ -42,5 +43,11 @@ namespace SLRM_IT_Assest_Management.Models
          public string TransferredBy { get; set; } = string.Empty;
 
          public DateTime CreatedDate { get; set; } = DateTime.Now;
+
+        public int? FromLocationId { get; set; }
+        public int? ToLocationId { get; set; }
+
+        public AssetLocation? FromLocation { get; set; }
+        public AssetLocation? ToLocation { get; set; }
     }
 }

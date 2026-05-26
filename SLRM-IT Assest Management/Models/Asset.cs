@@ -63,8 +63,8 @@ namespace SLRM_IT_Assest_Management.Models
 
      
         public string? AssetTag { get; set; }
+        public string? AssetCode { get; set; }
 
-    
         public string? Make { get; set; }
 
         public string? Model { get; set; }
@@ -78,7 +78,7 @@ namespace SLRM_IT_Assest_Management.Models
         public string? MoniterModel { get; set; }
 
  
-        public string? SerialNo { get; set; }
+        public string? MoniterSerialNo { get; set; }
      
 
         public string? Processor { get; set; }
@@ -127,9 +127,24 @@ namespace SLRM_IT_Assest_Management.Models
 
         public DateOnly? ExpiryDate { get; set; }
 
+        public string Stock { get; set; }
+
+        public string VendorName { get; set; }
+
+        public string MacId { get; set; }
+
+        public string Cost { get; set; }
+
 
         public string? CatridgeType { get; set; }
         public bool IsTransferred { get; set; } = false;
+
+
+        public bool IsCheckedOut { get; set; } = false;
+
+        public DateTime? CheckoutDate { get; set; }
+
+        public DateTime? CheckinDate { get; set; }
 
         public ICollection<AssetTransferLog>? TransferLogs { get; set; }
     }
