@@ -111,100 +111,150 @@
             <div class="card shadow">
                 <div class="card-header bg-primary text-white">
                     <h5 class="mb-0">
-                        <i class="fas fa-route me-2"></i> Transfer Lifecycle
+                        <i class="fas fa-route me-2"></i> Asset Lifecycle History
                     </h5>
                 </div>
 
                 <div class="card-body">
+
                     <div class="timeline">
+
                         @foreach (var item in Model)
                         {
                             <div class="timeline-item">
-                                <div class="row">
 
-                                    <div class="col-md-6">
-                                        <div class="border rounded p-3 bg-light">
+                                <div class="timeline-card">
 
-                                            <h6 class="text-danger">
-                                                <i class="fas fa-arrow-circle-left"></i> From
-                                            </h6>
+                                    <!-- Action Header -->
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
 
-                                            <p><b>User:</b> @(item.FromUserName ?? "NA")</p>
+                                        <h5 class="mb-0">
+                                            @{
+                                                var badgeClass = item.ActionType switch
+                                                {
+                                                    "Checkout" => "bg-danger",
+                                                    "Checkin" => "bg-success",
+                                                    "Transfer" => "bg-primary",
+                                                    "RepairCheckin" => "bg-warning text-dark",
+                                                    "RepairCheckout" => "bg-info text-dark",
+                                                    _ => "bg-secondary"
+                                                };
+                                            }
 
-                                            <p><b>Emp Code:</b> @(item.FromEmpCode ?? "NA")</p>
+                                            <span class="badge @badgeClass">
+                                                @item.ActionType
+                                            </span>
+                                        </h5>
 
-                                            <p>
-                                                <b>Department:</b>
-                                                @(item.FromDepartment?.DepartmentName ?? "NA")
-                                            </p>
+                                        <small class="text-muted">
+                                            @item.TransferDate.ToString("dd-MMM-yyyy hh:mm tt")
+                                        </small>
 
-                                            <p>
-                                                <b>Location:</b>
-                                                @(item.FromLocation?.Name ?? "NA")
-                                            </p>
-
-                                        </div>
                                     </div>
 
-                                    <div class="col-md-6">
-                                        <div class="border rounded p-3 bg-light">
+                                    <div class="row">
 
-                                            <h6 class="text-success">
-                                                <i class="fas fa-arrow-circle-right"></i> To
-                                            </h6>
+                                        <!-- FROM -->
+                                        <div class="col-md-6">
+                                            <div class="border rounded p-3 bg-light h-100">
 
-                                            <p><b>User:</b> @(item.ToUserName ?? "NA")</p>
+                                                <h6 class="text-danger">
+                                                    <i class="fas fa-arrow-circle-left"></i> From
+                                                </h6>
 
-                                            <p><b>Emp Code:</b> @(item.ToEmpCode ?? "NA")</p>
+                                                <p>
+                                                    <strong>User:</strong>
+                                                    @(item.FromUserName ?? "NA")
+                                                </p>
 
-                                            <p>
-                                                <b>Department:</b>
-                                                @(item.ToDepartment?.DepartmentName ?? "NA")
-                                            </p>
+                                                <p>
+                                                    <strong>Emp Code:</strong>
+                                                    @(item.FromEmpCode ?? "NA")
+                                                </p>
 
-                                            <p>
-                                                <b>Location:</b>
-                                                @(item.ToLocation?.Name ?? "NA")
-                                            </p>
+                                                <p>
+                                                    <strong>Department:</strong>
+                                                    @(item.FromDepartment?.DepartmentName ?? "NA")
+                                                </p>
 
+                                                <p>
+                                                    <strong>Location:</strong>
+                                                    @(item.FromLocation?.Name ?? "NA")
+                                                </p>
+
+                                            </div>
                                         </div>
+
+                                        <!-- TO -->
+                                        <div class="col-md-6">
+                                            <div class="border rounded p-3 bg-light h-100">
+
+                                                <h6 class="text-success">
+                                                    <i class="fas fa-arrow-circle-right"></i> To
+                                                </h6>
+
+                                                <p>
+                                                    <strong>User:</strong>
+                                                    @(item.ToUserName ?? "NA")
+                                                </p>
+
+                                                <p>
+                                                    <strong>Emp Code:</strong>
+                                                    @(item.ToEmpCode ?? "NA")
+                                                </p>
+
+                                                <p>
+                                                    <strong>Department:</strong>
+                                                    @(item.ToDepartment?.DepartmentName ?? "NA")
+                                                </p>
+
+                                                <p>
+                                                    <strong>Location:</strong>
+                                                    @(item.ToLocation?.Name ?? "NA")
+                                                </p>
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                    <hr />
+
+                                    <div class="row">
+
+                                        <div class="col-md-4">
+                                            <strong>Transferred By:</strong><br />
+                                            @(item.TransferredBy ?? "System")
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <strong>Reason:</strong><br />
+                                            @(item.TransferReason ?? "NA")
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <strong>Remarks:</strong><br />
+                                            @(item.Remarks ?? "NA")
+                                        </div>
+
                                     </div>
 
                                 </div>
 
-                                <hr />
-
-                                <div class="row mt-2">
-
-                                    <div class="col-md-4">
-                                        <b>Transferred By:</b>
-                                        @item.TransferredBy
-                                    </div>
-
-                                    <div class="col-md-4">
-                                        <b>Reason:</b>
-                                        @(item.TransferReason ?? "NA")
-                                    </div>
-
-                                    <div class="col-md-4">
-                                        <b>Remarks:</b>
-                                        @(item.Remarks ?? "NA")
-                                    </div>
-
-                                </div>
                             </div>
                         }
+
                     </div>
+
                 </div>
             </div>
         }
         else if (asset != null)
         {
             <div class="alert alert-info text-center">
-                No transfer history found for this asset.
+                No lifecycle history found for this asset.
             </div>
         }
-
     </div>
 
 </body>

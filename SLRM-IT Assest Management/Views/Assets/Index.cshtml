@@ -447,30 +447,26 @@
                                 <td>@(item.InvoiceDate.HasValue? item.InvoiceDate.Value.ToString("dd/MM/yyyy") : "NA")</td>
                                 <td>@(item.Warranty.HasValue ? $"{item.Warranty} Months" : "NA")</td>
                                 <td>
-                                    @if (!string.IsNullOrEmpty(item.Stock))
-                                    {
-                                        <span class="stock-badge">@item.Stock</span>
-                                    }
-                                    else
-                                    {
-                                        <span>NA</span>
-                                    }
-                                </td>
-                                <td>@item.VendorName</td>
-                                <td>@item.MacId</td>
-                                <td>@item.Cost</td>
-                                <td>
                                     @if (item.ExpiryDate.HasValue)
                                     {
-                                        var daysLeft = (item.ExpiryDate.Value.ToDateTime(TimeOnly.MinValue) - DateTime.Today).Days;
-                                        string status = daysLeft <= 0 ? "Expired" : daysLeft <= 30 ? "Expiring Soon" : "Active";
-                                        string color = daysLeft <= 0 ? "text-danger" : daysLeft <= 30 ? "text-warning" : "text-success";
+                                        var daysLeft = (item.ExpiryDate.Value.ToDateTime(TimeOnly.MinValue)
+                                        - DateTime.Today).Days;
+
+                                        string status = daysLeft <= 0
+                                        ? "Expired"
+                                        : daysLeft <= 30
+                                        ? "Expiring Soon"
+                                        : "Active";
+
+                                        string color = daysLeft <= 0
+                                        ? "text-danger"
+                                        : daysLeft <= 30
+                                        ? "text-warning"
+                                        : "text-success";
 
                                         <span>@item.ExpiryDate.Value.ToString("dd/MM/yyyy")</span>
-                                
                                         <br />
                                         <small class="@color fw-semibold">@status</small>
-
                                         <br />
                                         <small>(@daysLeft days left)</small>
                                     }
@@ -478,10 +474,24 @@
                                     {
                                         <span>NA</span>
                                     }
-
-
-
                                 </td>
+
+                                <td>
+                                    @if (!string.IsNullOrEmpty(item.Stock))
+                                    {
+                                        <span class="stock-badge">
+                                            @item.Stock
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span>NA</span>
+                                    }
+                            </td>
+
+                            <td>@item.VendorName</td>
+                            <td>@item.MacId</td>
+                            <td>@item.Cost</td>
                             <td>
                                 @(item.CheckinDate.HasValue
                                                                 ? item.CheckinDate.Value.ToString("dd/MM/yyyy")
@@ -491,12 +501,15 @@
                                     <div class="action-buttons">
 
                                         <!-- ✅ Checkout / Checkin Button -->
-                                        @if (item.IsCheckedOut)
+                                    @if (item.IsCheckedOut)
                                         {
                                             <form asp-action="Checkin" method="post" style="display:inline;">
                                                 <input type="hidden" name="assetId" value="@item.AssetId" />
-                                                <button class="btn btn-success btn-sm">
-                                                    <i class="fas fa-undo"></i> Checkin
+
+                                                <button type="submit"
+                                                        class="btn btn-success btn-sm"
+                                                        onclick="return confirm('Are you sure you want to check in this asset?');">
+                                                    <i class="fas fa-undo"></i> Check In
                                                 </button>
                                             </form>
                                         }
@@ -739,6 +752,6 @@
         });
     </script>
 
-    </script>
+    
 </body>
 </html>

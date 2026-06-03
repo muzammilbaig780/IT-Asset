@@ -125,7 +125,7 @@ namespace SLRM_IT_Assest_Management.Controllers
 
             // Pass data to the view
             ViewData["PrinterTypes"] = await _context.PrinterTypes.ToListAsync();
-            ViewData["Locations"] = await _context.AssetLocations.ToListAsync();
+            ViewData["AssetLocations"] = await _context.AssetLocations.ToListAsync();
             ViewData["Departments"] = await _context.Departments.ToListAsync();
 
             return View(printer);
@@ -135,37 +135,81 @@ namespace SLRM_IT_Assest_Management.Controllers
 
 
         // POST: Printers/Edit/5
+        // POST: Printers/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("PrinterId,ITAssetTag,Division,PrinterTypeId,AssetLocationId,DepartmentId,PrinterMake,PrinterModel,SerialNumber,CartridgeType,Status,GRNNumber,GRNDate,InvoiceDate,Warranty,EndDate")] Printer printer)
+        public async Task<IActionResult> Edit(int id, Printer printer)
         {
             if (id != printer.PrinterId)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                try
+                var errors = ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+
+                foreach (var error in errors)
                 {
-                    _context.Update(printer);
-                    await _context.SaveChangesAsync();
+                    Console.WriteLine("Validation Error: " + error);
                 }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!PrinterExists(printer.PrinterId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                // After saving, redirect to Index or Details
-                return RedirectToAction(nameof(Index));  // Or RedirectToAction(nameof(Details), new { id = printer.PrinterId });
+
+                ViewData["PrinterTypes"] = await _context.PrinterTypes.ToListAsync();
+                ViewData["AssetLocations"] = await _context.AssetLocations.ToListAsync();
+                ViewData["Departments"] = await _context.Departments.ToListAsync();
+
+                return View(printer);
             }
-            return View(printer);
+
+            try
+            {
+                var existingPrinter = await _context.Printers
+                    .FirstOrDefaultAsync(x => x.PrinterId == printer.PrinterId);
+
+                if (existingPrinter == null)
+                {
+                    return NotFound();
+                }
+
+                // Update fields
+                existingPrinter.ITAssetTag = printer.ITAssetTag;
+                existingPrinter.Division = printer.Division;
+                existingPrinter.UserName = printer.UserName;
+                existingPrinter.PrinterTypeId = printer.PrinterTypeId;
+                existingPrinter.PrinterMake = printer.PrinterMake;
+                existingPrinter.PrinterModel = printer.PrinterModel;
+                existingPrinter.SerialNumber = printer.SerialNumber;
+                existingPrinter.CartridgeType = printer.CartridgeType;
+                existingPrinter.Status = printer.Status;
+                existingPrinter.VendorName = printer.VendorName;
+                existingPrinter.Cost = printer.Cost;
+                existingPrinter.AssetLocationId = printer.AssetLocationId;
+                existingPrinter.DepartmentId = printer.DepartmentId;
+                existingPrinter.GRNNumber = printer.GRNNumber;
+                existingPrinter.GRNDate = printer.GRNDate;
+                existingPrinter.InvoiceDate = printer.InvoiceDate;
+                existingPrinter.Warranty = printer.Warranty;
+                existingPrinter.EndDate = printer.EndDate;
+
+                await _context.SaveChangesAsync();
+
+                TempData["SuccessMessage"] = "Printer updated successfully.";
+
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+
+                ViewData["PrinterTypes"] = await _context.PrinterTypes.ToListAsync();
+                ViewData["AssetLocations"] = await _context.AssetLocations.ToListAsync();
+                ViewData["Departments"] = await _context.Departments.ToListAsync();
+
+                return View(printer);
+            }
         }
 
 
@@ -269,12 +313,13 @@ namespace SLRM_IT_Assest_Management.Controllers
                             string assetLocationText = worksheet.Cells[row, 7]?.Text?.Trim();
                             string departmentText = worksheet.Cells[row, 8]?.Text?.Trim();
                             string division = worksheet.Cells[row, 9]?.Text?.Trim();
-                            string statusText = worksheet.Cells[row, 10]?.Text?.Trim();
-                            string warranty = worksheet.Cells[row, 11]?.Text?.Trim();
-                            string grnDateText = worksheet.Cells[row, 12]?.Text?.Trim();
-                            string grnNumber = worksheet.Cells[row, 13]?.Text?.Trim();
-                            string invoiceDateText = worksheet.Cells[row, 14]?.Text?.Trim();
-                            string endDateText = worksheet.Cells[row, 15]?.Text?.Trim();
+                            string userName = worksheet.Cells[row, 10]?.Text?.Trim();
+                            string statusText = worksheet.Cells[row, 11]?.Text?.Trim();
+                            string warranty = worksheet.Cells[row, 12]?.Text?.Trim();
+                            string grnDateText = worksheet.Cells[row, 13]?.Text?.Trim();
+                            string grnNumber = worksheet.Cells[row, 14]?.Text?.Trim();
+                            string invoiceDateText = worksheet.Cells[row, 15]?.Text?.Trim();
+                            string endDateText = worksheet.Cells[row, 16]?.Text?.Trim();
 
                             // ===== Ensure master data exists =====
 
@@ -336,6 +381,7 @@ namespace SLRM_IT_Assest_Management.Controllers
                                 AssetLocationId = location.AssetLocationId,
                                 DepartmentId = department.DepartmentId,
                                 Division = division,
+                                UserName = userName,
                                 Status = status,
                                 Warranty = warranty,
                                 GRNDate = grnDate,

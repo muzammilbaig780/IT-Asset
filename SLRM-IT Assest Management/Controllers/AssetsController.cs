@@ -85,19 +85,20 @@ namespace AssetManagement.Controllers
 
             // Available Laptop stock
             ViewBag.LaptopStock = await _context.Assets
-                .Include(a => a.AssetType)
-                .CountAsync(a =>
-                    a.AssetType.Name == "Laptop"
-                    && !a.IsTransferred
-                    && !a.IsCheckedOut);
+     .Include(a => a.AssetType)
+     .Include(a => a.Department)
+     .CountAsync(a =>
+         a.AssetType.Name == "Laptop"
+         && !a.IsCheckedOut
+         && a.Department.DepartmentName == "MIS-IT");
 
-            // Available Desktop stock
             ViewBag.DesktopStock = await _context.Assets
-                .Include(a => a.AssetType)
-                .CountAsync(a =>
-                    a.AssetType.Name == "Desktop"
-                    && !a.IsTransferred
-                    && !a.IsCheckedOut);
+      .Include(a => a.AssetType)
+      .Include(a => a.Department)
+      .CountAsync(a =>
+          a.AssetType.Name == "Desktop"
+          && !a.IsCheckedOut
+          && a.Department.DepartmentName == "MIS-IT");
 
 
 
@@ -414,10 +415,10 @@ namespace AssetManagement.Controllers
      .Include(x => x.ToDepartment)
      .Include(x => x.FromLocation)
      .Include(x => x.ToLocation)
-                     .Where(x => x.AssetId == asset.AssetId)
-                    .OrderByDescending(x => x.TransferDate)
-                    .AsNoTracking()
-                    .ToListAsync();
+     .Where(x => x.AssetId == asset.AssetId)
+     .OrderByDescending(x => x.TransferDate)
+     .AsNoTracking()
+     .ToListAsync();
 
             ViewBag.Asset = asset;
             return View(history);
@@ -966,6 +967,8 @@ namespace AssetManagement.Controllers
             asset.EmpCode = empCode;
             asset.DepartmentId = departmentId;
 
+            asset.Stock = "Out Stock";
+
             asset.IsCheckedOut = true;
             asset.CheckoutDate = DateTime.Now;
             asset.CheckinDate = null;
@@ -1008,9 +1011,15 @@ namespace AssetManagement.Controllers
             var oldDept = asset.DepartmentId;
 
             // Clear assignment
-            asset.UserName = null;
+            // Move asset back to MIS-IT stock
+            var misDept = await _context.Departments
+                .FirstOrDefaultAsync(x => x.DepartmentName == "MIS-IT");
+
+            asset.UserName = "MIS Store";
             asset.EmpCode = null;
-            asset.DepartmentId = null;
+            asset.DepartmentId = misDept?.DepartmentId;
+
+            asset.Stock = "In Stock";
 
             asset.IsCheckedOut = false;
             asset.CheckinDate = DateTime.Now;
@@ -1019,11 +1028,17 @@ namespace AssetManagement.Controllers
             _context.AssetTransferLogs.Add(new AssetTransferLog
             {
                 AssetId = asset.AssetId,
+
                 FromUserName = oldUser,
                 FromEmpCode = oldEmp,
                 FromDepartmentId = oldDept,
+
+                ToUserName = "MIS Store",
+                ToDepartmentId = misDept?.DepartmentId,
+
                 TransferDate = DateTime.Now,
                 ActionType = "Checkin",
+                Remarks = "Returned to MIS Stock",
                 TransferredBy = User.Identity?.Name ?? "System"
             });
 

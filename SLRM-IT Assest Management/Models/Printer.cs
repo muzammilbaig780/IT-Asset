@@ -13,6 +13,8 @@ namespace SLRM_IT_Assest_Management.Models
         [Required]
         public string ITAssetTag { get; set; } = null!;
 
+        public string UserName { get; set; }
+
         [Required]
         public string Division { get; set; } = null!;
 
@@ -32,6 +34,7 @@ namespace SLRM_IT_Assest_Management.Models
         public string? PrinterModel { get; set; }
         public string? SerialNumber { get; set; }
         public string? CartridgeType { get; set; }
+        public string? VendorName { get; set; }
 
         public string? Status { get; set; }
 
@@ -48,5 +51,7 @@ namespace SLRM_IT_Assest_Management.Models
 
         // 🔴 MUST BE NULLABLE
         public DateTime? EndDate { get; set; }
+
+        public string? Cost { get; set; }
     }
 }

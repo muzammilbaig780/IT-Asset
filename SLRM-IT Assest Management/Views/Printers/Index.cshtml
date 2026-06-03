@@ -271,9 +271,26 @@
                                 <i class="fas fa-filter filter-icon"></i>
                             </th>
                             <th class="filter-header">
+                                UserName
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th>
+
+
+                            <th class="filter-header">
                                 Status
                                 <i class="fas fa-filter filter-icon"></i>
                             </th>
+
+                            <th class="filter-header">
+                                VendorName
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th>
+
+                            <th class="filter-header">
+                                Cost
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th>
+
                             <th class="filter-header">
                                 Warranty
                                 <i class="fas fa-filter filter-icon"></i>
@@ -342,7 +359,10 @@
                                     }
                                 </td>
                                 <td>@printer.Division</td> <!-- Display Division -->
+                                <td>@printer.UserName</td> 
                                 <td>@printer.Status</td> <!-- Display Status -->
+                                <td>@printer.VendorName</td>
+                                <td>@printer.Cost</td>
                                 <td>@printer.Warranty</td> <!-- Display Warranty -->
                                 <td>(@printer.GRNDate?.ToString("yyyy-MM-dd"))</td>
                                 <td>@printer.GRNNumber</td>
