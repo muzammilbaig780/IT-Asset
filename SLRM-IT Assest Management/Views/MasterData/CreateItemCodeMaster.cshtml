@@ -1,0 +1,16 @@
+﻿@model SLRM_IT_Assest_Management.Models.ItemCodeMaster
+
+<form id="assetTypeForm" method="post">
+    @Html.AntiForgeryToken()
+
+    <div class="mb-3">
+        <label asp-for="ItemCode" class="form-label">Item Code *</label>
+        <input asp-for="ItemCode" class="form-control" required />
+        <span asp-validation-for="ItemCode" class="text-danger"></span>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Save Item Code</button>
+    </div>
+</form>

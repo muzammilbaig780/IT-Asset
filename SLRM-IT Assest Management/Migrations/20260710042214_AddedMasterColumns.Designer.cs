@@ -4,6 +4,7 @@ using AssetManagement.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace SLRM_IT_Assest_Management.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260710042214_AddedMasterColumns")]
+    partial class AddedMasterColumns
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -818,12 +821,7 @@ namespace SLRM_IT_Assest_Management.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ItemNameMasterId")
-                        .HasColumnType("int");
-
                     b.HasKey("ItemCodeMasterId");
-
-                    b.HasIndex("ItemNameMasterId");
 
                     b.ToTable("ItemCodeMasters");
                 });
@@ -1500,15 +1498,6 @@ namespace SLRM_IT_Assest_Management.Migrations
                         .IsRequired();
 
                     b.Navigation("Asset");
-                });
-
-            modelBuilder.Entity("SLRM_IT_Assest_Management.Models.ItemCodeMaster", b =>
-                {
-                    b.HasOne("SLRM_IT_Assest_Management.Models.ItemNameMaster", "ItemNameMaster")
-                        .WithMany()
-                        .HasForeignKey("ItemNameMasterId");
-
-                    b.Navigation("ItemNameMaster");
                 });
 
             modelBuilder.Entity("SLRM_IT_Assest_Management.Models.Printer", b =>

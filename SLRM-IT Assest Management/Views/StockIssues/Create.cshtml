@@ -1,0 +1,112 @@
+@model SLRM_IT_Assest_Management.Models.StockIssue
+
+@{
+    ViewData["Title"] = "Stock Issue Request";
+}
+
+<div class="container mt-4">
+
+    <div class="card shadow-lg border-0">
+
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0">
+                <i class="bi bi-box-arrow-right"></i>
+                Stock Issue Request
+            </h3>
+        </div>
+
+        <div class="card-body">
+
+            <form asp-action="Create">
+
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Item</label>
+
+                        <select asp-for="StoreInventoryId"
+                                class="form-select"
+                                asp-items="@(new SelectList(ViewBag.StockItems,
+                                                                    "StoreInventoryId",
+                                                                    "ItemDisplay"))">
+                            <option value="">Select Item</option>
+                        </select>
+
+                        <span asp-validation-for="StoreInventoryId" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Department</label>
+
+                        <select asp-for="DepartmentId"
+                                class="form-select"
+                                asp-items='@(new SelectList(ViewBag.Departments, "DepartmentId", "DepartmentName"))'>
+                            <option value="">Select Department</option>
+                        </select>
+
+                        <span asp-validation-for="DepartmentId" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="EmployeeName" class="form-label fw-bold">Employee Name</label>
+                        <input asp-for="EmployeeName" class="form-control" placeholder="Enter Employee Name" />
+                        <span asp-validation-for="EmployeeName" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="EmployeeCode" class="form-label fw-bold">Employee Code</label>
+                        <input asp-for="EmployeeCode" class="form-control" placeholder="Employee Code" />
+                        <span asp-validation-for="EmployeeCode" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label asp-for="IssueQty" class="form-label fw-bold">Issue Qty</label>
+                        <input asp-for="IssueQty" class="form-control" />
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label asp-for="RequestDate" class="form-label fw-bold">Request Date</label>
+                        <input asp-for="RequestDate" type="date" class="form-control" />
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label asp-for="RequestedBy" class="form-label fw-bold"></label>
+                        <input asp-for="RequestedBy" class="form-control" />
+                    </div>
+
+                    <div class="col-md-12 mb-3">
+                        <label asp-for="Remarks" class="form-label fw-bold"></label>
+                        <textarea asp-for="Remarks" rows="3" class="form-control"></textarea>
+                    </div>
+
+                </div>
+
+                <hr />
+
+                <div class="text-end">
+
+                    <a asp-action="Index" class="btn btn-secondary">
+                        Back
+                    </a>
+
+                    <button type="submit" class="btn btn-success">
+                        Submit Request
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

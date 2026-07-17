@@ -664,6 +664,51 @@
         };
     </script>
 
+    <script>
+        $(document).on("change", "#ItemNameMasterId", function () {
+
+            var itemNameId = $(this).val();
+
+            console.log("Selected Item:", itemNameId);
+
+            $("#ItemCodeMasterId").html('<option value="">-- Select Item Code --</option>');
+
+            if (itemNameId == "")
+                return;
+
+            $.ajax({
+                url: '@Url.Action("GetItemCodes", "StockInventories")',
+                type: 'GET',
+                data: { itemNameMasterId: itemNameId },
+                success: function (data) {
+
+                    console.log(data);
+
+                    $.each(data, function (i, item) {
+
+                        $("#ItemCodeMasterId").append(
+                            '<option value="' + item.itemCodeMasterId + '">' +
+                            item.itemCode +
+                            '</option>'
+                        );
+
+                    });
+
+                },
+                error: function (xhr) {
+
+                    console.log(xhr);
+
+                    alert("Error calling controller");
+
+                }
+
+            });
+
+        });
+    </script>
+
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

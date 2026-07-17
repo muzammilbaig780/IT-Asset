@@ -1,13 +1,8 @@
 ﻿using AssetManagement.Data;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
 using SLRM_IT_Assest_Management.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SLRM_IT_Assest_Management.Controllers
 {

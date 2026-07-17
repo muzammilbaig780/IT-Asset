@@ -1,0 +1,340 @@
+﻿@model IEnumerable<SLRM_IT_Assest_Management.Models.StockIssue>
+
+@{
+    ViewData["Title"] = "Level 2 Approval";
+}
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+
+<style>
+
+    body {
+        background: #f4f7fb;
+    }
+
+    .page-title {
+        font-size: 30px;
+        font-weight: 700;
+    }
+
+    .dashboard-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0,0,0,.08);
+    }
+
+    .table-card {
+        border: none;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0,0,0,.08);
+    }
+
+    .table thead {
+        background: #0d6efd;
+        color: white;
+    }
+
+    .table td {
+        vertical-align: middle;
+    }
+
+    .search-box {
+        width: 300px;
+    }
+
+    .btn-action {
+        width: 38px;
+        height: 38px;
+    }
+
+</style>
+
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <div class="page-title">
+                <i class="bi bi-check2-square text-success"></i>
+                Level 2 Approval
+            </div>
+
+            <small class="text-muted">
+                Store Manager Approval
+            </small>
+
+        </div>
+
+        <a href="javascript:history.back()"
+           class="btn btn-outline-secondary">
+
+            <i class="bi bi-arrow-left"></i>
+
+            Back
+
+        </a>
+
+    </div>
+
+
+    <div class="row mb-4">
+
+        <div class="col-md-4">
+
+            <div class="card dashboard-card">
+
+                <div class="card-body d-flex justify-content-between">
+
+                    <div>
+
+                        <h6>Total Pending</h6>
+
+                        <h2>@Model.Count()</h2>
+
+                    </div>
+
+                    <div class="text-primary">
+
+                        <i class="bi bi-list-check fs-1"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="card table-card">
+
+        <div class="card-header bg-white">
+
+            <div class="d-flex justify-content-between">
+
+                <input type="text"
+                       id="search"
+                       class="form-control search-box"
+                       placeholder="Search Employee / Item..." />
+
+                <strong>
+                    Total Records : @Model.Count()
+                </strong>
+
+            </div>
+
+        </div>
+
+        <div class="table-responsive">
+
+            <table class="table table-bordered table-hover mb-0"
+                   id="approvalTable">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Sl</th>
+                        <th>Item</th>
+                        <th>Department</th>
+                        <th>Employee</th>
+                        <th>Employee Code</th>
+                        <th>Qty</th>
+                        <th>Request Date</th>
+                        <th>Level 1</th>
+                        <th width="220">Action</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    @{
+
+                        int i = 1;
+
+                    }
+
+                    @foreach (var item in Model)
+                    {
+
+                        <tr>
+
+                            <td>@i</td>
+
+                            <td>
+                                @item.StockInventory?.ItemNameMaster?.ItemName
+                                <br />
+                                <small class="text-muted">
+                                    @item.StockInventory?.ItemCodeMaster?.ItemCode
+                                </small>
+                            </td>
+
+                            <td>
+                                @item.Department?.DepartmentName
+                            </td>
+
+                            <td>
+                                @item.EmployeeName
+                            </td>
+
+                            <td>
+                                @item.EmployeeCode
+                            </td>
+
+                            <td>
+                                <span class="badge bg-primary">
+                                    @item.IssueQty
+                                </span>
+                            </td>
+
+                            <td>
+                                @item.RequestDate.ToString("dd-MM-yyyy")
+                            </td>
+
+                            <td>
+                                <span class="badge bg-success">
+                                    Approved
+                                </span>
+                            </td>
+
+                            <td>
+
+                                <a asp-action="ApproveLevel2"
+                                   asp-route-id="@item.IssueId"
+                                   class="btn btn-success btn-sm">
+
+                                    <i class="bi bi-check-circle"></i>
+
+                                    Approve
+
+                                </a>
+
+                                <button class="btn btn-danger btn-sm"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#rejectModal@(item.IssueId)">
+
+                                    <i class="bi bi-x-circle"></i>
+
+                                    Reject
+
+                                </button>
+
+                            </td>
+
+                        </tr>
+
+                        <!-- Reject Modal -->
+
+                        <div class="modal fade"
+                             id="rejectModal@(item.IssueId)"
+                             tabindex="-1">
+
+                            <div class="modal-dialog">
+
+                                <div class="modal-content">
+
+                                    <form asp-action="RejectLevel2"
+                                          method="post">
+
+                                        <div class="modal-header bg-danger text-white">
+
+                                            <h5 class="modal-title">
+
+                                                Reject Request
+
+                                            </h5>
+
+                                            <button type="button"
+                                                    class="btn-close btn-close-white"
+                                                    data-bs-dismiss="modal">
+                                            </button>
+
+                                        </div>
+
+                                        <div class="modal-body">
+
+                                            <input type="hidden"
+                                                   name="id"
+                                                   value="@item.IssueId" />
+
+                                            <label class="fw-bold">
+
+                                                Remarks
+
+                                            </label>
+
+                                            <textarea name="remarks"
+                                                  class="form-control"
+                                                  rows="4"
+                                                  required>
+
+                                        </textarea>
+
+                                        </div>
+
+                                        <div class="modal-footer">
+
+                                            <button type="button"
+                                                    class="btn btn-secondary"
+                                                    data-bs-dismiss="modal">
+
+                                                Cancel
+
+                                            </button>
+
+                                            <button type="submit"
+                                                    class="btn btn-danger">
+
+                                                Reject
+
+                                            </button>
+
+                                        </div>
+
+                                    </form>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        i++;
+
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts {
+
+    <script>
+
+        document.getElementById("search").addEventListener("keyup",function(){
+
+            var value=this.value.toLowerCase();
+
+            document.querySelectorAll("#approvalTable tbody tr").forEach(function(row){
+
+                row.style.display=row.innerText.toLowerCase().includes(value) ? "" : "none";
+
+            });
+
+        });
+
+    </script>
+
+}

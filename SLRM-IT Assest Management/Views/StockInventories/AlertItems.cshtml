@@ -1,0 +1,55 @@
+﻿@model IEnumerable<SLRM_IT_Assest_Management.Models.StockInventory>
+
+<table class="table table-bordered table-striped">
+
+    <thead class="table-danger">
+
+        <tr>
+
+            <th>Sl</th>
+            <th>Item Name</th>
+            <th>Item Code</th>
+            <th>Available Qty</th>
+            <th>Store Location</th>
+            <th>Days Pending</th>
+
+        </tr>
+
+    </thead>
+
+    <tbody>
+
+        @{
+            int sl = 1;
+        }
+
+        @foreach (var item in Model)
+        {
+            <tr>
+
+                <td>@sl</td>
+
+                <td class="fw-bold">@item.ItemNameMaster?.ItemName</td>
+
+                <td>@item.ItemCodeMaster?.ItemCode</td>
+
+                <td>
+                    <span class="badge bg-primary">
+                        @item.AvailableQty
+                    </span>
+                </td>
+
+                <td>@item.StoreLocation</td>
+
+                <td>
+                    @( (DateTime.Now - item.CreatedDate).Days ) Days
+                </td>
+
+            </tr>
+
+            sl++;
+        }
+
+    </tbody>
+
+</table>

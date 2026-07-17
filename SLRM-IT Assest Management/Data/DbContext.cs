@@ -40,6 +40,8 @@ namespace AssetManagement.Data
         public DbSet<StockInventory> StockInventories { get; set; }
 
         public DbSet<StockIssue> StockIssues { get; set; }
+        public DbSet<ItemNameMaster> ItemNameMasters { get; set; }
+        public DbSet<ItemCodeMaster> ItemCodeMasters { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

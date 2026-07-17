@@ -272,36 +272,27 @@
     }
 
     @@media (max-width: 1200px) {
-        .dashboard-cards
-
-    {
-        grid-template-columns: repeat(3, 1fr);
-    }
-
+        .dashboard-cards {
+            grid-template-columns: repeat(3, 1fr);
+        }
     }
 
     @@media (max-width: 768px) {
-        .dashboard-cards
-
-    {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
+        .dashboard-cards {
+            grid-template-columns: repeat(2, 1fr);
+        }
     }
 
     @@media (max-width: 480px) {
-        .dashboard-cards
-
-    {
-        grid-template-columns: 1fr;
-    }
+        .dashboard-cards {
+            grid-template-columns: 1fr;
+        }
 
 
         .logo-wrapper {
             display: flex;
             align-items: center;
         }
-    
 </style>
 
 <div class="sidebar">
@@ -358,6 +349,17 @@
                 <li>
                     <a asp-controller="Barcode" asp-action="Index" class="menu-item">
                         <span>Barcode</span>
+                    </a>
+                </li>
+                <li>
+                    <a asp-controller="StockInventories" asp-action="Index" class="menu-item">
+                        <span>StockInventory</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a asp-controller="StockIssues" asp-action="Index" class="menu-item">
+                        <span>StockIssues</span>
                     </a>
                 </li>
             </ul>
@@ -489,12 +491,11 @@
 
     <!-- Content Area -->
     <div class="content-area">
-        <!-- Dashboard Cards -->
         <!-- Dashboard Cards - All in One Row -->
         <div class="dashboard-cards" style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; margin-bottom: 24px;">
 
-            <!-- Assets Card -->
-            <a asp-controller="Assets" asp-action="Index" style="text-decoration:none;">
+            <!-- Assets Card (no stock table, click opens combined modal) -->
+            <a href="javascript:void(0)" id="assetsCard" style="text-decoration:none;">
                 <div class="stat-card"
                      style="background:linear-gradient(135deg,#eef2ff 0%,#ffffff 100%);
                 border-left:4px solid #4f46e5;
@@ -534,75 +535,8 @@
                         Total IT Assets
                     </div>
 
-                    <!-- Stock Summary -->
-                    <div style="background:#f8f9ff;
-                    border-radius:6px;
-                    padding:8px;
-                    border:1px solid #dbe4ff;">
+                    <!-- (Stock table removed as requested) -->
 
-                        <table style="width:100%;
-                          font-size:11px;
-                          border-collapse:collapse;">
-
-                            <thead>
-                                <tr style="border-bottom:1px solid #dbe4ff;">
-                                    <th style="text-align:left;padding:4px;color:#4f46e5;">
-                                        Device
-                                    </th>
-
-                                    <th style="text-align:center;padding:4px;color:green;">
-                                        In Stock
-                                    </th>
-
-                                    <th style="text-align:center;padding:4px;color:red;">
-                                        Out Stock
-                                    </th>
-                                </tr>
-                            </thead>
-
-                            <tbody>
-
-                                <tr>
-                                    <td style="padding:6px;color:#475569;">
-                                        💻 Laptop
-                                    </td>
-
-                                    <td style="text-align:center;
-                                   color:green;
-                                   font-weight:bold;">
-                                        @Model.LaptopInStock
-                                    </td>
-
-                                    <td style="text-align:center;
-                                   color:red;
-                                   font-weight:bold;">
-                                        @Model.LaptopOutStock
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td style="padding:6px;color:#475569;">
-                                        🖥 Desktop
-                                    </td>
-
-                                    <td style="text-align:center;
-                                   color:green;
-                                   font-weight:bold;">
-                                        @Model.DesktopInStock
-                                    </td>
-
-                                    <td style="text-align:center;
-                                   color:red;
-                                   font-weight:bold;">
-                                        @Model.DesktopOutStock
-                                    </td>
-                                </tr>
-
-                            </tbody>
-
-                        </table>
-
-                    </div>
                 </div>
             </a>
 
@@ -617,7 +551,6 @@
                     </div>
                     <div style="font-size: 20px; font-weight: 700; color: #1e293b; margin-bottom: 2px;">@Model.LicenseCount</div>
                     <div style="font-size: 11px; color: #64748b;">Active Licenses</div>
-
                     <!-- Empty space for alignment -->
                     <div style="height: 48px;"></div>
                 </div>
@@ -634,7 +567,6 @@
                     </div>
                     <div style="font-size: 20px; font-weight: 700; color: #1e293b; margin-bottom: 2px;">@Model.ConsumablesCount</div>
                     <div style="font-size: 11px; color: #64748b;">Items in Stock</div>
-
                     <!-- Empty space for alignment -->
                     <div style="height: 48px;"></div>
                 </div>
@@ -651,7 +583,6 @@
                     </div>
                     <div style="font-size: 20px; font-weight: 700; color: #1e293b; margin-bottom: 2px;">@Model.PrinterCount</div>
                     <div style="font-size: 11px; color: #64748b;">Network Printers</div>
-
                     <!-- Empty space for alignment -->
                     <div style="height: 48px;"></div>
                 </div>
@@ -667,7 +598,6 @@
                 </div>
                 <div style="font-size: 20px; font-weight: 700; color: #1e293b; margin-bottom: 2px;">24</div>
                 <div style="font-size: 11px; color: #64748b;">Peripheral Devices</div>
-
                 <!-- Empty space for alignment -->
                 <div style="height: 48px;"></div>
             </div>
@@ -682,9 +612,100 @@
                 </div>
                 <div style="font-size: 20px; font-weight: 700; color: #1e293b; margin-bottom: 2px;">@Model.ComponentCount</div>
                 <div style="font-size: 11px; color: #64748b;">Items in Stock</div>
-
                 <!-- Empty space for alignment -->
                 <div style="height: 48px;"></div>
+            </div>
+        </div>
+
+        <!-- NEW Combined Modal: Counts + Scrap -->
+        <div class="modal fade" id="assetSummaryModal" tabindex="-1" aria-labelledby="assetSummaryModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="assetSummaryModalLabel">
+                            <i class="fas fa-server text-primary me-2"></i>Asset Summary
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Counts Row -->
+                        <div class="row text-center mb-3">
+                            <div class="col-6">
+                                <span class="text-muted">Laptops (Total)</span>
+                                <h3 class="text-primary">@(Model.LaptopWorking + Model.LaptopUnderRepair + Model.LaptopScrap + Model.LaptopMissing)</h3>
+                            </div>
+                            <div class="col-6">
+                                <span class="text-muted">Desktops (Total)</span>
+                                <h3 class="text-primary">@(Model.DesktopWorking + Model.DesktopUnderRepair + Model.DesktopScrap + Model.DesktopMissing)</h3>
+                            </div>
+                        </div>
+                        <hr />
+                        <!-- Scrap Row -->
+                        <div class="row text-center">
+                            <div class="col-6">
+                                <span class="text-muted">Laptop Scrap</span>
+                                <h3 class="text-danger">@Model.LaptopScrap</h3>
+                            </div>
+                            <div class="col-6">
+                                <span class="text-muted">Desktop Scrap</span>
+                                <h3 class="text-danger">@Model.DesktopScrap</h3>
+                            </div>
+                        </div>
+                        <hr />
+                        <!-- Totals -->
+                        <div class="text-center">
+                            <span class="text-muted">Total Scrap</span>
+                            <h2 class="text-danger fw-bold">@(Model.LaptopScrap + Model.DesktopScrap)</h2>
+                            <span class="text-muted d-block mt-2">Total Assets: <strong>@Model.AssetCount</strong></span>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <a asp-controller="Assets" asp-action="Index" class="btn btn-outline-primary">
+                            <i class="fas fa-eye me-1"></i>View All Assets
+                        </a>
+                        <a asp-controller="Assets" asp-action="Index" asp-route-status="Scrap" class="btn btn-outline-danger">
+                            <i class="fas fa-trash-alt me-1"></i>View Scrap Only
+                        </a>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Existing Scrap Modal (unchanged, in case you need it separately) -->
+        <div class="modal fade" id="scrapModal" tabindex="-1" aria-labelledby="scrapModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="scrapModalLabel">
+                            <i class="fas fa-trash-alt text-danger me-2"></i>Scrap Asset Summary
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row text-center">
+                            <div class="col-6">
+                                <span class="text-muted">Laptop Scrap</span>
+                                <h3 class="text-danger">@Model.LaptopScrap</h3>
+                            </div>
+                            <div class="col-6">
+                                <span class="text-muted">Desktop Scrap</span>
+                                <h3 class="text-danger">@Model.DesktopScrap</h3>
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="text-center">
+                            <span class="text-muted">Total Scrap</span>
+                            <h2 class="text-danger fw-bold">@(Model.LaptopScrap + Model.DesktopScrap)</h2>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <a asp-controller="Assets" asp-action="Index" asp-route-status="Scrap" class="btn btn-outline-danger">
+                            <i class="fas fa-eye me-1"></i>View All Scrap
+                        </a>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -913,5 +934,15 @@
             this.classList.add("active");
             document.getElementById("btnLaptop").classList.remove("active");
         });
+
+        // NEW: Click handler for Assets Card -> open combined summary modal
+        var assetsCard = document.getElementById('assetsCard');
+        if (assetsCard) {
+            assetsCard.addEventListener('click', function (e) {
+                e.preventDefault();
+                var summaryModal = new bootstrap.Modal(document.getElementById('assetSummaryModal'));
+                summaryModal.show();
+            });
+        }
     });
 </script>

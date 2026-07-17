@@ -10,12 +10,7 @@
     <h4>StockInventory</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ItemName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ItemName)
-        </dd>
+      
     </dl>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Category)
@@ -25,17 +20,17 @@
         </dd>
     </dl>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.InvoiceNumber)
+            @Html.DisplayNameFor(model => model.GRNNumber)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.InvoiceNumber)
+            @Html.DisplayFor(model => model.GRNNumber)
         </dd>
     </dl>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.InvoiceDate)
+            @Html.DisplayNameFor(model => model.RequesitionNo)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.InvoiceDate)
+            @Html.DisplayFor(model => model.RequesitionNo)
         </dd>
     </dl>
         <dt class = "col-sm-2">
@@ -52,12 +47,12 @@
             @Html.DisplayFor(model => model.AvailableQty)
         </dd>
     </dl>
-        <dt class = "col-sm-2">
+        @* <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.IssuedQty)
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.IssuedQty)
-        </dd>
+        </dd> *@
     </dl>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.StoreLocation)
