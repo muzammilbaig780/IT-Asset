@@ -37,6 +37,10 @@ namespace AssetManagement.Data
         public DbSet<Tv> Tv { get; set; }
         public DbSet<Telephone> Telephone { get; set; }
 
+        public DbSet<StockInventory> StockInventories { get; set; }
+
+        public DbSet<StockIssue> StockIssues { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

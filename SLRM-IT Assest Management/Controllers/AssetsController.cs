@@ -83,22 +83,41 @@ namespace AssetManagement.Controllers
             ViewBag.Filter = filter;
             ViewBag.AssetTag = assetTag;
 
-            // Available Laptop stock
-            ViewBag.LaptopStock = await _context.Assets
-     .Include(a => a.AssetType)
-     .Include(a => a.Department)
-     .CountAsync(a =>
-         a.AssetType.Name == "Laptop"
-         && !a.IsCheckedOut
-         && a.Department.DepartmentName == "MIS-IT");
+            var misDept = await _context.Departments
+        .FirstOrDefaultAsync(d => d.DepartmentName == "MIS-IT");
 
-            ViewBag.DesktopStock = await _context.Assets
-      .Include(a => a.AssetType)
-      .Include(a => a.Department)
-      .CountAsync(a =>
-          a.AssetType.Name == "Desktop"
-          && !a.IsCheckedOut
-          && a.Department.DepartmentName == "MIS-IT");
+            if (misDept != null)
+            {
+                // Laptop In Stock
+                ViewBag.LaptopInStock = await _context.Assets
+                    .Include(a => a.AssetType)
+                    .CountAsync(a =>
+                        a.AssetType.Name == "Laptop" &&
+                        a.DepartmentId == misDept.DepartmentId &&
+                        !a.IsCheckedOut);
+
+                // Laptop Out Stock
+                ViewBag.LaptopOutStock = await _context.Assets
+                    .Include(a => a.AssetType)
+                    .CountAsync(a =>
+                        a.AssetType.Name == "Laptop" &&
+                        a.IsCheckedOut);
+
+                // Desktop In Stock
+                ViewBag.DesktopInStock = await _context.Assets
+                    .Include(a => a.AssetType)
+                    .CountAsync(a =>
+                        a.AssetType.Name == "Desktop" &&
+                        a.DepartmentId == misDept.DepartmentId &&
+                        !a.IsCheckedOut);
+
+                // Desktop Out Stock
+                ViewBag.DesktopOutStock = await _context.Assets
+                    .Include(a => a.AssetType)
+                    .CountAsync(a =>
+                        a.AssetType.Name == "Desktop" &&
+                        a.IsCheckedOut);
+            }
 
 
 
@@ -334,7 +353,7 @@ namespace AssetManagement.Controllers
                 existingAsset.AssetTypeId = asset.AssetTypeId;
                 existingAsset.CompanyId = asset.CompanyId;
                 //existingAsset.AssetStatusId = asset.AssetStatusId;
-                existingAsset.AssetLocationId = asset.AssetLocationId;
+                existingAsset.AssetLocationId = asset.AssetLocationId;                
                 existingAsset.DepartmentId = asset.DepartmentId;
                 existingAsset.BlockId = asset.BlockId;
                 existingAsset.DivisionId = asset.DivisionId;

@@ -31,7 +31,6 @@ namespace SLRM_IT_Assest_Management.Models
         [ForeignKey("StatusId")]
         public Status? AssetStatus { get; set; }
 
-
         [Required(ErrorMessage = "Please select a Location.")]
         public int? AssetLocationId { get; set; }
         [ForeignKey("AssetLocationId")]

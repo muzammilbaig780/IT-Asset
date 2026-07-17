@@ -30,10 +30,16 @@
         public int DesktopScrap { get; set; }
         public int DesktopMissing { get; set; }
         public int PrinterCount { get; set; }
+        public  int  ComponentCount { get; set; }
+
+        public int LaptopInStock { get; set; }
+        public int LaptopOutStock { get; set; }
+        public int DesktopInStock { get; set; }
+        public int DesktopOutStock { get; set; }
 
 
 
-      
+
 
     }
 }
